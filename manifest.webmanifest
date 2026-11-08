@@ -1,0 +1,32 @@
+{
+  "name": "КАСКАД — строительство и ремонт",
+  "short_name": "КАСКАД",
+  "description": "Дома, ремонт и архитектурные идеи — Горячий Ключ",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f5ee",
+  "theme_color": "#2d4439",
+  "lang": "ru",
+  "dir": "ltr",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/kaskad-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/kaskad-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "business",
+    "lifestyle"
+  ]
+}

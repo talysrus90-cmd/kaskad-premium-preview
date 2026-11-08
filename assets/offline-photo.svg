@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620" role="img">
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#e8e5dd"/><stop offset="1" stop-color="#d9ded4"/></linearGradient></defs>
+<rect width="960" height="620" fill="url(#bg)"/>
+<g fill="none" stroke="#96a397" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+<path d="M245 341 482 153l238 188"/>
+<path d="M298 316v196h368V316"/>
+<path d="M443 512V369h87v143"/>
+<path d="M339 347h63v68h-63zM562 347h62v68h-62z"/>
+</g><text x="480" y="560" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" fill="#52665a">Фото появится после подключения</text></svg>

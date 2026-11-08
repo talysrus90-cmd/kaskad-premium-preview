@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2d4439">
+  <meta name="description" content="КАСКАД — интерактивная архитектурная 3D-модель дома. Вращайте дом на 360°, управляйте солнечным освещением и светом в окнах.">
+  <title>3D-дом — КАСКАД</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/kaskad-apple-180.png">
+  <link rel="stylesheet" href="fonts.css?v=pwa1">
+  <link rel="stylesheet" href="3d-house.css?v=1">
+</head>
+<body>
+<header class="header">
+  <div class="top">
+    <a href="./#inspiration" class="brand" aria-label="Назад на сайт Каскад">
+      <span class="brand-symbol" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 40 40" fill="none"><path d="M5 20 20 6l15 14M9 18v17h22V18M17 35V24h6v11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span><strong>Каскад</strong><small>СОЗДАЁМ ПРОСТРАНСТВА</small></span>
+    </a>
+    <a href="./#inspiration" class="return"><span aria-hidden="true">←</span> Вернуться на сайт</a>
+  </div>
+</header>
+<main>
+  <div class="layout">
+    <div class="intro">
+      <p class="eyebrow">Интерактивная архитектура</p>
+      <h1>Дом, который можно <em>рассмотреть.</em></h1>
+      <p>Поверните модель на 360°, изучите фасады, измените время суток и включите свет в окнах. Всё работает прямо в браузере без видеороликов.</p>
+    </div>
+    <div class="workspace">
+      <div class="viewer-col">
+        <div class="scene" id="sceneContainer" aria-label="Трёхмерный обзор кирпичной двухэтажной виллы">
+          <img id="modelFallback" src="assets/ideas/card/hero-960.webp" alt="Современный загородный дом" loading="eager" decoding="async">
+          <div id="loading3d" class="loading" role="status">Открываем интерактивную 3D-модель…</div>
+          <div class="scene-caption"><span class="scene-dot"></span> 3D · КОНЦЕПЦИЯ</div>
+          <div class="scene-tip">Вращайте пальцем или мышью · Масштабируйте двумя пальцами</div>
+        </div>
+        <div class="footbar">
+          <span><span class="bullet"></span> Тёплый кирпич · Колонны · Два этажа</span>
+          <span id="modelFPS">Модель загружается</span>
+        </div>
+      </div>
+      <aside class="controls">
+        <div class="control-head">
+          <span class="number">01 / ВРЕМЯ СУТОК</span>
+          <h2>Свет меняет всё.</h2>
+          <p>Посмотрите, как меняется освещение фасада и участка в течение дня.</p>
+        </div>
+        <label class="slider-row" for="hourInput"><span>Время суток</span><output id="hourLabel" for="hourInput">16:00</output></label>
+        <input id="hourInput" type="range" min="6" max="22" value="16" step=".5" aria-label="Время суток для освещения модели">
+        <div class="time-markers"><span>06:00</span><span>14:00</span><span>22:00</span></div>
+        <div class="rule"></div>
+        <div class="toggle-row"><div><strong>Свет в окнах</strong><span>Тёплое освещение интерьера</span></div>
+          <label class="switch" aria-label="Свет в окнах"><input type="checkbox" id="windowsToggle" checked><span class="track"></span></label>
+        </div>
+        <div class="rule"></div>
+        <button class="secondary" id="resetCamera" type="button">↺ Вернуть вид спереди</button>
+        <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Автоматический обзор</button>
+        <div class="note">Демонстрационная архитектурная модель. Не является проектной документацией или визуализацией построенного объекта.</div>
+      </aside>
+    </div>
+  </div>
+</main>
+<footer>© 2026 КАСКАД · Архитектура и строительство · <a href="./#home">Главная</a></footer>
+<script src="pwa.js?v=1" defer></script>
+<script type="module" src="house-3d.bundle.js?v=1"></script>
+</body>
+</html>
