@@ -40,77 +40,9 @@
     updateCompare();
   }
 
-  // Палитра отделки — только наглядная имитация, не обещаем точного PBR-рендера.
-  const matWindow = q('#premiumMaterialVisual');
-  const matSample = q('#premiumMaterialSample');
-  const matTitle = q('#premiumMaterialTitle');
-  const matCaption = q('#premiumMaterialCaption');
-  const matButtons = qa('.premium-material-button');
-  const surfaceButtons = qa('.premium-surface-button');
-  let currentMat = 'wood';
-  let currentSurface = 'floor';
-  const materials = {
-    wood: {name:'Дубовая доска', note:'Тёплая натуральная фактура'},
-    microcement: {name:'Микроцемент', note:'Современная матовая поверхность'},
-    stone: {name:'Светлый камень', note:'Выразительная минеральная фактура'}
-  };
-  const updateMaterial = () => {
-    if (!matWindow) return;
-    matWindow.dataset.material = currentMat;
-    matWindow.dataset.surface = currentSurface;
-    if (matSample) matSample.dataset.material = currentMat;
-    if (matTitle) matTitle.textContent = materials[currentMat].name;
-    if (matCaption) matCaption.textContent = currentSurface==='floor'
-      ? 'Наглядный эффект материала пола'
-      : 'Наглядный эффект отделки стены';
-    matButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.material===currentMat)));
-    surfaceButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.surface===currentSurface)));
-  };
-  matButtons.forEach(b => b.addEventListener('click', () => {currentMat = b.dataset.material;updateMaterial()}));
-  surfaceButtons.forEach(b => b.addEventListener('click', () => {currentSurface = b.dataset.surface;updateMaterial()}));
-  updateMaterial();
-
-  // Деликатный навигационный помощник, не выдаём его за настоящего менеджера или AI.
-  const tip = q('#premiumChatTip');
-  const launcher = q('#premiumChatLauncher');
-  const panel = q('#premiumChatPanel');
-  let chatUsed = false;
-  const hideTip = () => {if (tip) tip.hidden = true;};
-  const closePanel = () => {
-    if (panel) panel.hidden = true;
-    launcher?.setAttribute('aria-expanded','false');
-  };
-  const openPanel = () => {
-    chatUsed = true;
-    hideTip();
-    if (!panel) return;
-    panel.hidden = false;
-    launcher?.setAttribute('aria-expanded','true');
-    q('#premiumChatClose')?.focus();
-  };
-  launcher?.addEventListener('click', () => {
-    if (panel && !panel.hidden) {closePanel();launcher.focus();}
-    else openPanel();
-  });
-  launcher?.addEventListener('mouseenter', () => { if (!chatUsed && tip) tip.hidden = false; });
-  q('#premiumTipClose')?.addEventListener('click', () => {chatUsed = true;hideTip();});
-  q('#premiumChatClose')?.addEventListener('click', () => {closePanel();launcher?.focus();});
-  qa('[data-premium-go]').forEach(b => b.addEventListener('click', () => {
-    const dest = q(b.dataset.premiumGo);
-    closePanel();
-    if (dest) dest.scrollIntoView({behavior:reduce.matches?'instant':'smooth',block:'start'});
-  }));
-  document.addEventListener('keydown',e => {
-    if (e.key==='Escape') {hideTip();closePanel();}
-  });
-  window.setTimeout(() => {
-    if (chatUsed || !panel?.hidden || !tip || document.hidden || window.scrollY < 100) return;
-    tip.hidden = false;
-  },15000);
-
   // Живые появления — только если пользователь не отключил анимацию.
   if (!reduce.matches && 'IntersectionObserver' in window) {
-    const candidates=qa('.premium-section .premium-compare-copy,.premium-compare-window,.premium-material-grid > div,.premium-section h2');
+    const candidates=qa('.premium-section .premium-compare-copy,.premium-compare-window,.premium-section h2');
     const obs=new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if(entry.isIntersecting) {
