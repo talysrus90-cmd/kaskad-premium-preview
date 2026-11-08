@@ -285,7 +285,8 @@ h1,h2,h3{color:var(--ink)}
   .hero-benefits+.hero-notes{margin-top:25px}
   @media(max-width:550px){.hero-benefits{margin-top:19px;gap:8px}.hero-benefit{padding:10px 12px}.hero-benefit strong{font-size:13px}.hero-benefit span{font-size:12px}.hero-benefits+.hero-notes{margin-top:23px}}
 </style>
-<link rel="stylesheet" href="premium.css?v=hero-trim-20261108">
+<link rel="stylesheet" href="premium.css?v=request-slider-final-20261108">
+<link rel="stylesheet" href="ui-enhancements-20261108.css?v=1">
 <link rel="stylesheet" href="gallery-viewer.css?v=20261108b">
 <script src="preview-runtime.js"></script>
 </head>
@@ -345,7 +346,11 @@ h1,h2,h3{color:var(--ink)}
 
 
         <div class="premium-compare-line" aria-hidden="true"></div>
-        <div class="premium-compare-handle" aria-hidden="true">↔</div>
+        <div class="premium-compare-handle" aria-hidden="true">
+          <svg class="premium-compare-arrows" width="56" height="34" viewBox="0 0 68 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 19H7M7 19l10-10M7 19l10 10M40 19h21M61 19L51 9M61 19L51 29" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <label for="premiumCompareRange" class="sr-only">Сравнение оформления интерьера: переместите ползунок</label>
         <input class="premium-compare-range" id="premiumCompareRange" aria-label="Показать сравнение оформления интерьера" type="range" min="0" max="100" value="50" step="1">
       </div>
@@ -410,16 +415,17 @@ h1,h2,h3{color:var(--ink)}
 <button class="floating" data-open-request title="Подготовить заявку" aria-label="Подготовить заявку">✎</button>
 <div class="modal" id="requestModal" role="dialog" aria-modal="true" aria-label="Заявка на работы"><div class="modal-dialog" style="max-height:90dvh;overflow-y:auto"><button class="modal-close" id="closeRequest" aria-label="Закрыть">×</button><div id="modalFormHost" style="padding-top:15px"><form class="lead-form" id="leadForm">
       <h3>Расскажите о задаче</h3><p>Опишите пожелания и оставьте имя и телефон для ответа. Остальные параметры можно не заполнять.</p>
-      <label class="field-title" for="leadService">Направление</label><select id="leadService" class="input"><option>Строительство дома, коттеджа или виллы</option><option>Ремонт дома</option><option>Ремонт квартиры</option><option>Интерьеры и отделка</option><option>Персональный дизайнер</option><option>Проекты, сметы и согласования</option></select>
-      <label class="field-title" for="leadComment">Что хотите сделать?</label><textarea id="leadComment" class="input" rows="4" maxlength="2500" placeholder="Например: построить одноэтажный дом около 100 м². Участок есть, хочу обсудить варианты."></textarea>
+      <label class="field-title" for="leadService">Направление</label><select id="leadService" class="input"><option>Строительство дома, коттеджа или виллы</option><option>Строительство иного</option><option>Ремонт дома</option><option>Ремонт квартиры</option><option>Интерьеры и отделка</option><option>Персональный дизайнер</option><option>Проекты, сметы и согласования</option></select>
+      <label class="field-title" for="leadComment">Что хотите сделать?</label><textarea id="leadComment" class="input" rows="4" maxlength="2500" placeholder=""></textarea>
       <details id="extraParams" style="margin:16px 0"><summary style="cursor:pointer;font-weight:700">Добавить параметры — необязательно</summary>
-      <div class="form-line" style="margin-top:14px"><div><label class="field-title" for="leadArea">Площадь, м²</label><input class="input" id="leadArea" type="number" min="1" max="100000" step="0.1" placeholder="Если знаете"></div><div><label class="field-title" for="leadObject" id="objectLabel">Этажей / материал стен</label><input class="input" id="leadObject" maxlength="180" placeholder="Например: один этаж, газобетон"></div></div>
-      <div class="form-line"><div><label class="field-title" for="leadBudget">Бюджет</label><input class="input" id="leadBudget" maxlength="100" placeholder="Можно пока не указывать"></div><div><label class="field-title" for="leadWhen">Когда планируете?</label><input class="input" id="leadWhen" maxlength="100" placeholder="Например: весной"></div></div>
+      <div class="form-line" style="margin-top:14px"><div><label class="field-title" for="leadArea">Площадь, м²</label><input class="input" id="leadArea" type="number" min="1" max="100000" step="0.1" placeholder="Если знаете"></div><div><label class="field-title" for="leadObject" id="objectLabel">Этажей / материал стен</label><input class="input" id="leadObject" maxlength="180" placeholder=""></div></div>
+      <div class="form-line"><div><label class="field-title" for="leadBudget">Бюджет</label><input class="input" id="leadBudget" maxlength="100" placeholder="Можно пока не указывать"></div><div><label class="field-title" for="leadWhen">Когда планируете?</label><input class="input" id="leadWhen" maxlength="100" placeholder=""></div></div>
       <label class="field-title" for="leadCity">Город</label><input class="input" id="leadCity" maxlength="120" value="Горячий Ключ"></details>
-      <div class="form-line"><div><label class="field-title" for="leadName">Ваше имя</label><input class="input" id="leadName" autocomplete="given-name" maxlength="80" placeholder="Как к вам обращаться" required></div><div><label class="field-title" for="leadPhone">Телефон для ответа</label><input class="input" id="leadPhone" type="tel" autocomplete="tel" inputmode="tel" maxlength="22" pattern="[+0-9 ()-]{10,22}" placeholder="+7 999 123-45-67" required></div></div>
+      <div class="form-line"><div><label class="field-title" for="leadName">Ваше имя</label><input class="input" id="leadName" autocomplete="given-name" maxlength="80" placeholder="Как к вам обращаться" required></div><div><label class="field-title" for="leadPhone">Телефон для ответа</label><input class="input" id="leadPhone" type="tel" autocomplete="tel" inputmode="tel" maxlength="22" pattern="[+0-9 ()-]{10,22}" placeholder="" required></div></div>
       <label class="consent"><input type="checkbox" id="leadAgree" required><span>Даю согласие на обработку указанных мной персональных данных для рассмотрения обращения и обратной связи.</span></label>
-      <button class="btn btn-terra" type="submit">Подготовить заявку <span class="btn-arrow">↗</span></button>
-      <p class="form-note">Канал приёма заявок ещё не подключён. Сейчас текст можно скопировать или скачать. Он остаётся на вашем устройстве и не отправляется владельцу.</p>
+      <button class="btn btn-terra kaskad-send-request" type="submit">Отправить заявку на предварительный расчёт <span class="btn-arrow" aria-hidden="true">↗</span></button>
+      <p class="kaskad-lead-benefit">Мы рассчитаем предварительную стоимость работ и свяжемся с вами.</p>
+      <p class="form-note">В этой демонстрационной версии кнопка подготовит черновик заявки. Для настоящей отправки владельцу требуется подключённая панель компании.</p>
       <div id="leadOutput" class="hidden" aria-live="polite" style="margin-top:17px;background:#f3f6f0;padding:17px;border-radius:8px"><strong style="font-size:13px">Черновик готов — ещё не отправлен</strong><pre id="leadPreview" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;color:#45564d;line-height:1.6;margin-top:10px"></pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-dark" id="copyLead">Скопировать</button><button type="button" class="btn btn-outline" id="downloadLead">Скачать TXT</button></div></div>
     </form></div></div></div>
 <div class="modal" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageTitle"><div class="modal-dialog image-dialog" style="max-height:94dvh;overflow-y:auto"><button class="modal-close" id="closeImage" aria-label="Закрыть">×</button><div class="photo-zoom-stage" id="photoZoomStage" aria-label="Просмотр фотографии с увеличением">
@@ -447,9 +453,20 @@ h1,h2,h3{color:var(--ink)}
   const request=one('#requestModal'), imgModal=one('#imageModal');
   let returnFocus=null;
   let galleryHistoryToken=null,galleryScrollY=0;
+  let requestHistoryToken=null,requestScrollY=0;
   function openModal(m){
     returnFocus=document.activeElement;
-    if(m===request)updateService();
+    if(m===request){
+      updateService();
+      if(!m.classList.contains('open') && history.state?.kaskadLayer!=='request'){
+        requestScrollY=window.scrollY;
+        requestHistoryToken='request-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+        try{
+          history.pushState({...history.state,kaskadLayer:'request',kaskadRequestToken:requestHistoryToken},'',
+            location.pathname+location.search+'#project-request');
+        }catch(error){requestHistoryToken=null}
+      }
+    }
     if(m===imgModal&&!m.classList.contains('open')){
       galleryScrollY=window.scrollY;
       galleryHistoryToken='photo-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
@@ -468,19 +485,44 @@ h1,h2,h3{color:var(--ink)}
     document.body.style.overflow='hidden';
     (m===request?one('#leadComment'):m.querySelector('.modal-close')).focus();
   }
-  function updateService(){const service=one('#leadService').value;const house=service==='Строительство дома, коттеджа или виллы',homeRepair=service==='Ремонт дома',flat=service==='Ремонт квартиры';one('#objectLabel').textContent=house?'Этажей / материал стен':homeRepair?'Помещения / состояние дома':flat?'Комнат / состояние квартиры':'Помещение / стиль';one('#leadObject').placeholder=house?'Например: один этаж, газобетон':homeRepair?'Например: два этажа, требуется отделка':flat?'Например: двушка, новостройка':'Например: кухня, светлый современный стиль';one('#leadComment').placeholder=house?'Например: хочу одноэтажный дом около 100 м². Участок есть.':homeRepair?'Например: нужен ремонт частного дома, обновление кухни и санузлов.':flat?'Например: нужен ремонт двухкомнатной квартиры. Хочу обновить кухню и санузел.':'Например: хочу светлый интерьер гостиной, покраску стен и новое освещение.'}
+  function updateService(){
+    const service=one('#leadService').value;
+    const house=service==='Строительство дома, коттеджа или виллы',
+          otherBuild=service==='Строительство иного',
+          homeRepair=service==='Ремонт дома',
+          flat=service==='Ремонт квартиры';
+    one('#objectLabel').textContent=house?'Этажей / материал стен':otherBuild?'Вид постройки / материалы':homeRepair?'Помещения / состояние дома':flat?'Комнат / состояние квартиры':'Помещение / стиль';
+    one('#leadObject').placeholder='';
+    one('#leadComment').placeholder='';
+  }
   one('#leadService').addEventListener('change',updateService);updateService();
   function closeModal(m,fromPopstate=false){
     if(!m.classList.contains('open'))return;
     const restoreGallery=m===imgModal;
+    const restoreRequest=m===request;
     const shouldPop=restoreGallery&&!fromPopstate&&galleryHistoryToken&&history.state?.kaskadGalleryToken===galleryHistoryToken;
+    const shouldCloseRequestHistory=restoreRequest&&!fromPopstate&&requestHistoryToken&&history.state?.kaskadRequestToken===requestHistoryToken;
     m.classList.remove('open');
     document.body.style.overflow=(request.classList.contains('open')||imgModal.classList.contains('open'))?'hidden':'';
     if(restoreGallery){galleryHistoryToken=null;window.scrollTo({top:galleryScrollY,behavior:'instant'})}
+    if(restoreRequest){requestHistoryToken=null;window.scrollTo({top:requestScrollY,behavior:'instant'})}
     if(returnFocus&&returnFocus.isConnected)returnFocus.focus({preventScroll:true});
-    if(shouldPop)history.back();
+    if(shouldPop||shouldCloseRequestHistory)history.back();
   }
   window.addEventListener('popstate',event=>{
+    if(request.classList.contains('open') && event.state?.kaskadLayer!=='request'){
+      closeModal(request,true);
+    }
+    if(event.state?.kaskadLayer==='request'){
+      if(!request.classList.contains('open')){
+        requestHistoryToken=event.state.kaskadRequestToken||null;
+        requestScrollY=window.scrollY;
+        request.classList.add('open');
+        document.body.style.overflow='hidden';
+        one('#closeRequest').focus({preventScroll:true});
+      }
+      return;
+    }
     if(event.state?.kaskadLayer==='photo'){
       // Browser Forward: reopen the same picture without adding another history entry.
       if(!imgModal.classList.contains('open')){
@@ -548,8 +590,8 @@ h1,h2,h3{color:var(--ink)}
 </script><script>document.querySelectorAll('[data-open-documents]').forEach(b=>b.addEventListener('click',()=>{document.querySelector('#leadService').value='Проекты, сметы и согласования';document.querySelector('[data-open-request]').click()}));</script><script>
 (()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');if(preference.matches||!('IntersectionObserver' in window))return;const elements=[...document.querySelectorAll('.service,.step,.project,.designer-gallery,.section-head')];const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-revealed');const el=entry.target;setTimeout(()=>el.classList.remove('motion-reveal'),900);observer.unobserve(el)}})},{threshold:.08});elements.forEach((el,i)=>{el.classList.add('motion-reveal');el.style.setProperty('--reveal-delay',((i%3)*65)+'ms');observer.observe(el)});preference.addEventListener('change',()=>{if(preference.matches){observer.disconnect();elements.forEach(el=>el.classList.add('is-revealed'))}});
 })();
-</script><script src="smart/integration.js?v=3" defer></script><div class="premium-reading-progress" id="premiumReadingProgress" aria-hidden="true"></div>
-<script src="premium.js?v=021398a" defer></script>
+</script><script src="smart/lead-integration-20261108.js?v=1" defer></script><div class="premium-reading-progress" id="premiumReadingProgress" aria-hidden="true"></div>
+<script src="premium.js?v=request-slider-final-20261108" defer></script>
 <script src="gallery-zoom.js?v=20261108b" defer></script>
 <script src="pwa.js?v=1" defer></script>
 </body>

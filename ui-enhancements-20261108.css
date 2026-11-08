@@ -1,0 +1,89 @@
+/* KASKAD: fresh standalone styles for the compare handle and lead form */
+/* High-visibility architectural Before/After slider:
+   softly pulsing porcelain/copper handle with prominent dual arrows. */
+.premium-compare-line{
+ width:4px!important;
+ background:linear-gradient(to bottom,#fff5d9,#ffffff 48%,#fff5d9)!important;
+ box-shadow:0 0 0 1px rgba(125,68,42,.34),0 0 12px rgba(255,248,226,.65);
+ transform:translateX(-2px)!important;
+}
+.premium-compare-handle{
+ width:78px!important;height:78px!important;
+ background:linear-gradient(135deg,#fffef9,#ffe4bb)!important;
+ color:#86442e!important;
+ border:3px solid #b96e46!important;
+ box-shadow:0 0 0 5px rgba(255,255,249,.72),0 8px 29px rgba(54,39,25,.38)!important;
+ animation:kaskadCompareBlink 2.65s ease-in-out infinite;
+}
+.premium-compare-arrows{display:block;width:60px;height:35px;filter:drop-shadow(0 1px 0 rgba(255,255,255,.76));animation:kaskadArrowInvite 2.65s ease-in-out infinite}
+@keyframes kaskadCompareBlink{
+ 0%,100%{box-shadow:0 0 0 5px rgba(255,255,249,.8),0 8px 29px rgba(54,39,25,.35)}
+ 52%{box-shadow:0 0 0 11px rgba(255,231,176,.40),0 8px 35px rgba(153,83,49,.52)}
+}
+@keyframes kaskadArrowInvite{
+ 0%,100%{opacity:1;transform:scale(1)}
+ 49%{opacity:.67;transform:scale(1.08)}
+}
+.premium-compare-window:focus-within .premium-compare-handle{outline:3px solid #5f784e;outline-offset:6px}
+.premium-compare-range:focus-visible{opacity:0!important;outline:0!important}
+@media(max-width:600px){
+ .premium-compare-handle{width:70px!important;height:70px!important}
+ .premium-compare-arrows{width:56px;height:32px}
+}
+@media(prefers-reduced-motion:reduce){
+ .premium-compare-handle,.premium-compare-arrows{animation:none!important}
+}
+
+/* Warm, visible preliminary-request CTA; no distracting fast blinking. */
+#leadForm .kaskad-send-request{
+  width:100%;
+  min-height:58px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:14px 20px;
+  color:#fff!important;
+  background:linear-gradient(115deg,#9b4c32 0%,#b66b43 49%,#9e5335 100%)!important;
+  border:1px solid #7e3827!important;
+  border-radius:9px;
+  font-weight:800;font-size:clamp(13px,3.6vw,15px);
+  line-height:1.42;
+  text-align:center;
+  box-shadow:0 7px 19px rgba(139,67,40,.27);
+  animation:kaskadSendGlow 3.1s ease-in-out infinite;
+}
+#leadForm .kaskad-send-request .btn-arrow{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:23px;
+  animation:kaskadSendArrow 3.1s ease-in-out infinite;
+}
+#leadForm .kaskad-send-request:hover{
+  background:linear-gradient(115deg,#95452c,#ac5e37)!important;
+  transform:translateY(-2px);
+}
+#leadForm .kaskad-send-request:focus-visible{
+  outline:3px solid #335944;outline-offset:4px;
+}
+#leadForm .kaskad-send-request:disabled{
+  opacity:.6;animation:none;cursor:wait;
+}
+@keyframes kaskadSendGlow{
+  0%,100%{box-shadow:0 7px 19px rgba(139,67,40,.27)}
+  50%{box-shadow:0 7px 22px rgba(139,67,40,.4),0 0 0 5px rgba(210,152,91,.22)}
+}
+@keyframes kaskadSendArrow{
+  0%,100%{transform:translateX(-2px);opacity:.85}
+  50%{transform:translateX(4px);opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  #leadForm .kaskad-send-request,
+  #leadForm .kaskad-send-request .btn-arrow{animation:none!important;transition:none!important}
+}
+
+#leadForm .kaskad-lead-benefit{
+ margin:10px 0 8px;
+ font-size:12px;line-height:1.6;text-align:center;
+ font-weight:650;color:#52674f;
+}
+@media(max-width:550px){
+ #leadForm .kaskad-send-request{font-size:14px;line-height:1.38}
+ #leadForm .kaskad-lead-benefit{font-size:11px;padding:0 3px}
+}
