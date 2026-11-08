@@ -476,3 +476,9 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
 
 /* Slider stops pulsing after the first user interaction. */
 .premium-compare-window.is-interacted .premium-compare-handle,.premium-compare-window.is-interacted .premium-compare-arrows{animation:none!important}
+
+
+/* Photo-only gallery: no source labels, no letter overlays, no commentary in photo viewer. */
+#imageModal #imageDesc{display:none!important}
+.portfolio-grid .project::before,.portfolio-grid .project::after{content:none!important;display:none!important}
+.portfolio-grid .project .project-info{position:static!important;inset:auto!important}

@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261108-v4';
+const VERSION='kaskad-pwa-20261108-v5';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -9,19 +9,19 @@ const ROOT=self.registration.scope;
 const core=[
  './','./index.html',
  './manifest.webmanifest','./pwa.js?v=1','./fonts.css?v=pwa1',
- './premium.css?v=request-slider-v3-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
+ './premium.css?v=houses-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
  './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261108b',
  './preview-runtime.js','./smart/lead-integration-20261108.js?v=1',
  './icons/kaskad-192.png','./icons/kaskad-512.png','./icons/kaskad-apple-180.png',
  './fonts/manrope-cyrillic.woff2','./fonts/manrope-latin.woff2',
  './fonts/prata-cyrillic.woff2','./fonts/prata-latin.woff2',
  './assets/ideas/card/hero-960.webp',
- './assets/ideas/card/p-13752348-640.webp',
+ './assets/ideas/card/house-new-16501696-640.webp',
+ './assets/ideas/card/house-new-7174109-640.webp',
+ './assets/ideas/card/house-new-9408429-640.webp',
  './assets/ideas/card/p-7534561-640.webp',
  './assets/ideas/card/extra-6032280-640.webp',
  './assets/ideas/card/extra-26886880-640.webp',
- './assets/ideas/card/p-31817156-640.webp',
- './assets/ideas/card/p-7534563-640.webp',
  './assets/offline-photo.svg'
 ];
 const URL_OF=p=>new URL(p,ROOT);
