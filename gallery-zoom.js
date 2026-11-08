@@ -110,11 +110,25 @@
     e.preventDefault();
     setZoom(zoom*(e.deltaY<0?1.22:1/1.22));
   },{passive:false});
+  // Make the picture stage match the real photo aspect ratio.
+  // A 3:2 villa no longer sits in a tall, empty dark frame on portrait screens.
+  const fitPhotoToViewport=()=>{
+    const naturalW=img.naturalWidth,naturalH=img.naturalHeight;
+    if(!naturalW||!naturalH)return;
+    const ratio=naturalW/naturalH;
+    const availableHeight=Math.max(240,window.innerHeight-(window.innerWidth<560?248:270));
+    stage.style.aspectRatio=naturalW+' / '+naturalH;
+    stage.style.maxWidth=Math.floor(availableHeight*ratio)+'px';
+    stage.style.maxHeight=Math.floor(availableHeight)+'px';
+    stage.setAttribute('aria-label','Просмотр фотографии '+naturalW+' на '+naturalH+' пикселей. Увеличение двумя пальцами.');
+    redraw();
+  };
+  img.addEventListener('load',fitPhotoToViewport);
   document.getElementById('zoomIn')?.addEventListener('click',()=>setZoom(zoom*1.5));
   document.getElementById('zoomOut')?.addEventListener('click',()=>setZoom(zoom/1.5));
   document.getElementById('zoomReset')?.addEventListener('click',reset);
-  new MutationObserver(()=>reset()).observe(img,{attributes:true,attributeFilter:['src']});
+  new MutationObserver(()=>{reset();if(img.complete&&img.naturalWidth)fitPhotoToViewport()}).observe(img,{attributes:true,attributeFilter:['src']});
   new MutationObserver(()=>{if(!modal.classList.contains('open')) reset()}).observe(modal,{attributes:true,attributeFilter:['class']});
-  window.addEventListener('resize',redraw,{passive:true});
+  window.addEventListener('resize',()=>{fitPhotoToViewport();redraw()},{passive:true});
   redraw();
 })();

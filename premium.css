@@ -320,3 +320,55 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
   .photo-zoom-hint{font-size:10px;margin-left:6px}
 }
 @media(prefers-reduced-motion:reduce){.photo-zoom-stage #bigImage{transition:none!important}}
+
+/* Gallery photo occupies its natural aspect ratio: no tall black letterboxing. */
+#imageModal .modal-dialog.image-dialog {
+  width:min(1210px,calc(100vw - 12px))!important;
+  max-width:min(1210px,calc(100vw - 12px))!important;
+  max-height:calc(100dvh - 10px)!important;
+  padding:12px!important;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+#imageModal .photo-zoom-stage {
+  display:block;
+  margin:0 auto;
+  width:100%;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:3/2;
+  max-height:calc(100dvh - 245px);
+  overflow:hidden;
+  background:#f3f0e8!important;
+  border-radius:3px;
+}
+#imageModal .photo-zoom-stage #bigImage {
+  width:100%!important;
+  height:100%!important;
+  max-height:none!important;
+  object-fit:contain;
+  object-position:center center;
+}
+#imageModal .image-dialog h3{
+  margin:10px 4px 5px!important;
+  font-size:clamp(17px,3.3vw,25px);
+  line-height:1.35;
+}
+#imageModal .image-dialog p{margin:3px 4px 7px!important}
+#imageModal .photo-zoom-tools{margin:8px 0 2px!important}
+#imageModal .image-dialog .modal-close{z-index:10}
+@media(max-width:550px){
+  #imageModal .modal-dialog.image-dialog{
+    width:calc(100vw - 8px)!important;
+    max-width:calc(100vw - 8px)!important;
+    max-height:calc(100dvh - 8px)!important;
+    padding:8px!important;
+    border-radius:12px;
+  }
+  #imageModal .photo-zoom-stage {
+    max-height:calc(100dvh - 238px);
+    border-radius:2px;
+  }
+  #imageModal .image-dialog h3{margin:8px 4px 3px!important}
+  #imageModal .image-dialog .photo-zoom-hint{font-size:10px}
+}
