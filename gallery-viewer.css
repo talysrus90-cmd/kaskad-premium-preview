@@ -1,0 +1,30 @@
+/* KASKAD — photo viewer refinement. The lightbox follows the actual photo size. */
+#imageModal .modal-dialog.image-dialog{
+  width:min(var(--gallery-dialog-width,1180px),calc(100vw - 10px))!important;
+  max-width:min(var(--gallery-dialog-width,1180px),calc(100vw - 10px))!important;
+  border-radius:10px;
+  transition:width .18s ease;
+}
+#imageModal .photo-zoom-stage{
+  background:#f7f4ee!important;
+  overflow:hidden;
+}
+#imageModal .photo-zoom-stage #bigImage{
+  transition:opacity .17s ease;
+}
+#imageModal .photo-zoom-stage.photo-changing #bigImage{opacity:.5}
+#imageModal .image-dialog .modal-close{
+  background:rgba(255,253,248,.96);
+  box-shadow:0 2px 14px rgba(0,0,0,.15);
+}
+@media(max-width:550px){
+  #imageModal .modal-dialog.image-dialog{
+    width:min(var(--gallery-dialog-width,calc(100vw - 8px)),calc(100vw - 8px))!important;
+    max-width:min(var(--gallery-dialog-width,calc(100vw - 8px)),calc(100vw - 8px))!important;
+    padding:8px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #imageModal .modal-dialog.image-dialog,
+  #imageModal .photo-zoom-stage #bigImage{transition:none}
+}
