@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261108-v3';
+const VERSION='kaskad-pwa-20261108-v4';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -9,8 +9,8 @@ const ROOT=self.registration.scope;
 const core=[
  './','./index.html',
  './manifest.webmanifest','./pwa.js?v=1','./fonts.css?v=pwa1',
- './premium.css?v=request-slider-final-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
- './premium.js?v=request-slider-final-20261108','./gallery-zoom.js?v=20261108b',
+ './premium.css?v=request-slider-v3-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
+ './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261108b',
  './preview-runtime.js','./smart/lead-integration-20261108.js?v=1',
  './icons/kaskad-192.png','./icons/kaskad-512.png','./icons/kaskad-apple-180.png',
  './fonts/manrope-cyrillic.woff2','./fonts/manrope-latin.woff2',
@@ -94,13 +94,14 @@ const getCachedImage=async(request,url)=>{
 };
 const staleWhileRevalidate=async(request)=>{
  const store=await caches.open(RUNTIME);
- const old=await caches.match(request,{ignoreSearch:true});
+ // Respect cache-busting asset versions; an older stylesheet must not override a new design.
+ const old=await caches.match(request);
  const fresh=fetch(request).then(async(response)=>{
    if(response.ok){await put(store,request,response);await limitCache(store,50)}
    return response;
  }).catch(()=>null);
  if(old){void fresh;return old}
- return await fresh||Response.error();
+ return await fresh||await caches.match(request,{ignoreSearch:true})||Response.error();
 };
 self.addEventListener('fetch',event=>{
  const request=event.request;

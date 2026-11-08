@@ -35,7 +35,7 @@
     if (current) current.textContent = range.value + '%';
   };
   if (range && compare) {
-    range.addEventListener('input', updateCompare);
+    range.addEventListener('input',()=>{compare.classList.add('is-interacted');updateCompare()});
     range.addEventListener('change', updateCompare);
     updateCompare();
   }

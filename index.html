@@ -285,7 +285,7 @@ h1,h2,h3{color:var(--ink)}
   .hero-benefits+.hero-notes{margin-top:25px}
   @media(max-width:550px){.hero-benefits{margin-top:19px;gap:8px}.hero-benefit{padding:10px 12px}.hero-benefit strong{font-size:13px}.hero-benefit span{font-size:12px}.hero-benefits+.hero-notes{margin-top:23px}}
 </style>
-<link rel="stylesheet" href="premium.css?v=request-slider-final-20261108">
+<link rel="stylesheet" href="premium.css?v=request-slider-v3-20261108">
 <link rel="stylesheet" href="ui-enhancements-20261108.css?v=1">
 <link rel="stylesheet" href="gallery-viewer.css?v=20261108b">
 <script src="preview-runtime.js"></script>
@@ -424,7 +424,7 @@ h1,h2,h3{color:var(--ink)}
       <div class="form-line"><div><label class="field-title" for="leadName">Ваше имя</label><input class="input" id="leadName" autocomplete="given-name" maxlength="80" placeholder="Как к вам обращаться" required></div><div><label class="field-title" for="leadPhone">Телефон для ответа</label><input class="input" id="leadPhone" type="tel" autocomplete="tel" inputmode="tel" maxlength="22" pattern="[+0-9 ()-]{10,22}" placeholder="" required></div></div>
       <label class="consent"><input type="checkbox" id="leadAgree" required><span>Даю согласие на обработку указанных мной персональных данных для рассмотрения обращения и обратной связи.</span></label>
       <button class="btn btn-terra kaskad-send-request" type="submit">Отправить заявку на предварительный расчёт <span class="btn-arrow" aria-hidden="true">↗</span></button>
-      <p class="kaskad-lead-benefit">Рассчитаем ориентировочную стоимость вашего проекта и свяжемся с вами.</p>
+      <p class="kaskad-lead-benefit">Мы рассчитаем предварительную стоимость работ и свяжемся с вами.</p>
       <p class="form-note">В этой демонстрационной версии кнопка подготовит черновик заявки. Для настоящей отправки владельцу требуется подключённая панель компании.</p>
       <div id="leadOutput" class="hidden" aria-live="polite" style="margin-top:17px;background:#f3f6f0;padding:17px;border-radius:8px"><strong style="font-size:13px">Черновик готов — ещё не отправлен</strong><pre id="leadPreview" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;color:#45564d;line-height:1.6;margin-top:10px"></pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-dark" id="copyLead">Скопировать</button><button type="button" class="btn btn-outline" id="downloadLead">Скачать TXT</button></div></div>
     </form></div></div></div>
@@ -591,7 +591,7 @@ h1,h2,h3{color:var(--ink)}
 (()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');if(preference.matches||!('IntersectionObserver' in window))return;const elements=[...document.querySelectorAll('.service,.step,.project,.designer-gallery,.section-head')];const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-revealed');const el=entry.target;setTimeout(()=>el.classList.remove('motion-reveal'),900);observer.unobserve(el)}})},{threshold:.08});elements.forEach((el,i)=>{el.classList.add('motion-reveal');el.style.setProperty('--reveal-delay',((i%3)*65)+'ms');observer.observe(el)});preference.addEventListener('change',()=>{if(preference.matches){observer.disconnect();elements.forEach(el=>el.classList.add('is-revealed'))}});
 })();
 </script><script src="smart/lead-integration-20261108.js?v=1" defer></script><div class="premium-reading-progress" id="premiumReadingProgress" aria-hidden="true"></div>
-<script src="premium.js?v=request-slider-final-20261108" defer></script>
+<script src="premium.js?v=request-slider-v3-20261108" defer></script>
 <script src="gallery-zoom.js?v=20261108b" defer></script>
 <script src="pwa.js?v=1" defer></script>
 </body>

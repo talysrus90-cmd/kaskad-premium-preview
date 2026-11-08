@@ -473,3 +473,6 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
  #leadForm .kaskad-send-request{font-size:14px;line-height:1.38}
  #leadForm .kaskad-lead-benefit{font-size:11px;padding:0 3px}
 }
+
+/* Slider stops pulsing after the first user interaction. */
+.premium-compare-window.is-interacted .premium-compare-handle,.premium-compare-window.is-interacted .premium-compare-arrows{animation:none!important}
