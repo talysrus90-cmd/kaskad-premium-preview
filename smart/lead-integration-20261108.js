@@ -2,7 +2,7 @@
 (async()=>{
 if(!/^https?:$/.test(location.protocol))return;
 let config;try{const r=await fetch('/api/bootstrap',{credentials:'same-origin'});if(!r.ok)return;config=await r.json()}catch{return}
-if(!document.querySelector('script[data-kaskad-legal]')){const script=document.createElement('script');script.src='/kaskad-premium-preview/smart/legal.js?v=2';script.dataset.kaskadLegal='';document.head.append(script)}
+if(!document.querySelector('#personal-data-consent')&&!document.querySelector('script[data-kaskad-legal]')){const script=document.createElement('script');script.src='/kaskad-premium-preview/smart/legal.js?v=3';script.dataset.kaskadLegal='';document.head.append(script)}
 const consentLabel=document.querySelector('#leadAgree')?.closest('label');if(consentLabel){for(const child of [...consentLabel.childNodes])if(child.nodeType===3||child.nodeType===1&&child.tagName!=='INPUT')child.remove();const span=document.createElement('span');span.append('Даю согласие на обработку персональных данных. ');span.append('Текст согласия — в конце сайта.');consentLabel.append(span)}
 const links=document.querySelector('.navlinks');if(links&&!document.querySelector('[data-smart-entry]')){const a=document.createElement('a');a.href='/kaskad-premium-preview/smart/'+location.search+'#estimate';a.textContent='Параметры проекта';a.dataset.smartEntry='';links.append(a)}
 const mobile=document.querySelector('#mobileMenu');if(mobile){for(const [title,hash]of [['Ремонт и строительство','estimate'],['Мой объект','portal']]){const a=document.createElement('a');a.href='/kaskad-premium-preview/smart/'+location.search+'#'+hash;a.textContent=title;mobile.append(a)}}

@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261109-footer-legal-v2';
+const VERSION='kaskad-pwa-20261109-consent-clean-v1';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -15,7 +15,7 @@ const core=[
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
  './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261109-fullscreen',
- './preview-runtime.js','./smart/lead-integration-20261108.js?v=1',
+ './preview-runtime.js','./smart/lead-integration-20261108.js?v=2',
  './icons/kaskad-192.png','./icons/kaskad-512.png','./icons/kaskad-apple-180.png',
  './fonts/manrope-cyrillic.woff2','./fonts/manrope-latin.woff2',
  './fonts/prata-cyrillic.woff2','./fonts/prata-latin.woff2',

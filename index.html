@@ -389,7 +389,7 @@ h1,h2,h3{color:var(--ink)}
 <p>Нажмите «Подготовить заявку», выберите строительство, ремонт или отделку и укажите пожелания. В демонстрационной версии можно подготовить и сохранить черновик — отправка компании пока не подключена. Для настоящего приёма заявок будут добавлены защищённый канал связи и подтверждённые контакты.</p>
 <button class="faq-lead-button" type="button" data-open-request>Подготовить заявку на предварительный расчёт <span aria-hidden="true">↗</span></button></details>
 <details class="faq-legal" id="preliminary-not-offer">
-<summary>Являются ли заявка, расчёт, смета или эскиз публичной офертой?</summary>
+<summary>Заявка не является публичной офертой</summary>
 <p><strong>Нет, информация на сайте носит предварительный информационный характер.</strong> Описания услуг, цены калькулятора, иллюстрации, планы, схемы, эскизы, примеры проектов, ориентировочные расчёты и сметы не являются публичной офертой в смысле пункта 2 статьи 437 Гражданского кодекса Российской Федерации.</p>
 <p>Направление заявки означает просьбу обсудить проект или подготовить расчёт. Само по себе оно не означает принятия заказа, заключения договора, бронирования сроков либо обязательства компании выполнить работы по указанной цене.</p>
 <p>Переданный предварительный расчёт, эскиз или смета не являются подтверждением заказа или согласованием окончательной цены. Объём и состав работ, материалы, стоимость, сроки, этапы оплаты и гарантийные условия определяются по результатам согласования и фиксируются сторонами в отдельном договоре. Отдельные адресные предложения и заключённые договоры оцениваются в соответствии с законодательством РФ.</p>
@@ -605,7 +605,7 @@ h1,h2,h3{color:var(--ink)}
 </script><script>document.querySelectorAll('[data-open-documents]').forEach(b=>b.addEventListener('click',()=>{document.querySelector('#leadService').value='Проекты, сметы и согласования';document.querySelector('[data-open-request]').click()}));</script><script>
 (()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');if(preference.matches||!('IntersectionObserver' in window))return;const elements=[...document.querySelectorAll('.service,.step,.designer-gallery,.section-head')];const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-revealed');const el=entry.target;setTimeout(()=>el.classList.remove('motion-reveal'),900);observer.unobserve(el)}})},{threshold:.08});elements.forEach((el,i)=>{el.classList.add('motion-reveal');el.style.setProperty('--reveal-delay',((i%3)*65)+'ms');observer.observe(el)});preference.addEventListener('change',()=>{if(preference.matches){observer.disconnect();elements.forEach(el=>el.classList.add('is-revealed'))}});
 })();
-</script><script src="smart/lead-integration-20261108.js?v=1" defer></script><div class="premium-reading-progress" id="premiumReadingProgress" aria-hidden="true"></div>
+</script><script src="smart/lead-integration-20261108.js?v=2" defer></script><div class="premium-reading-progress" id="premiumReadingProgress" aria-hidden="true"></div>
 <script src="premium.js?v=request-slider-v3-20261108" defer></script>
 <script src="gallery-zoom.js?v=20261109-fullscreen" defer></script>
 <script src="pwa.js?v=1" defer></script>
