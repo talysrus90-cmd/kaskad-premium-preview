@@ -288,6 +288,7 @@ h1,h2,h3{color:var(--ink)}
 <link rel="stylesheet" href="premium.css?v=houses-20261108">
 <link rel="stylesheet" href="ui-enhancements-20261108.css?v=1">
 <link rel="stylesheet" href="gallery-viewer.css?v=20261108b">
+<link rel="stylesheet" href="site-clarity-20261109.css?v=1">
 <script src="preview-runtime.js"></script>
 </head>
 <body>
@@ -552,7 +553,7 @@ h1,h2,h3{color:var(--ink)}
   [request,imgModal].forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m)}));
   window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal(request);closeModal(imgModal)}});
   if(new URLSearchParams(location.search).has('preview-request'))openModal(request);
-  const galleryViewport=window.matchMedia('(max-width:550px)');const galleryBatch=()=>6;let galleryCategory='all',galleryLimit=galleryBatch();
+  const galleryViewport=window.matchMedia('(max-width:550px)');const galleryBatch=()=>Number.MAX_SAFE_INTEGER;let galleryCategory='all',galleryLimit=galleryBatch();
   function filterGallery(){const cards=all('.project');const matching=cards.filter(p=>galleryCategory==='all'||p.dataset.category===galleryCategory);cards.forEach(p=>p.classList.toggle('hidden',!matching.includes(p)||matching.indexOf(p)>=galleryLimit));one('#moreIdeas').classList.toggle('hidden',matching.length<=galleryLimit);one('#galleryStatus').textContent='Показано '+Math.min(galleryLimit,matching.length)+' из '+matching.length+' подборок';}
   all('[data-portfolio-filter]').forEach(btn=>btn.addEventListener('click',()=>{galleryCategory=btn.dataset.portfolioFilter;galleryLimit=galleryBatch();all('[data-portfolio-filter]').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',String(b===btn))});filterGallery()}));
   one('#moreIdeas').addEventListener('click',()=>{galleryLimit+=galleryBatch();filterGallery()});filterGallery();galleryViewport.addEventListener('change',()=>{galleryLimit=galleryBatch();filterGallery()});
@@ -593,7 +594,7 @@ h1,h2,h3{color:var(--ink)}
 <script>(function(){var officialPhone="";var buttons=document.querySelectorAll("[data-kaskad-call]");buttons.forEach(function(b){if(officialPhone){b.href="tel:"+officialPhone;b.title="Позвонить в компанию Каскад"}else{b.addEventListener("click",function(e){e.preventDefault();var t=document.getElementById("toast");if(t){t.textContent="Номер телефона «Каскад» ещё не указан. Кнопка будет работать после добавления настоящего номера.";t.classList.add("show");setTimeout(function(){t.classList.remove("show")},5000)}})}})})();</script><script>
 (()=>{const g=document.querySelector('.designer-picture');if(!g)return;g.querySelectorAll('[data-designer-show]').forEach(b=>b.addEventListener('click',()=>{const index=b.dataset.designerShow;g.querySelectorAll('[data-designer-slide]').forEach(i=>i.hidden=i.dataset.designerSlide!==index);g.querySelectorAll('[data-designer-show]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))}))})();
 </script><script>document.querySelectorAll('[data-open-documents]').forEach(b=>b.addEventListener('click',()=>{document.querySelector('#leadService').value='Проекты, сметы и согласования';document.querySelector('[data-open-request]').click()}));</script><script>
-(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');if(preference.matches||!('IntersectionObserver' in window))return;const elements=[...document.querySelectorAll('.service,.step,.project,.designer-gallery,.section-head')];const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-revealed');const el=entry.target;setTimeout(()=>el.classList.remove('motion-reveal'),900);observer.unobserve(el)}})},{threshold:.08});elements.forEach((el,i)=>{el.classList.add('motion-reveal');el.style.setProperty('--reveal-delay',((i%3)*65)+'ms');observer.observe(el)});preference.addEventListener('change',()=>{if(preference.matches){observer.disconnect();elements.forEach(el=>el.classList.add('is-revealed'))}});
+(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');if(preference.matches||!('IntersectionObserver' in window))return;const elements=[...document.querySelectorAll('.service,.step,.designer-gallery,.section-head')];const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-revealed');const el=entry.target;setTimeout(()=>el.classList.remove('motion-reveal'),900);observer.unobserve(el)}})},{threshold:.08});elements.forEach((el,i)=>{el.classList.add('motion-reveal');el.style.setProperty('--reveal-delay',((i%3)*65)+'ms');observer.observe(el)});preference.addEventListener('change',()=>{if(preference.matches){observer.disconnect();elements.forEach(el=>el.classList.add('is-revealed'))}});
 })();
 </script><script src="smart/lead-integration-20261108.js?v=1" defer></script><div class="premium-reading-progress" id="premiumReadingProgress" aria-hidden="true"></div>
 <script src="premium.js?v=request-slider-v3-20261108" defer></script>

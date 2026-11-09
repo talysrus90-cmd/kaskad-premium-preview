@@ -1,0 +1,46 @@
+/* Premium visual refinement — natural colors, improved contrast, no destructive source edits. */
+:root{--muted:#59655d}
+.hero-media img,
+.service img,
+.step img,
+.designer-gallery img,
+.portfolio-grid .project img,
+#imageModal #bigImage{
+  filter:contrast(1.065) saturate(1.075) brightness(1.025);
+  image-rendering:auto;
+}
+.portfolio-grid .project:hover img{
+  filter:contrast(1.075) saturate(1.095) brightness(1.03)!important;
+}
+.premium-compare-window .premium-before{
+  filter:grayscale(.20) brightness(1.015) contrast(1.085) saturate(.97)!important;
+}
+.premium-compare-window .premium-compare-after img{
+  filter:brightness(1.045) contrast(1.09) saturate(1.12)!important;
+}
+.hero-copy p,.section-head p,.premium-description,.premium-disclaimer{
+  color:#536159;
+}
+#imageModal #bigImage{filter:contrast(1.06) saturate(1.07) brightness(1.025)}
+/* Make every gallery card visible; native lazy images avoid downloading all originals. */
+.portfolio-grid .project.motion-reveal{
+  opacity:1!important;
+  transform:none!important;
+  visibility:visible!important;
+}
+.premium-compare-handle{
+  width:66px!important;
+  height:66px!important;
+  border-width:2.5px!important;
+}
+.premium-compare-arrows{
+  width:52px!important;
+  height:30px!important;
+}
+@media(max-width:600px){
+  .premium-compare-handle{width:60px!important;height:60px!important}
+  .premium-compare-arrows{width:48px!important;height:28px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .premium-compare-handle,.premium-compare-arrows{animation:none!important}
+}
