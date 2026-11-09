@@ -440,7 +440,7 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
   box-shadow:0 7px 19px rgba(139,67,40,.27);
   animation:kaskadSendGlow 3.1s ease-in-out infinite;
 }
-#leadForm .kaskad-send-request .request-text{
+#leadForm .kaskad-send-request .kaskad-send-label{
   display:block;min-width:0;overflow-wrap:break-word;text-wrap:balance;
 }
 #leadForm .kaskad-send-request .btn-arrow{
