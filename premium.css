@@ -496,3 +496,28 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
 #imageModal #imageDesc{display:none!important}
 .portfolio-grid .project::before,.portfolio-grid .project::after{content:none!important;display:none!important}
 .portfolio-grid .project .project-info{position:static!important;inset:auto!important}
+
+/* Lead modal: compact, readable, and resilient to enlarged mobile text */
+#requestModal .modal-dialog{width:min(560px,100%);overscroll-behavior:contain}
+#requestModal #modalFormHost{padding-top:0!important}
+#requestModal .lead-form>h3{display:block;font-size:clamp(20px,4.8vw,24px);line-height:1.25;margin:1px 48px 7px 0;letter-spacing:-.025em}
+#requestModal .lead-form>p:first-of-type{display:block;color:#66756c;font-size:12px;line-height:1.55;margin:0 30px 15px 0}
+#requestModal .lead-form .field-title{margin-top:12px;margin-bottom:6px;line-height:1.4;font-size:12px}
+#requestModal #leadComment{min-height:86px;max-height:260px;resize:vertical;line-height:1.45;font-size:16px;padding:11px 12px}
+#requestModal #extraParams{margin:13px 0!important}
+#requestModal #extraParams>summary{font-size:13px;line-height:1.5}
+#requestModal .lead-form .form-line{margin:13px 0}
+#requestModal .consent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 16px;font-size:12px;line-height:1.5}
+#requestModal .consent input{width:19px;height:19px;min-width:19px;flex:0 0 19px}
+#leadForm .kaskad-send-request{display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;gap:8px;min-height:60px;max-width:100%;padding:12px 14px;white-space:normal;line-height:1.35}
+#leadForm .kaskad-send-request .kaskad-send-label{display:block;min-width:0;font-size:clamp(12px,3vw,15px);line-height:1.4;overflow-wrap:break-word;text-wrap:balance}
+#leadForm .kaskad-send-request .btn-arrow{justify-self:center;align-self:center;width:28px;height:28px;flex:0 0 28px;font-size:22px;animation:kaskadSendArrow 1.65s ease-in-out infinite}
+@media(max-width:440px){
+ #requestModal .modal-dialog{padding:18px 16px}
+ #requestModal .lead-form>h3{margin-right:44px}
+ #requestModal .lead-form .input{font-size:16px}
+ #leadForm .kaskad-send-request{grid-template-columns:minmax(0,1fr) 25px;gap:6px;padding:11px 9px;min-height:62px}
+ #leadForm .kaskad-send-request .kaskad-send-label{font-size:12px}
+ #leadForm .kaskad-send-request .btn-arrow{width:25px;height:25px;font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){#leadForm .kaskad-send-request .btn-arrow{animation:none!important}}
