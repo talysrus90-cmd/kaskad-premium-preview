@@ -284,6 +284,19 @@ h1,h2,h3{color:var(--ink)}
   .hero-benefit span{font-size:13px;color:#a55335;font-weight:700}
   .hero-benefits+.hero-notes{margin-top:25px}
   @media(max-width:550px){.hero-benefits{margin-top:19px;gap:8px}.hero-benefit{padding:10px 12px}.hero-benefit strong{font-size:13px}.hero-benefit span{font-size:12px}.hero-benefits+.hero-notes{margin-top:23px}}
+
+  /* Форма заявки: текст помещается целиком и на узком мобильном экране */
+  .lead-form .kaskad-send-request{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    width:100%;min-width:0;min-height:56px;padding:12px 14px;
+    white-space:normal;text-align:center;line-height:1.4;
+  }
+  .kaskad-send-label{min-width:0;overflow-wrap:normal;font-size:clamp(11px,2.8vw,13px)}
+  .lead-form .kaskad-send-arrow{display:inline-block;flex:0 0 auto;font-size:22px;animation:kaskadArrowPulse 1.35s ease-in-out infinite}
+  @keyframes kaskadArrowPulse{0%,100%{opacity:1;transform:translateX(0)}50%{opacity:.38;transform:translateX(4px)}}
+  @media(max-width:410px){.lead-form .kaskad-send-request{padding:11px 10px;gap:7px}.kaskad-send-label{font-size:11px}}
+  @media(prefers-reduced-motion:reduce){.lead-form .kaskad-send-arrow{animation:none}}
+
 </style>
 <link rel="stylesheet" href="premium.css?v=houses-20261108">
 <link rel="stylesheet" href="ui-enhancements-20261108.css?v=1">
@@ -417,8 +430,8 @@ h1,h2,h3{color:var(--ink)}
       <div class="form-line"><div><label class="field-title" for="leadBudget">Бюджет</label><input class="input" id="leadBudget" maxlength="100" placeholder="Можно пока не указывать"></div><div><label class="field-title" for="leadWhen">Когда планируете?</label><input class="input" id="leadWhen" maxlength="100" placeholder=""></div></div>
       <label class="field-title" for="leadCity">Город</label><input class="input" id="leadCity" maxlength="120" value="Горячий Ключ"></details>
       <div class="form-line"><div><label class="field-title" for="leadName">Ваше имя</label><input class="input" id="leadName" autocomplete="given-name" maxlength="80" placeholder="Как к вам обращаться" required></div><div><label class="field-title" for="leadPhone">Телефон для ответа</label><input class="input" id="leadPhone" type="tel" autocomplete="tel" inputmode="tel" maxlength="22" pattern="[+0-9 ()-]{10,22}" placeholder="" required></div></div>
-      <label class="consent"><input type="checkbox" id="leadAgree" required><span>Даю согласие на обработку указанных мной персональных данных для рассмотрения обращения и обратной связи. Текст и текущие условия — в конце сайта.</span></label><button type="button" id="readConsentFaq" class="lead-consent-link">Прочитать условия обработки персональных данных <span aria-hidden="true">↗</span></button>
-      <button class="btn btn-terra kaskad-send-request" type="submit">Отправить заявку на предварительный расчёт <span class="btn-arrow" aria-hidden="true">↗</span></button>
+      <label class="consent"><input type="checkbox" id="leadAgree" required><span>Даю согласие на обработку указанных мной персональных данных для рассмотрения обращения и обратной связи. Текст и текущие условия — в конце сайта.</span></label>
+      <button class="btn btn-terra kaskad-send-request" type="submit"><span class="kaskad-send-label">Отправить заявку на предварительный расчёт</span><span class="btn-arrow kaskad-send-arrow" aria-hidden="true">→</span></button>
       <p class="kaskad-lead-benefit">Мы рассчитаем предварительную стоимость работ и свяжемся с вами.</p>
       <p class="form-note">В этой демонстрационной версии кнопка подготовит черновик заявки. Для настоящей отправки владельцу требуется подключённая панель компании.</p>
       <div id="leadOutput" class="hidden" aria-live="polite" style="margin-top:17px;background:#f3f6f0;padding:17px;border-radius:8px"><strong style="font-size:13px">Черновик готов — ещё не отправлен</strong><pre id="leadPreview" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;color:#45564d;line-height:1.6;margin-top:10px"></pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-dark" id="copyLead">Скопировать</button><button type="button" class="btn btn-outline" id="downloadLead">Скачать TXT</button></div></div>
@@ -547,7 +560,7 @@ h1,h2,h3{color:var(--ink)}
     }
   });
   all('[data-open-request]').forEach(b=>b.addEventListener('click',()=>openModal(request)));
-  one('#readConsentFaq').addEventListener('click',()=>{const details=one('#personal-data-consent');details.open=true;closeModal(request);setTimeout(()=>details.scrollIntoView({behavior:'instant',block:'start'}),240)});
+  
   all('.service [data-service]').forEach(b=>b.addEventListener('click',()=>{one('#leadService').value=b.dataset.service;openModal(request)}));
   one('#closeRequest').addEventListener('click',()=>closeModal(request));one('#closeImage').addEventListener('click',()=>closeModal(imgModal));one('#galleryReturn').addEventListener('click',()=>closeModal(imgModal));
   [request,imgModal].forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m)}));
