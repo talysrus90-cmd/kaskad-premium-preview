@@ -1,0 +1,218 @@
+/* Full-viewport gallery — swipe left/right across the entire image area. */
+#imageModal.immersive{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  background:#1a2a22!important;
+  backdrop-filter:none!important;
+  overscroll-behavior:contain;
+}
+#imageModal.immersive .modal-dialog.image-dialog{
+  position:fixed!important;
+  inset:0!important;
+  margin:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#24352c!important;
+  box-shadow:none!important;
+  isolation:isolate;
+  transform:none!important;
+  transition:none!important;
+}
+/* A gently blurred duplicate fills the area behind portrait/landscape photos.
+   Original photo remains fully visible and undistorted in front. */
+#imageModal.immersive .image-dialog::before{
+  content:"";
+  position:absolute;
+  inset:-24px;
+  z-index:0;
+  pointer-events:none;
+  background-color:#34453b;
+  background-image:var(--gallery-photo-backdrop);
+  background-size:cover;
+  background-position:center;
+  filter:blur(28px) brightness(.48) saturate(.8);
+  opacity:.9;
+  transform:scale(1.02);
+}
+#imageModal.immersive .photo-zoom-stage{
+  position:relative!important;
+  display:block!important;
+  flex:1 1 100%!important;
+  margin:0!important;
+  padding:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  background:transparent!important;
+  border-radius:0!important;
+  z-index:1;
+  touch-action:none!important;
+}
+#imageModal.immersive .photo-zoom-stage #bigImage{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:transparent!important;
+  touch-action:none!important;
+}
+#imageModal.immersive #imageTitle,
+#imageModal.immersive #imageDesc,
+#imageModal.immersive #imageThumbs,
+#imageModal.immersive #chooseIdea,
+#imageModal.immersive .photo-zoom-hint{
+  display:none!important;
+}
+#imageModal .gallery-back{display:none}
+#imageModal.immersive .gallery-back{
+  display:flex!important;
+  position:absolute;
+  top:calc(env(safe-area-inset-top,0px) + 12px);
+  left:calc(env(safe-area-inset-left,0px) + 12px);
+  z-index:30;
+  min-height:43px;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:99px;
+  padding:10px 16px;
+  color:#fff;
+  font:750 13px/1.3 Manrope,system-ui,sans-serif;
+  background:rgba(27,44,34,.80);
+  box-shadow:0 3px 15px rgba(0,0,0,.14);
+  backdrop-filter:blur(8px);
+  cursor:pointer;
+}
+#imageModal.immersive .modal-close{
+  position:absolute!important;
+  top:calc(env(safe-area-inset-top,0px) + 12px)!important;
+  right:calc(env(safe-area-inset-right,0px) + 12px)!important;
+  z-index:30!important;
+  display:grid;
+  place-items:center;
+  width:43px!important;
+  height:43px!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:50%!important;
+  font-size:25px!important;
+  background:rgba(253,251,246,.96)!important;
+  color:#253d30!important;
+}
+#imageModal.immersive .gallery-nav-bar{
+  display:flex!important;
+  position:absolute!important;
+  z-index:25!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 13px)!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  width:min(318px,calc(100vw - 30px))!important;
+  gap:14px!important;
+  margin:0!important;
+  padding:6px 10px!important;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:99px;
+  color:white;
+  background:rgba(22,39,29,.78);
+  box-shadow:0 7px 25px rgba(0,0,0,.18);
+  backdrop-filter:blur(10px);
+}
+#imageModal.immersive .gallery-nav-bar .btn{
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  min-width:52px!important;
+  width:52px!important;
+  height:45px!important;
+  min-height:45px!important;
+  border:1px solid rgba(255,255,255,.24)!important;
+  border-radius:99px!important;
+  background:rgba(255,255,255,.92)!important;
+  color:#274135!important;
+  box-shadow:none!important;
+  font-size:24px!important;
+  line-height:1!important;
+}
+#imageModal.immersive #imageCount{
+  font:800 14px/1.1 Manrope,system-ui,sans-serif;
+  color:#fff;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+#imageModal.immersive .photo-zoom-tools{
+  position:absolute!important;
+  z-index:25!important;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 84px)!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  margin:0!important;
+  min-height:0!important;
+  display:flex!important;
+  gap:5px!important;
+  padding:5px 7px!important;
+  background:rgba(22,39,29,.69);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:99px;
+  backdrop-filter:blur(10px);
+}
+#imageModal.immersive .photo-zoom-tools button{
+  background:rgba(250,248,243,.95)!important;
+  border-radius:99px!important;
+  width:37px!important;
+  min-width:37px!important;
+  height:34px!important;
+  font-size:20px!important;
+}
+#imageModal.immersive .photo-zoom-tools .photo-zoom-current{
+  width:60px!important;
+  min-width:60px!important;
+  font-size:12px!important;
+}
+#imageModal.immersive .modal-dialog .gallery-back:focus-visible,
+#imageModal.immersive .modal-dialog .modal-close:focus-visible,
+#imageModal.immersive .gallery-nav-bar button:focus-visible{
+  outline:3px solid #e8bd92!important;
+  outline-offset:3px!important;
+}
+/* The original comparison control stays usable while becoming more discreet. */
+.premium-compare-handle{
+  width:56px!important;
+  height:56px!important;
+}
+.premium-compare-arrows{
+  width:44px!important;
+  height:26px!important;
+}
+@media(max-width:600px){
+  .premium-compare-handle{
+    width:50px!important;
+    height:50px!important;
+  }
+  .premium-compare-arrows{
+    width:40px!important;
+    height:24px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #imageModal.immersive .photo-zoom-stage #bigImage{transition:none!important}
+  #imageModal.immersive .modal-dialog::before{filter:blur(26px) brightness(.52)}
+}

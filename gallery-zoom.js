@@ -115,6 +115,14 @@
   const fitPhotoToViewport=()=>{
     const naturalW=img.naturalWidth,naturalH=img.naturalHeight;
     if(!naturalW||!naturalH)return;
+    if(modal.classList.contains('immersive')){
+      stage.style.removeProperty('aspect-ratio');
+      stage.style.removeProperty('max-width');
+      stage.style.removeProperty('max-height');
+      modal.querySelector('.image-dialog')?.style.removeProperty('--gallery-dialog-width');
+      redraw();
+      return;
+    }
     const ratio=naturalW/naturalH;
     const availableHeight=Math.max(240,window.innerHeight-(window.innerWidth<560?248:270));
     const maxViewportWidth=Math.max(250,window.innerWidth-(window.innerWidth<560?30:45));

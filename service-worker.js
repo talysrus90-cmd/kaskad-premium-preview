@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261109-gallery-full-v1';
+const VERSION='kaskad-pwa-20261109-immersive-v1';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -11,7 +11,8 @@ const core=[
  './manifest.webmanifest','./pwa.js?v=1','./fonts.css?v=pwa1',
  './premium.css?v=houses-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
  './site-clarity-20261109.css?v=1',
- './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261108b',
+ './gallery-fullscreen-20261109.css?v=1',
+ './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261109-fullscreen',
  './preview-runtime.js','./smart/lead-integration-20261108.js?v=1',
  './icons/kaskad-192.png','./icons/kaskad-512.png','./icons/kaskad-apple-180.png',
  './fonts/manrope-cyrillic.woff2','./fonts/manrope-latin.woff2',
