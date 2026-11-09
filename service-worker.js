@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261109-immersive-v1';
+const VERSION='kaskad-pwa-20261109-unique-gallery-v1';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -18,12 +18,12 @@ const core=[
  './fonts/manrope-cyrillic.woff2','./fonts/manrope-latin.woff2',
  './fonts/prata-cyrillic.woff2','./fonts/prata-latin.woff2',
  './assets/ideas/card/hero-960.webp',
- './assets/ideas/card/house-new-16501696-640.webp',
- './assets/ideas/card/house-new-7174109-640.webp',
- './assets/ideas/card/house-new-9408429-640.webp',
- './assets/ideas/card/p-7534561-640.webp',
- './assets/ideas/card/extra-6032280-640.webp',
- './assets/ideas/card/extra-26886880-640.webp',
+ './assets/ideas/card/unique-a79ecc982f2e-640.webp',
+ './assets/ideas/card/unique-2aaa26eccf2a-640.webp',
+ './assets/ideas/card/unique-50b8c495240c-640.webp',
+ './assets/ideas/card/unique-a28d450cebc5-640.webp',
+ './assets/ideas/card/unique-983737b122b1-640.webp',
+ './assets/ideas/card/unique-5b2747452105-640.webp',
  './assets/offline-photo.svg'
 ];
 const URL_OF=p=>new URL(p,ROOT);
