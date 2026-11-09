@@ -421,25 +421,34 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
 }
 
 /* Warm, visible preliminary-request CTA; no distracting fast blinking. */
+/* The request CTA must fit the narrowest mobile dialog without horizontal overflow. */
 #leadForm .kaskad-send-request{
-  width:100%;
-  min-height:58px;
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  padding:14px 20px;
+  box-sizing:border-box;
+  width:100%;max-width:100%;min-width:0;
+  min-height:62px;
+  display:grid;grid-template-columns:minmax(0,1fr) 28px;
+  align-items:center;justify-content:stretch;gap:8px;
+  padding:12px 14px;
+  white-space:normal;
   color:#fff!important;
   background:linear-gradient(115deg,#9b4c32 0%,#b66b43 49%,#9e5335 100%)!important;
   border:1px solid #7e3827!important;
   border-radius:9px;
   font-weight:800;font-size:clamp(13px,3.6vw,15px);
-  line-height:1.42;
+  line-height:1.38;
   text-align:center;
   box-shadow:0 7px 19px rgba(139,67,40,.27);
   animation:kaskadSendGlow 3.1s ease-in-out infinite;
 }
+#leadForm .kaskad-send-request .request-text{
+  display:block;min-width:0;overflow-wrap:break-word;text-wrap:balance;
+}
 #leadForm .kaskad-send-request .btn-arrow{
+  width:28px;height:28px;min-width:0;
   display:inline-flex;align-items:center;justify-content:center;
-  font-size:23px;
-  animation:kaskadSendArrow 3.1s ease-in-out infinite;
+  font-size:23px;line-height:1;border-radius:50%;
+  background:rgba(255,255,255,.13);
+  animation:kaskadSendArrow 1.65s ease-in-out infinite;
 }
 #leadForm .kaskad-send-request:hover{
   background:linear-gradient(115deg,#95452c,#ac5e37)!important;
@@ -456,8 +465,8 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
   50%{box-shadow:0 7px 22px rgba(139,67,40,.4),0 0 0 5px rgba(210,152,91,.22)}
 }
 @keyframes kaskadSendArrow{
-  0%,100%{transform:translateX(-2px);opacity:.85}
-  50%{transform:translateX(4px);opacity:1}
+  0%,100%{transform:translateX(-2px);opacity:.38}
+  50%{transform:translateX(3px);opacity:1}
 }
 @media(prefers-reduced-motion:reduce){
   #leadForm .kaskad-send-request,
@@ -470,7 +479,12 @@ html.premium-motion-ready .premium-reveal.is-visible{opacity:1;transform:transla
  font-weight:650;color:#52674f;
 }
 @media(max-width:550px){
- #leadForm .kaskad-send-request{font-size:14px;line-height:1.38}
+ #leadForm .kaskad-send-request{
+   grid-template-columns:minmax(0,1fr) 25px;
+   min-height:64px;padding:11px 11px;gap:6px;
+   font-size:13px;line-height:1.38
+ }
+ #leadForm .kaskad-send-request .btn-arrow{width:25px;height:25px;font-size:22px}
  #leadForm .kaskad-lead-benefit{font-size:11px;padding:0 3px}
 }
 
