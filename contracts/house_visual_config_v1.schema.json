@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/talysrus90-cmd/kaskad-premium-preview/blob/main/contracts/house_visual_config_v1.schema.json",
+  "title": "KASKAD/Zhivoy interoperable conceptual building visual config v1",
+  "description": "Visual proposal only, not a measured metric twin, BIM model, engineering or price estimate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "authority",
+    "units",
+    "style",
+    "geometry",
+    "facade",
+    "roof",
+    "fence",
+    "assets"
+  ],
+  "properties": {
+    "version": {
+      "const": "kaskad.visual-house.v1"
+    },
+    "authority": {
+      "const": "CONCEPT_VISUAL"
+    },
+    "units": {
+      "const": "m"
+    },
+    "style": {
+      "enum": [
+        "classic",
+        "italian",
+        "modern",
+        "estate",
+        "kavkaz",
+        "coastal",
+        "practical",
+        "craft"
+      ]
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "areaM2",
+        "levels",
+        "widthM",
+        "depthM"
+      ],
+      "properties": {
+        "areaM2": {
+          "type": "number",
+          "minimum": 60,
+          "maximum": 450
+        },
+        "levels": {
+          "const": 2
+        },
+        "widthM": {
+          "type": "number",
+          "exclusiveMinimum": 1
+        },
+        "depthM": {
+          "type": "number",
+          "exclusiveMinimum": 1
+        }
+      }
+    },
+    "facade": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "brick",
+            "tuscan",
+            "stone",
+            "plaster",
+            "gray"
+          ]
+        }
+      }
+    },
+    "roof": {
+      "type": "object",
+      "required": [
+        "shape",
+        "covering",
+        "color"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "shape": {
+          "enum": [
+            "gable",
+            "hip",
+            "flat",
+            "shed",
+            "mansard"
+          ]
+        },
+        "covering": {
+          "enum": [
+            "slate",
+            "terracotta",
+            "graphite",
+            "ceramic",
+            "metalGraphite",
+            "metalBurgundy",
+            "metal3d",
+            "metalModular",
+            "standingSeam",
+            "flexible",
+            "composite",
+            "profiled"
+          ]
+        },
+        "color": {
+          "enum": [
+            "graphite",
+            "chocolate",
+            "burgundy",
+            "green",
+            "black",
+            "gray",
+            "terracotta",
+            "sand"
+          ]
+        }
+      }
+    },
+    "fence": {
+      "type": "object",
+      "required": [
+        "type",
+        "color"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "iron",
+            "tuscan",
+            "wood",
+            "stone",
+            "brickIron",
+            "louvers",
+            "picket",
+            "chess",
+            "ranch",
+            "profiled",
+            "panel3d"
+          ]
+        },
+        "color": {
+          "enum": [
+            "graphite",
+            "chocolate",
+            "burgundy",
+            "green",
+            "black",
+            "gray",
+            "terracotta",
+            "sand"
+          ]
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "required": [
+        "origin",
+        "materialLicense",
+        "textureQuality"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "origin": {
+          "const": "kaskad-original-geometry"
+        },
+        "materialLicense": {
+          "const": "Poly Haven CC0"
+        },
+        "textureQuality": {
+          "enum": [
+            "1k-mobile",
+            "2k-on-demand"
+          ]
+        }
+      }
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

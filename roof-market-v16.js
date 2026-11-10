@@ -7,7 +7,7 @@ export function createRoofSystem(THREE,scene,{tileRoof,roofSurface}){
   const colorable=[metalMat,compositeMat,flexibleMat,seamMat,roofSurface];
   const roofGroups=new Map();
   const types=['slate','terracotta','graphite','ceramic','metalGraphite','metalBurgundy','metal3d','metalModular','standingSeam','flexible','composite','profiled'];
-  let current='slate';
+  let current='slate',enabled=true;
 
   function makeSlope(side,kind,material){
     const nAcross=45,nLong=80,positions=[],uvs=[],indices=[];
@@ -55,8 +55,18 @@ export function createRoofSystem(THREE,scene,{tileRoof,roofSurface}){
     types,metalMat,compositeMat,flexibleMat,seamMat,
     setType(kind){
       const safe=types.includes(kind)?kind:'slate';current=safe;
-      tileRoof.visible=['slate','terracotta','graphite','ceramic'].includes(safe);
-      for(const [value,group] of roofGroups)group.visible=value===safe;
+      tileRoof.visible=enabled&&['slate','terracotta','graphite','ceramic'].includes(safe);
+      for(const [value,group] of roofGroups)group.visible=enabled&&value===safe;
+    },
+    setEnabled(value){
+      enabled=!!value;
+      tileRoof.visible=enabled&&['slate','terracotta','graphite','ceramic'].includes(current);
+      for(const [value,group] of roofGroups)group.visible=enabled&&value===current;
+    },
+    getMaterial(){
+      return ['slate','terracotta','graphite','ceramic'].includes(current)?roofSurface:
+        current==='standingSeam'?seamMat:current==='composite'?compositeMat:
+        current==='flexible'?flexibleMat:metalMat;
     },
     setColor(hex){for(const material of colorable)material.color.set(hex)},
     setPhotoMap(map){for(const material of [metalMat,seamMat]){material.map=map;material.needsUpdate=true}},

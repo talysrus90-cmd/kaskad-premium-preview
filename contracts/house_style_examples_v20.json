@@ -1,0 +1,245 @@
+{
+  "schema": "kaskad.visual-house.v1",
+  "examples": [
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "classic",
+      "geometry": {
+        "areaM2": 260,
+        "levels": 2,
+        "widthM": 13.587,
+        "depthM": 9.568
+      },
+      "facade": {
+        "type": "brick"
+      },
+      "roof": {
+        "shape": "hip",
+        "covering": "slate",
+        "color": "graphite"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "italian",
+      "geometry": {
+        "areaM2": 300,
+        "levels": 2,
+        "widthM": 15.0,
+        "depthM": 10.0
+      },
+      "facade": {
+        "type": "tuscan"
+      },
+      "roof": {
+        "shape": "hip",
+        "covering": "terracotta",
+        "color": "terracotta"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "modern",
+      "geometry": {
+        "areaM2": 350,
+        "levels": 2,
+        "widthM": 17.993,
+        "depthM": 9.726
+      },
+      "facade": {
+        "type": "stone"
+      },
+      "roof": {
+        "shape": "flat",
+        "covering": "standingSeam",
+        "color": "graphite"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "estate",
+      "geometry": {
+        "areaM2": 350,
+        "levels": 2,
+        "widthM": 16.523,
+        "depthM": 10.591
+      },
+      "facade": {
+        "type": "gray"
+      },
+      "roof": {
+        "shape": "mansard",
+        "covering": "metalBurgundy",
+        "color": "burgundy"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "kavkaz",
+      "geometry": {
+        "areaM2": 300,
+        "levels": 2,
+        "widthM": 14.491,
+        "depthM": 10.351
+      },
+      "facade": {
+        "type": "stone"
+      },
+      "roof": {
+        "shape": "hip",
+        "covering": "metal3d",
+        "color": "chocolate"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "coastal",
+      "geometry": {
+        "areaM2": 220,
+        "levels": 2,
+        "widthM": 13.675,
+        "depthM": 8.044
+      },
+      "facade": {
+        "type": "plaster"
+      },
+      "roof": {
+        "shape": "shed",
+        "covering": "metalModular",
+        "color": "gray"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "practical",
+      "geometry": {
+        "areaM2": 150,
+        "levels": 2,
+        "widthM": 10.1,
+        "depthM": 7.426
+      },
+      "facade": {
+        "type": "brick"
+      },
+      "roof": {
+        "shape": "gable",
+        "covering": "profiled",
+        "color": "green"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    },
+    {
+      "version": "kaskad.visual-house.v1",
+      "authority": "CONCEPT_VISUAL",
+      "units": "m",
+      "style": "craft",
+      "geometry": {
+        "areaM2": 180,
+        "levels": 2,
+        "widthM": 10.817,
+        "depthM": 8.321
+      },
+      "facade": {
+        "type": "plaster"
+      },
+      "roof": {
+        "shape": "mansard",
+        "covering": "flexible",
+        "color": "black"
+      },
+      "fence": {
+        "type": "iron",
+        "color": "black"
+      },
+      "assets": {
+        "origin": "kaskad-original-geometry",
+        "materialLicense": "Poly Haven CC0",
+        "textureQuality": "1k-mobile"
+      },
+      "note": "Illustrative architectural massing. No verified dimensions, geospatial survey, SKU, local permit or engineering claim."
+    }
+  ]
+}

@@ -37,3 +37,15 @@
 - roof_tile_neutral.webp: цветонезависимая версия CC0-текстуры roof_tiles.webp (Poly Haven), используется для выбора восьми оттенков кровли.
 
 - cards/preset_*_v19.webp — восемь собственных снимков обновлённого конструктора КАСКАД; используются перечисленные выше фототекстуры CC0, не фотографии построенного дома.
+
+
+## v20 — 2K high-detail CC0 (opt-in, local WebP)
+
+- assets/3d/red_brick_hd.webp — Poly Haven CC0 https://polyhaven.com/a/red_brick; original 2K diffuse JPG from https://api.polyhaven.com/files/red_brick, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/stone_tile_wall_hd.webp — Poly Haven CC0 https://polyhaven.com/a/stone_tile_wall; original 2K diffuse JPG from https://api.polyhaven.com/files/stone_tile_wall, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/rustic_brick_diff_hd.webp — Poly Haven CC0 https://polyhaven.com/a/castle_brick_02_red; original 2K diffuse JPG from https://api.polyhaven.com/files/castle_brick_02_red, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/italian_brick_diff_hd.webp — Poly Haven CC0 https://polyhaven.com/a/brick_wall_08; original 2K diffuse JPG from https://api.polyhaven.com/files/brick_wall_08, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/roof_tile_neutral_hd.webp — Poly Haven CC0 https://polyhaven.com/a/roof_tiles; original 2K diffuse JPG from https://api.polyhaven.com/files/roof_tiles, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/wood_planks_hd.webp — Poly Haven CC0 https://polyhaven.com/a/wood_planks; original 2K diffuse JPG from https://api.polyhaven.com/files/wood_planks, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/metal_roof_base_hd.webp — Poly Haven CC0 https://polyhaven.com/a/corrugated_iron_02; original 2K diffuse JPG from https://api.polyhaven.com/files/corrugated_iron_02, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
+- assets/3d/cards/preset_*_v20.webp — own 3D scene captures (840x520 WebP) showing the new footprint/roof, not photos of constructed buildings.

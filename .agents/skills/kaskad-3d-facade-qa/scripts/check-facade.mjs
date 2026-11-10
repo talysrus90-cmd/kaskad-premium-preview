@@ -23,7 +23,7 @@ const checks=[
  ['window backing same facade material',/cell\(w\+\.25,h\+\.32,\.13,brick,0,0,0\)/],
  ['independent fence handler',/\[fenceSelect,fenceColorSelect\]\.forEach\(el=>el\?\.addEventListener\('change',applyFence\)\)/],
  ['distinct architecture system',/createArchitectureStyles\(THREE,scene/],
- ['style change handler separate',/houseStyleSelect\?\.addEventListener\('change',applyHouseStyle\)/]
+ ['style change handler separate',/houseStyleSelect\?\.addEventListener\('change',applyWholeStyle\)/]
 ];
 for(const [name,re] of checks){
  assert.match(src,re,'3D regression: '+name);
@@ -31,7 +31,7 @@ for(const [name,re] of checks){
 }
 for(const key of ['classic','italian','modern','estate','kavkaz','coastal','practical','craft']){
  assert.match(archive,new RegExp("add\\('"+key+"',g=>"),'Missing distinct architectural theme '+key);
- assert.match(gallery,new RegExp("image:'preset_"+key+"_v19'"),'Missing updated preview for '+key);
+ assert.match(gallery,new RegExp("image:'preset_"+key+"_v20'"),'Missing updated preview for '+key);
 }
 assert.match(gallery,/key:'presets',label:'Стили домов'/,'Styles tab missing');
 assert.match(gallery,/new CustomEvent\('kaskad:focus-view'/,'Missing style-focused camera event');

@@ -6,7 +6,7 @@
 <title>КАСКАД · 3D-обзор дома</title>
 <link rel="stylesheet" href="fonts.css?v=pwa1">
 <link rel="stylesheet" href="3d-house.css?v=4">
-<link rel="stylesheet" href="builder-gallery.css?v=2">
+<link rel="stylesheet" href="builder-gallery.css?v=3">
 <style>
 html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .embed{padding:0;margin:0}.workspace{max-width:none;margin:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;gap:0;align-items:stretch}
@@ -93,6 +93,35 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
  .builder-gallery-tabs button{padding:6px 10px}
 }
 </style>
+
+<style id="kaskad-parametric-v20">
+.scene #highDetailButton{position:absolute;top:9px;right:10px;z-index:6;width:auto;
+ min-height:32px;padding:5px 10px;border-radius:7px;border:1px solid #bacdc3;
+ font:850 11px/1.2 Manrope,system-ui,sans-serif;background:#f6f9f4ef;color:#2b5943}
+.scene #highDetailButton[aria-pressed="true"]{background:#30604c;color:#fff}
+@media(max-width:730px){
+ .controls{padding:5px 8px 8px!important;gap:1px!important}
+ .builder-gallery-tabs{padding:0 0 2px!important;gap:2px!important}
+ .builder-gallery-tabs button{min-height:31px!important;padding:5px 8px!important}
+ .builder-material-list{gap:4px!important;padding:0 1px 2px!important}
+ .builder-material-card img{height:52px!important}
+ .builder-material-card strong{font-size:9px!important}
+ .builder-material-card span{font-size:8px!important}
+ .builder-choice-summary{margin:1px 0 2px!important}
+ .builder-colors{padding:3px 0 0!important}
+ .builder-swatch-row{margin-top:2px!important}
+ .builder-swatch{min-height:46px!important}
+ .builder-advanced summary{min-height:31px!important}
+ .scene #highDetailButton{top:8px;right:8px;min-height:29px}
+}
+</style>
+
+<style id="kaskad-geometry-strip">
+.builder-geometry-strip{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:6px;width:100%;min-width:0;margin:3px 0 5px}
+.builder-geometry-strip label{font:800 10px/1.3 Manrope,system-ui,sans-serif;color:#375344;display:flex;flex-direction:column;gap:3px;min-width:0}
+.builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
+@media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
+</style>
 </head>
 <body>
 <main class="embed">
@@ -103,11 +132,13 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div id="loading3d" class="loading" role="status">Загружаем 3D-модель…</div>
 <div class="scene-caption"><span class="scene-dot"></span> 3D · АРХИТЕКТУРНЫЙ КОНСТРУКТОР</div>
 <div class="scene-tip">Поверните дом пальцем · двумя пальцами измените масштаб</div>
+<button class="secondary" id="highDetailButton" type="button" aria-pressed="false" title="Повышенная чёткость вращаемого дома">HD</button>
 <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Автообзор</button>
 </div>
 <div class="footbar"><span>Дом и участок</span><span id="modelFPS">Загрузка</span></div>
 </div>
 <aside class="controls" aria-label="Управление трёхмерной моделью">
+<div class="builder-geometry-strip" aria-label="Размеры и форма дома"><label for="roofShapeSelect">Форма крыши<select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip">Четырёхскатная</option><option value="flat">Плоская</option><option value="shed">Односкатная</option><option value="mansard">Мансардная</option></select></label><label for="houseSizeSelect">Площадь дома<select id="houseSizeSelect"><option value="150">≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220" selected>≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select></label></div>
 <div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
   <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
 </div>
@@ -122,7 +153,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="toggle-row"><div><strong>Свет в окнах</strong><span>Включить или выключить</span></div><label class="switch" aria-label="Свет в окнах"><input type="checkbox" id="windowsToggle" checked><span class="track"></span></label></div>
 
 
-<label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">Высокая чёткость</option><option value="economy">Экономный режим</option></select></label>
+<label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">HD · высокая</option><option value="ultra">Ультра · 3D (мощные телефоны)</option><option value="economy">Экономный режим</option></select></label>
 <details class="builder-select-fallback">
   <summary>Все материалы списком</summary>
 <div class="builder-options" aria-label="Дополнительный выбор материалов">
@@ -132,6 +163,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
     <label for="roofColorSelect">Цвет кровли<select id="roofColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="houseStyleSelect">Архитектурный стиль<select id="houseStyleSelect"><option value="classic">Загородная классика</option><option value="italian">Итальянский двор</option><option value="modern">Современный дом</option><option value="estate">Парадная усадьба</option><option value="kavkaz">Кавказский стиль</option><option value="coastal">Светлый минимализм</option><option value="practical">Практичный дом</option><option value="craft">Садовый дом</option></select></label>
+
+
   </div>
 </details>
 </div></details>
@@ -139,7 +172,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=4" defer></script>
-<script type="module" src="house-3d.bundle.js?v=8"></script>
+<script src="builder-gallery.js?v=5" defer></script>
+<script type="module" src="house-3d.bundle.js?v=9"></script>
 </body>
 </html>

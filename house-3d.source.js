@@ -4,6 +4,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {createFenceSystem} from './fence-market-v16.js';
 import {createRoofSystem} from './roof-market-v16.js';
+import {createRoofForms} from './roof-forms-v20.js';
 import {addNaturalFoliage} from './foliage-v16.js';
 import {createArchitectureStyles} from './architecture-styles-v19.js';
 
@@ -19,6 +20,9 @@ const fenceSelect=document.getElementById('fenceSelect');
 const roofColorSelect=document.getElementById('roofColorSelect');
 const fenceColorSelect=document.getElementById('fenceColorSelect');
 const houseStyleSelect=document.getElementById('houseStyleSelect');
+const roofShapeSelect=document.getElementById('roofShapeSelect');
+const houseSizeSelect=document.getElementById('houseSizeSelect');
+const highDetailButton=document.getElementById('highDetailButton');
 const qualitySelect=document.getElementById('qualitySelect');
 const autoButton=document.getElementById('autoRotate');
 const status=document.getElementById('modelFPS');
@@ -128,7 +132,7 @@ try {
   if(!window.WebGLRenderingContext)throw new Error('WebGL unavailable');
   const scene=new THREE.Scene();
   const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power',alpha:false,stencil:false});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.95));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.35;
@@ -211,6 +215,8 @@ try {
     scene.add(b);
     return b;
   };
+  // Capture only the building's geometry, not plot, trees, pool or fence.
+  const houseStart=scene.children.length;
   // Foundations, warm brick masonry, cornices, porch with stone columns.
   box(13.6,.42,9.65,limestone,0,.29,0);
   // A single facade material is shared by all four walls and BOTH roof gables.
@@ -279,7 +285,7 @@ try {
   gableFacades.name='КАСКАД · фронтоны того же материала';
   gableFacades.castShadow=true;gableFacades.receiveShadow=true;
   scene.add(gableFacades);
-  box(.2,.24,10.6,roofMat,0,9.03,0);
+  const roofRidge=box(.2,.24,10.6,roofMat,0,9.03,0);
   // Architectural ornaments: gutters, downspouts, stone quoins and cornices.
   // These details are visible in close-up instead of relying on an enlarged photo.
   for(const x of [-6.6,6.6]){
@@ -312,6 +318,7 @@ try {
     color:'#a6bdc7',roughness:.17,metalness:.26,emissive:new THREE.Color('#ffd68c'),emissiveIntensity:0
   });
   const frames=[];
+  const windowGroups=[];
   const windowFrame=(x,y,z,rot=0,w=1.48,h=1.58)=>{
     const group=new THREE.Group();
     group.position.set(x,y,z);
@@ -336,6 +343,7 @@ try {
     cell(.043,h-.22,.055,bronze,w*.26,0,.243);
     cell(w-.11,.032,.055,bronze,0,-h*.23,.245);
     cell(w-.11,.032,.055,bronze,0,h*.23,.245);
+    windowGroups.push({group,x,y,z,rot});
     return group;
   };
   [-4.55,-2.30,2.30,4.55].forEach(x=>{
@@ -343,9 +351,14 @@ try {
     windowFrame(x,5.49,4.58);
   });
   windowFrame(0,5.49,4.58,0,1.54,1.72);
-  for(const z of [-2.55,0,2.55]){
-    windowFrame(6.49,2.22,z,Math.PI/2,1.55,1.7);
-    windowFrame(-6.49,5.43,z,-Math.PI/2,1.55,1.7);
+  for(const x of [-4.5,-2.3,2.3,4.5]){
+    windowFrame(x,2.12,-4.58,Math.PI);
+    windowFrame(x,5.49,-4.58,Math.PI);
+  }
+  // Balanced side elevations: matching fenestration on both floors.
+  for(const z of [-2.65,0,2.65])for(const level of [2.18,5.43]){
+    windowFrame(6.49,level,z,Math.PI/2,1.45,1.64);
+    windowFrame(-6.49,level,z,-Math.PI/2,1.45,1.64);
   }
   const balconyStart=scene.children.length;
   // Classic balcony railing, modest metal highlights.
@@ -360,19 +373,71 @@ try {
     limestone,quartz,bronze,doorMat,roofMat,porchElements,balconyElements
   });
   const applyHouseStyle=()=>{
-    architectureSystem.setStyle(houseStyleSelect?.value||'classic');
+    const style=houseStyleSelect?.value||'classic';
+    architectureSystem.setStyle(style);
+    for(const window of windowGroups){
+      const onFront=Math.abs(window.z-4.58)<.2;
+      const onBack=Math.abs(window.z+4.58)<.2;
+      const upper=window.y>4;
+      const center=Math.abs(window.x)<2.7;
+      // Do not render classical fenestration through the glass curtain wall.
+      const modernOccluded=style==='modern'&&onFront&&upper;
+      const minimalOccluded=style==='coastal'&&onFront&&upper&&center;
+      const practicalOccluded=style==='practical'&&
+        ((onFront||onBack)&&Math.abs(window.x)>4||!onFront&&!onBack&&Math.abs(window.z)<.1);
+      const gardenOccluded=style==='craft'&&onFront&&upper&&Math.abs(window.x)<3;
+      window.group.visible=!(modernOccluded||minimalOccluded||practicalOccluded||gardenOccluded);
+    }
   };
-  houseStyleSelect?.addEventListener('change',applyHouseStyle);
-  applyHouseStyle();
+  // House footprint uses a coherent x/z scale across facade, all windows,
+  // ornaments and roofs. Plot, fence and pool retain their real dimensions.
+  const houseRoot=new THREE.Group();
+  houseRoot.name='KASKAD parametric house volume';
+  for(const component of scene.children.slice(houseStart))houseRoot.add(component);
+  scene.add(houseRoot);
+  const roofForms=createRoofForms(THREE,houseRoot,{
+    roofSystem,roofRidge,gableFacades
+  });
+  const styleAspects={classic:1.42,italian:1.50,modern:1.85,estate:1.56,
+    kavkaz:1.40,coastal:1.70,practical:1.36,craft:1.30};
+  const originalFacadeUvs=Float32Array.from(facadeBodyGeo.getAttribute('uv').array);
+  const originalGableUvs=Float32Array.from(gableG.getAttribute('uv').array);
+  const applyHouseSize=()=>{
+    const size=Number(houseSizeSelect?.value||220);
+    const aspect=styleAspects[houseStyleSelect?.value]||1.42;
+    const footprint=size/2;  // Two illustrative floors; not a floor plan.
+    const width=Math.sqrt(footprint*aspect),depth=Math.sqrt(footprint/aspect);
+    const scaleX=width/12.8,scaleZ=depth/9;
+    houseRoot.scale.set(scaleX,1,scaleZ);
+    // Real-world material scale: brick stays one brick size when changing
+    // building width/depth; UVs are not stretched with the whole building.
+    const bodyUV=facadeBodyGeo.getAttribute('uv');
+    for(let i=0;i<bodyUV.count;i++){
+      const multiplier=i<8?scaleZ:i>=16?scaleX:1;
+      bodyUV.setXY(i,originalFacadeUvs[i*2]*multiplier,originalFacadeUvs[i*2+1]);
+    }
+    bodyUV.needsUpdate=true;
+    const gableUV=gableG.getAttribute('uv');
+    for(let i=0;i<gableUV.count;i++)gableUV.setXY(i,originalGableUvs[i*2]*scaleX,originalGableUvs[i*2+1]);
+    gableUV.needsUpdate=true;
+    houseRoot.userData.illustrativeArea=size;
+    houseRoot.userData.footprint={width,depth,floors:2};
+  };
+  const applyRoofShape=()=>roofForms.setShape(roofShapeSelect?.value||'gable');
+  const applyWholeStyle=()=>{applyHouseStyle();applyHouseSize();applyRoofShape();};
+  houseStyleSelect?.addEventListener('change',applyWholeStyle);
+  houseSizeSelect?.addEventListener('change',applyHouseSize);
+  roofShapeSelect?.addEventListener('change',applyRoofShape);
+  applyWholeStyle();
   // Stairs and paved path.
   for(let i=0;i<3;i++)box(3.5+i*.55,.17,.86,quartz,0,.26-i*.07,7.08+i*.83);
   box(3.8,.075,15,gravel,0,.05,13.6,false);
   for(let i=0;i<12;i++)box(3.65,.016,.09,limestone,0,.094,7.9+i*.95,false);
   // Pool and borders on the lawn; do not use video or external heavy textures.
-  box(6.4,.21,10.3,quartz,10.45,.15,2.4,false);
-  box(5.85,.015,9.82,water,10.45,.269,2.4,false);
-  for(const x of [7.28,13.62])box(.2,.24,10.4,limestone,x,.20,2.4,false);
-  for(const z of [-2.7,7.5])box(6.5,.24,.2,limestone,10.45,.20,z,false);
+  box(6.4,.21,10.3,quartz,14.35,.15,2.4,false);
+  box(5.85,.015,9.82,water,14.35,.269,2.4,false);
+  for(const x of [11.18,17.52])box(.2,.24,10.4,limestone,x,.20,2.4,false);
+  for(const z of [-2.7,7.5])box(6.5,.24,.2,limestone,14.35,.20,z,false);
   const trunkMat=M('#6b5847',.96);
   addNaturalFoliage(THREE,scene,{trunkMat});
 
@@ -429,6 +494,7 @@ try {
     const roofStyle=roofSelect?.value||'slate';
     const roofColor=palette[roofColorSelect?.value]||palette.graphite;
     roofSystem.setType(roofStyle);roofSystem.setColor(roofColor);
+    roofForms.setMaterial();
     roofMat.color.set(roofColor);
   };
   const applyFence=()=>{
@@ -472,6 +538,37 @@ try {
       if(criticalFacadeFiles.has(file))applyFacade(true);
       finishCritical(file);
     },undefined,()=>{finishCritical(file);});
+  };
+  // 2K CC0 texture upgrade only when the visitor explicitly selects HD/Ultra.
+  // Normal mobile traffic keeps the small 1K local copies and quick load time.
+  let hiResStarted=false;
+  const upgradeTextures=()=>{
+    if(hiResStarted)return;
+    hiResStarted=true;
+    const refresh=(key,texture)=>{
+      facadeTextures[key]=texture;
+      if(activeFacade===key)applyFacade(true);
+    };
+    loadPhotoTexture('red_brick_hd',3.25,2.15,tex=>{
+      refresh('brick',tex);
+      postBrick.map=tex;postBrick.needsUpdate=true;
+    });
+    loadPhotoTexture('stone_tile_wall_hd',2,1.75,tex=>{refresh('stone',tex);gardenStone.map=tex;gardenStone.needsUpdate=true;});
+    loadPhotoTexture('rustic_brick_diff_hd',3.2,2.2,tex=>{
+      refresh('tuscan',tex);
+      tuscanBrick.map=tex.clone();
+      tuscanBrick.map.wrapS=tuscanBrick.map.wrapT=THREE.RepeatWrapping;
+      tuscanBrick.map.repeat.set(1.9,2.4);
+      tuscanBrick.map.needsUpdate=true;tuscanBrick.needsUpdate=true;
+      tuscanFenceWall.map=tex.clone();
+      tuscanFenceWall.map.wrapS=tuscanFenceWall.map.wrapT=THREE.RepeatWrapping;
+      tuscanFenceWall.map.repeat.set(12,2.9);
+      tuscanFenceWall.map.needsUpdate=true;tuscanFenceWall.needsUpdate=true;
+    });
+    loadPhotoTexture('italian_brick_diff_hd',3.1,2.2,tex=>{refresh('gray',tex);});
+    loadPhotoTexture('roof_tile_neutral_hd',3,3,tex=>roofSystem.setTileMap(tex));
+    loadPhotoTexture('wood_planks_hd',1,1,tex=>{timber.map=tex;timber.needsUpdate=true;});
+    loadPhotoTexture('metal_roof_base_hd',2,2,tex=>roofSystem.setPhotoMap(tex));
   };
   renderer.domElement.style.visibility='hidden';
   window.setTimeout(revealFacade,4500);
@@ -591,13 +688,23 @@ try {
   // Higher detail is opt-in, avoiding permanent heavy GPU use on mobile.
   qualitySelect?.addEventListener('change',()=>{
     const quality=qualitySelect.value;
-    const maxDpr=quality==='high'?2.4:quality==='economy'?1:1.7;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,maxDpr));
-    sun.shadow.mapSize.set(quality==='high'?2048:quality==='economy'?512:1024,
-      quality==='high'?2048:quality==='economy'?512:1024);
+    const maxDpr=quality==='ultra'?3:quality==='high'?2.4:quality==='economy'?1:1.95;
+    const dpr=window.devicePixelRatio||1;
+    // In opt-in modes supersample above the physical DPR when performance permits.
+    const budget=quality==='ultra'?dpr*1.5:quality==='high'?dpr*1.25:dpr;
+    renderer.setPixelRatio(Math.min(maxDpr,budget));
+    if(quality==='high'||quality==='ultra')upgradeTextures();
+    const shadowSize=quality==='ultra'?2048:quality==='high'?1536:quality==='economy'?512:1024;
+    sun.shadow.mapSize.set(shadowSize,shadowSize);
     if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}
     resize();
     renderer.render(scene,camera);
+  });
+  highDetailButton?.addEventListener('click',()=>{
+    qualitySelect.value=qualitySelect.value==='high'?'balanced':'high';
+    qualitySelect.dispatchEvent(new Event('change',{bubbles:true}));
+    highDetailButton.setAttribute('aria-pressed',String(qualitySelect.value==='high'));
+    highDetailButton.textContent=qualitySelect.value==='high'?'HD ✓':'HD';
   });
   // Start with the same time of day as the UI. Model loaded only on this separate page.
   updateLighting();
@@ -643,6 +750,6 @@ try {
   loading.textContent='3D недоступен на этом устройстве. Показываем фотографию дома.';
   loading.style.whiteSpace='normal';
   status.textContent='Фото вместо 3D';
-  for(const el of [hourInput,windowsToggle,facadeSelect,roofSelect,fenceSelect,roofColorSelect,fenceColorSelect,houseStyleSelect,qualitySelect,autoButton])if(el)el.disabled=true;
+  for(const el of [hourInput,windowsToggle,facadeSelect,roofSelect,fenceSelect,roofColorSelect,fenceColorSelect,houseStyleSelect,houseSizeSelect,roofShapeSelect,qualitySelect,autoButton,highDetailButton])if(el)el.disabled=true;
   // The static page, project photo and navigation remain available.
 }

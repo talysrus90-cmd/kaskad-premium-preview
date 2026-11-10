@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="icons/kaskad-apple-180.png">
   <link rel="stylesheet" href="fonts.css?v=pwa1">
   <link rel="stylesheet" href="3d-house.css?v=4">
-<link rel="stylesheet" href="builder-gallery.css?v=2">
+<link rel="stylesheet" href="builder-gallery.css?v=3">
 </head>
 <body>
 <header class="header">
@@ -56,7 +56,8 @@
           <label class="switch" aria-label="Свет в окнах"><input type="checkbox" id="windowsToggle" checked><span class="track"></span></label>
         </div>
         <div class="rule"></div>
-        <div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
+        <div class="builder-geometry-strip" aria-label="Размеры и форма дома"><label for="roofShapeSelect">Форма крыши<select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip">Четырёхскатная</option><option value="flat">Плоская</option><option value="shed">Односкатная</option><option value="mansard">Мансардная</option></select></label><label for="houseSizeSelect">Площадь дома<select id="houseSizeSelect"><option value="150">≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220" selected>≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select></label></div>
+<div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
   <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
 </div>
 <details class="builder-select-fallback">
@@ -68,10 +69,12 @@
     <label for="roofColorSelect">Цвет кровли<select id="roofColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="houseStyleSelect">Архитектурный стиль<select id="houseStyleSelect"><option value="classic">Загородная классика</option><option value="italian">Итальянский двор</option><option value="modern">Современный дом</option><option value="estate">Парадная усадьба</option><option value="kavkaz">Кавказский стиль</option><option value="coastal">Светлый минимализм</option><option value="practical">Практичный дом</option><option value="craft">Садовый дом</option></select></label>
+
+
   </div>
 </details>
 
-        <label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">Высокая чёткость</option><option value="economy">Экономный режим</option></select></label>
+        <label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">HD · высокая</option><option value="ultra">Ультра · 3D (мощные телефоны)</option><option value="economy">Экономный режим</option></select></label>
 <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Быстрое вращение</button>
         <div class="note">Демонстрационная архитектурная модель. Не является проектной документацией или визуализацией построенного объекта.</div>
       </aside>
@@ -80,7 +83,7 @@
 </main>
 <footer>© 2026 КАСКАД · Архитектура и строительство · <a href="./#home">Главная</a></footer>
 <script src="pwa.js?v=1" defer></script>
-<script src="builder-gallery.js?v=4" defer></script>
-<script type="module" src="house-3d.bundle.js?v=8"></script>
+<script src="builder-gallery.js?v=5" defer></script>
+<script type="module" src="house-3d.bundle.js?v=9"></script>
 </body>
 </html>
