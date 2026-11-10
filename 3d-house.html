@@ -9,8 +9,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/kaskad-apple-180.png">
   <link rel="stylesheet" href="fonts.css?v=pwa1">
-  <link rel="stylesheet" href="3d-house.css?v=3">
-<link rel="stylesheet" href="builder-gallery.css?v=1">
+  <link rel="stylesheet" href="3d-house.css?v=4">
+<link rel="stylesheet" href="builder-gallery.css?v=2">
 </head>
 <body>
 <header class="header">
@@ -61,31 +61,17 @@
 </div>
 <details class="builder-select-fallback">
   <summary>Все материалы списком</summary>
-  <div class="builder-options" aria-label="Дополнительный выбор материалов">
-    <label for="facadeSelect">Фасад<select id="facadeSelect">
-      <option value="brick">Красный кирпич</option>
-      <option value="tuscan">Тосканский кирпич</option>
-      <option value="stone">Светлый камень</option>
-      <option value="plaster">Тёплая штукатурка</option>
-      <option value="gray">Серо-бежевый кирпич</option>
-    </select></label>
-    <label for="roofSelect">Кровля<select id="roofSelect">
-      <option value="slate">Тёмная черепица</option>
-      <option value="terracotta">Терракотовая черепица</option>
-      <option value="graphite">Графитовая черепица</option>
-      <option value="metalGraphite">Металлочерепица — графит</option>
-      <option value="metalBurgundy">Металлочерепица — бордо</option>
-    </select></label>
-    <label for="fenceSelect">Ограждение<select id="fenceSelect">
-      <option value="iron">Кованый металл</option>
-      <option value="wood">Деревянные ламели</option>
-      <option value="stone">Каменные секции</option>
-      <option value="tuscan">Итальянская кладка, кирпичный забор</option>
-    </select></label>
+<div class="builder-options" aria-label="Дополнительный выбор материалов">
+    <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный кирпич</option><option value="tuscan">Тосканская кладка</option><option value="stone">Светлый камень</option><option value="plaster">Светлая штукатурка</option><option value="gray">Серо-бежевый кирпич</option></select></label>
+    <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая черепица</option><option value="graphite">Графитовая черепица</option><option value="ceramic">Керамическая</option><option value="metalGraphite">Металлочерепица — классика, графит</option><option value="metalBurgundy">Металлочерепица — классика, бордо</option><option value="metal3d">Металлочерепица 3D</option><option value="metalModular">Металлочерепица модульная</option><option value="standingSeam">Фальцевая кровля</option><option value="flexible">Гибкая черепица</option><option value="composite">Композитная черепица</option><option value="profiled">Кровельный профлист</option></select></label>
+    <label for="fenceSelect">Забор<select id="fenceSelect"><option value="iron">Кованый металл</option><option value="tuscan">Кирпичная ограда</option><option value="wood">Деревянные ламели</option><option value="stone">Каменные секции</option><option value="brickIron">Кирпичные столбы + ковка</option><option value="louvers">Забор-жалюзи</option><option value="picket">Евроштакетник</option><option value="chess">Штакетник шахматка</option><option value="ranch">Ранчо</option><option value="profiled">Сплошной профлист</option><option value="panel3d">Сварные 3D-панели</option></select></label>
+    <label for="roofColorSelect">Цвет кровли<select id="roofColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
+    <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
   </div>
 </details>
 
-        <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Быстрое вращение</button>
+        <label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">Высокая чёткость</option><option value="economy">Экономный режим</option></select></label>
+<button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Быстрое вращение</button>
 <button class="builder-discuss" id="builderDiscuss" type="button">Обсудить этот вариант ↗</button>
         <div class="note">Демонстрационная архитектурная модель. Не является проектной документацией или визуализацией построенного объекта.</div>
       </aside>
@@ -94,7 +80,7 @@
 </main>
 <footer>© 2026 КАСКАД · Архитектура и строительство · <a href="./#home">Главная</a></footer>
 <script src="pwa.js?v=1" defer></script>
-<script src="builder-gallery.js?v=1" defer></script>
-<script type="module" src="house-3d.bundle.js?v=4"></script>
+<script src="builder-gallery.js?v=2" defer></script>
+<script type="module" src="house-3d.bundle.js?v=5"></script>
 </body>
 </html>

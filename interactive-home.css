@@ -11,7 +11,7 @@
  .kaskad-3d-feature{padding-top:48px;padding-bottom:50px;scroll-margin-top:78px}
  .kaskad-3d-feature .k3d-header{display:block}
  .kaskad-3d-feature .k3d-header p{font-size:12px;max-width:none}
- .kaskad-3d-feature iframe{height:780px}
+ .kaskad-3d-feature iframe{height:1040px}
 }
-@media(max-width:400px){.kaskad-3d-feature iframe{height:775px}}
+@media(max-width:400px){.kaskad-3d-feature iframe{height:1040px}}
 

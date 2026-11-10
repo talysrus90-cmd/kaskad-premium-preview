@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-world-gallery-v15';
+const VERSION='kaskad-pwa-20261110-russian-market-v16';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -14,15 +14,37 @@ const core=[
  './gallery-fullscreen-20261109.css?v=1',
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
- './interactive-home.css?v=5',
- './3d-house-embed.html?v=4',
- './house-3d.bundle.js?v=4',
- './3d-house.css?v=3',
+ './interactive-home.css?v=6',
+ './3d-house-embed.html?v=5',
+ './house-3d.bundle.js?v=5',
+ './3d-house.css?v=4',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=1',
- './builder-gallery.css?v=1',
- './builder-lead-bridge.js?v=1',
+ './builder-gallery.js?v=2',
+ './builder-gallery.css?v=2',
+ './builder-lead-bridge.js?v=2',
+ './assets/3d/roof_tile_neutral.webp',
+ './roof-market-v16.js',
+ './fence-market-v16.js',
+ './foliage-v16.js',
+ './assets/3d/cards/fence_brickIron.webp',
+ './assets/3d/cards/fence_chess.webp',
+ './assets/3d/cards/fence_louvers.webp',
+ './assets/3d/cards/fence_panel3d.webp',
+ './assets/3d/cards/fence_picket.webp',
+ './assets/3d/cards/fence_profiled.webp',
+ './assets/3d/cards/fence_ranch.webp',
+ './assets/3d/cards/preset_coastal.webp',
+ './assets/3d/cards/preset_craft.webp',
+ './assets/3d/cards/preset_kavkaz.webp',
+ './assets/3d/cards/preset_practical.webp',
+ './assets/3d/cards/roof_ceramic.webp',
+ './assets/3d/cards/roof_composite.webp',
+ './assets/3d/cards/roof_flexible.webp',
+ './assets/3d/cards/roof_metal3d.webp',
+ './assets/3d/cards/roof_metalModular.webp',
+ './assets/3d/cards/roof_profiled.webp',
+ './assets/3d/cards/roof_standingSeam.webp',
  './assets/3d/italian_brick_diff.webp',
  './assets/3d/italian_brick_nor_gl.webp',
  './assets/3d/rustic_brick_diff.webp',

@@ -1,143 +1,189 @@
-/* КАСКАД · мини-галерея материалов и готовых сочетаний для 3D.
-   Никаких сторонних запросов, пользовательских трекеров или отправки ПДн.
-   Материалы меняют существующие нативные select через change. */
+/* КАСКАД · каталог российских типов ограждений/кровли. Все карточки — выбор 3D-геометрии.
+   Названия — обобщённые категории, не фирменные изделия и не реальные цены. */
 (function(){
-  'use strict';
-  const root=document.getElementById('builderGallery');
-  const facade=document.getElementById('facadeSelect');
-  const roof=document.getElementById('roofSelect');
-  const fence=document.getElementById('fenceSelect');
-  if(!root||!facade||!roof||!fence)return;
-  const matRoot='assets/3d/cards/';
-  const categories=[
-    {key:'presets',label:'Готовые образы'},
-    {key:'facade',label:'Фасад'},
-    {key:'roof',label:'Кровля'},
-    {key:'fence',label:'Забор'}
-  ];
-  const data={
-    presets:[
-      {value:'classic',title:'Загородная классика',sub:'Красный кирпич · тёмная кровля',image:'preset_classic',set:['brick','slate','iron']},
-      {value:'italian',title:'Итальянский двор',sub:'Терракота · кирпичная ограда',image:'preset_italian',set:['tuscan','terracotta','tuscan']},
-      {value:'modern',title:'Современный дом',sub:'Светлый камень · металлочерепица',image:'preset_modern',set:['stone','metalGraphite','stone']},
-      {value:'estate',title:'Усадьба',sub:'Бордовая кровля · тёплый кирпич',image:'preset_estate',set:['gray','metalBurgundy','tuscan']}
-    ],
-    facade:[
-      {value:'brick',title:'Красный кирпич',sub:'Тёплая классика',image:'facade_brick'},
-      {value:'tuscan',title:'Тосканский кирпич',sub:'Красно-песочная фактура',image:'facade_tuscan'},
-      {value:'stone',title:'Светлый камень',sub:'Натуральный мотив',image:'facade_stone'},
-      {value:'plaster',title:'Штукатурка',sub:'Светлый фасад',image:'facade_plaster'},
-      {value:'gray',title:'Серо-бежевый кирпич',sub:'Современная кладка',image:'facade_gray'}
-    ],
-    roof:[
-      {value:'slate',title:'Тёмная черепица',sub:'Классическая',image:'roof_slate'},
-      {value:'terracotta',title:'Терракота',sub:'Керамический стиль',image:'roof_terracotta'},
-      {value:'graphite',title:'Графитовая',sub:'Тёмная фактура',image:'roof_graphite'},
-      {value:'metalGraphite',title:'Металлочерепица',sub:'Графит · профиль',image:'roof_metalGraphite'},
-      {value:'metalBurgundy',title:'Металлочерепица',sub:'Бордо · профиль',image:'roof_metalBurgundy'}
-    ],
-    fence:[
-      {value:'iron',title:'Кованый металл',sub:'Светопрозрачная ограда',image:'fence_iron'},
-      {value:'wood',title:'Деревянные ламели',sub:'Тёплый современный стиль',image:'fence_wood'},
-      {value:'stone',title:'Каменные секции',sub:'Низкая ограда',image:'fence_stone'},
-      {value:'tuscan',title:'Итальянская кладка',sub:'Высокий кирпичный забор с воротами',image:'fence_tuscan'}
-    ]
-  };
-  const selects={facade,roof,fence};
-  let category='presets';
-  root.replaceChildren();
-  const tabs=document.createElement('div');
-  tabs.className='builder-gallery-tabs';
-  tabs.setAttribute('role','tablist');
-  tabs.setAttribute('aria-label','Разделы конструктора');
-  for(const option of categories){
-    const b=document.createElement('button');
-    b.type='button';b.textContent=option.label;b.dataset.builderTab=option.key;
-    b.setAttribute('role','tab');b.setAttribute('aria-selected',String(option.key===category));
-    b.addEventListener('click',()=>{category=option.key;render()});
-    tabs.appendChild(b);
-  }
-  root.appendChild(tabs);
-  const list=document.createElement('div');
-  list.id='builderMaterialList';
-  list.className='builder-material-list';
-  list.setAttribute('role','group');
-  list.setAttribute('aria-label','Варианты для выбора');
-  root.appendChild(list);
-  const summary=document.createElement('p');
-  summary.className='builder-choice-summary';
-  summary.id='builderChoiceSummary';
-  summary.setAttribute('aria-live','polite');
-  root.appendChild(summary);
-  const label=(key,value)=>data[key].find(item=>item.value===value)?.title||value;
-  function state(){return [facade.value,roof.value,fence.value]}
-  function selectedOption(item){
-    if(category==='presets')return state().every((v,i)=>item.set[i]===v);
-    return selects[category].value===item.value;
-  }
-  function choose(item){
-    if(category==='presets'){
-      for(const [i,key] of ['facade','roof','fence'].entries()){
-        const el=selects[key];
-        if(el.value!==item.set[i]){el.value=item.set[i];el.dispatchEvent(new Event('change',{bubbles:true}))}
-      }
-    }else{
-      const el=selects[category];
-      if(el.value!==item.value){el.value=item.value;el.dispatchEvent(new Event('change',{bubbles:true}))}
-    }
-    render(true);
-  }
-  function render(keepScroll=false){
-    const scroll=keepScroll?list.scrollLeft:0;
-    for(const tab of tabs.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===category));
-    list.replaceChildren();
-    for(const item of data[category]){
-      const card=document.createElement('button');
-      card.type='button';card.className='builder-material-card';
-      card.dataset.option=item.value;
-      card.setAttribute('aria-pressed',String(selectedOption(item)));
-      card.setAttribute('aria-label',item.title+'. '+item.sub+'. Выбрать');
-      const img=document.createElement('img');
-      img.src=matRoot+item.image+'.webp';img.alt='';
-      img.loading='lazy';img.decoding='async';
-      const strong=document.createElement('strong');strong.textContent=item.title;
-      const small=document.createElement('span');small.textContent=item.sub;
-      card.append(img,strong,small);
-      card.addEventListener('click',()=>choose(item));
-      list.appendChild(card);
-    }
-    if(keepScroll)list.scrollLeft=scroll;
-    else list.scrollLeft=0;
-    summary.textContent='Выбрано: '+label('facade',facade.value)+' · '+label('roof',roof.value)+
-      (roof.value==='metalGraphite'?' (графит)':roof.value==='metalBurgundy'?' (бордо)':'')+
-      ' · '+label('fence',fence.value);
-  }
-  for(const select of [facade,roof,fence])select.addEventListener('change',()=>render(true));
-  render();
-  // The embedded scene must expose the whole gallery on small Redmi screens.
-  // Send only its measured pixel height, never personal data.
-  if(window.parent!==window&&'ResizeObserver' in window){
-    let lastHeight=0;
-    const reportHeight=()=>{
-      const height=Math.ceil(Math.max(document.documentElement.scrollHeight,document.body.scrollHeight));
-      if(Math.abs(height-lastHeight)>2){
-        lastHeight=height;
-        window.parent.postMessage({type:'kaskad-3d-frame-height',height},location.origin);
-      }
-    };
-    new ResizeObserver(reportHeight).observe(document.body);
-    window.addEventListener('load',reportHeight);
-    document.fonts?.ready?.then(reportHeight).catch(()=>{});
-    requestAnimationFrame(reportHeight);
-  }
-  const discuss=document.getElementById('builderDiscuss');
-  discuss?.addEventListener('click',()=>{
-    const config={facade:facade.value,roof:roof.value,fence:fence.value};
-    if(window.parent!==window){
-      window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);
-    }else{
-      const params=new URLSearchParams(config);
-      location.href='./?'+params.toString()+'#interactive-home';
-    }
-  });
+ 'use strict';
+ const root=document.getElementById('builderGallery');
+ const fields={
+   facade:document.getElementById('facadeSelect'),
+   roof:document.getElementById('roofSelect'),
+   fence:document.getElementById('fenceSelect'),
+   roofColor:document.getElementById('roofColorSelect'),
+   fenceColor:document.getElementById('fenceColorSelect')
+ };
+ if(!root||Object.values(fields).some(x=>!x))return;
+ const src='assets/3d/cards/';
+ const colors=[
+   {value:'graphite',title:'Графит',color:'#52595e'},
+   {value:'chocolate',title:'Шоколад',color:'#594438'},
+   {value:'burgundy',title:'Бордо',color:'#873c48'},
+   {value:'green',title:'Тёмно-зелёный',color:'#426047'},
+   {value:'black',title:'Чёрный',color:'#252b30'},
+   {value:'gray',title:'Серый',color:'#898f93'},
+   {value:'terracotta',title:'Терракота',color:'#bd7254'},
+   {value:'sand',title:'Песочный',color:'#beb3a0'}
+ ];
+ const tabs=[
+   {key:'presets',label:'Готовые образы'},
+   {key:'facade',label:'Фасад'},
+   {key:'roof',label:'Кровля'},
+   {key:'fence',label:'Забор'}
+ ];
+ const data={
+  presets:[
+    {value:'classic',title:'Загородная классика',sub:'Кирпич · черепица · ковка',image:'preset_classic',set:['brick','slate','iron','graphite','black']},
+    {value:'italian',title:'Итальянский двор',sub:'Кирпич · терракота · ограда',image:'preset_italian',set:['tuscan','terracotta','tuscan','terracotta','chocolate']},
+    {value:'modern',title:'Современный дом',sub:'Камень · фальц · жалюзи',image:'preset_modern',set:['stone','standingSeam','louvers','graphite','graphite']},
+    {value:'estate',title:'Усадьба',sub:'Металлочерепица · кирпич с ковкой',image:'preset_estate',set:['gray','metalBurgundy','brickIron','burgundy','black']},
+    {value:'kavkaz',title:'Кавказский стиль',sub:'Камень · объёмная кровля · ограда',image:'preset_kavkaz',set:['stone','metal3d','tuscan','chocolate','chocolate']},
+    {value:'coastal',title:'Светлый минимализм',sub:'Штукатурка · модульная · ранчо',image:'preset_coastal',set:['plaster','metalModular','ranch','gray','chocolate']},
+    {value:'practical',title:'Практичный дом',sub:'Кирпич · профлист · забор сплошной',image:'preset_practical',set:['brick','profiled','profiled','green','graphite']},
+    {value:'craft',title:'Садовый особняк',sub:'Штукатурка · гибкая · штакетник',image:'preset_craft',set:['plaster','flexible','picket','black','black']}
+  ],
+  facade:[
+    {value:'brick',title:'Красный кирпич',sub:'Классическая кладка',image:'facade_brick'},
+    {value:'tuscan',title:'Тосканская кладка',sub:'Тёплая красно-песочная',image:'facade_tuscan'},
+    {value:'stone',title:'Светлый камень',sub:'Светлая фактура',image:'facade_stone'},
+    {value:'plaster',title:'Штукатурка',sub:'Тёплая светлая',image:'facade_plaster'},
+    {value:'gray',title:'Серо-бежевый кирпич',sub:'Современная кладка',image:'facade_gray'}
+  ],
+  roof:[
+    {value:'slate',title:'Тёмная черепица',sub:'Классическая',image:'roof_slate',defaultColor:'graphite'},
+    {value:'terracotta',title:'Терракотовая',sub:'Черепица под керамику',image:'roof_terracotta',defaultColor:'terracotta'},
+    {value:'graphite',title:'Графитовая черепица',sub:'Классическая',image:'roof_graphite',defaultColor:'graphite'},
+    {value:'ceramic',title:'Керамическая',sub:'Объёмная поверхность',image:'roof_ceramic',defaultColor:'terracotta'},
+    {value:'metalGraphite',title:'Металлочерепица',sub:'Классика · графит',image:'roof_metalGraphite',defaultColor:'graphite'},
+    {value:'metalBurgundy',title:'Металлочерепица',sub:'Классика · бордо',image:'roof_metalBurgundy',defaultColor:'burgundy'},
+    {value:'metal3d',title:'Металлочерепица 3D',sub:'Выраженная ступень',image:'roof_metal3d',defaultColor:'graphite'},
+    {value:'metalModular',title:'Модульная',sub:'Крупные модули',image:'roof_metalModular',defaultColor:'chocolate'},
+    {value:'standingSeam',title:'Фальцевая',sub:'Продольные фальцы',image:'roof_standingSeam',defaultColor:'graphite'},
+    {value:'flexible',title:'Гибкая черепица',sub:'Мягкая кровля',image:'roof_flexible',defaultColor:'black'},
+    {value:'composite',title:'Композитная',sub:'Рельефная',image:'roof_composite',defaultColor:'chocolate'},
+    {value:'profiled',title:'Кровельный профлист',sub:'Частые волны',image:'roof_profiled',defaultColor:'gray'}
+  ],
+  fence:[
+    {value:'iron',title:'Кованый металл',sub:'Светопрозрачный',image:'fence_iron'},
+    {value:'tuscan',title:'Высокий кирпичный',sub:'Итальянский стиль · ворота',image:'fence_tuscan'},
+    {value:'brickIron',title:'Кирпич + ковка',sub:'Столбы и металл',image:'fence_brickIron'},
+    {value:'louvers',title:'Забор-жалюзи',sub:'Наклонные ламели',image:'fence_louvers'},
+    {value:'picket',title:'Евроштакетник',sub:'Вертикальные планки',image:'fence_picket'},
+    {value:'chess',title:'Шахматка',sub:'Двусторонние планки',image:'fence_chess'},
+    {value:'ranch',title:'Ранчо',sub:'Широкие горизонтальные',image:'fence_ranch'},
+    {value:'profiled',title:'Профнастил',sub:'Сплошная ограда',image:'fence_profiled'},
+    {value:'panel3d',title:'Панельный 3D',sub:'Сварная сетка',image:'fence_panel3d'},
+    {value:'stone',title:'Каменные секции',sub:'Массивные',image:'fence_stone'},
+    {value:'wood',title:'Деревянные ламели',sub:'Горизонтальная обшивка',image:'fence_wood'}
+  ]
+ };
+ let activeTab='presets';
+ root.replaceChildren();
+ const nav=document.createElement('div');nav.className='builder-gallery-tabs';
+ nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Галерея конструктора');
+ root.append(nav);
+ const cardList=document.createElement('div');cardList.className='builder-material-list';
+ cardList.id='builderMaterialList';cardList.setAttribute('aria-label','Варианты материалов');
+ root.append(cardList);
+ const colorArea=document.createElement('div');colorArea.className='builder-colors';root.append(colorArea);
+ const summary=document.createElement('p');summary.className='builder-choice-summary';summary.id='builderChoiceSummary';
+ summary.setAttribute('aria-live','polite');root.append(summary);
+ for(const t of tabs){
+   const button=document.createElement('button');
+   button.type='button';button.textContent=t.label;button.dataset.builderTab=t.key;
+   button.setAttribute('role','tab');button.addEventListener('click',()=>{activeTab=t.key;render()});
+   nav.appendChild(button);
+ }
+ const findName=(key,val)=>data[key].find(x=>x.value===val)?.title||val;
+ const colorName=(val)=>colors.find(x=>x.value===val)?.title||val;
+ const choices=()=>Object.values(fields).map(el=>el.value);
+ const selected=(item)=>activeTab==='presets'?choices().every((v,i)=>item.set[i]===v):fields[activeTab].value===item.value;
+ function choose(item){
+   if(activeTab==='presets'){
+     for(const [index,key] of Object.keys(fields).entries()){
+       const input=fields[key];
+       if(input.value!==item.set[index]){input.value=item.set[index];input.dispatchEvent(new Event('change',{bubbles:true}))}
+     }
+   }else{
+     const input=fields[activeTab];
+     if(input.value!==item.value){input.value=item.value;input.dispatchEvent(new Event('change',{bubbles:true}))}
+     if(activeTab==='roof'&&item.defaultColor&&fields.roofColor.value!==item.defaultColor){
+       fields.roofColor.value=item.defaultColor;fields.roofColor.dispatchEvent(new Event('change',{bubbles:true}));
+     }
+   }
+   render(true);
+ }
+ function palette(){
+   colorArea.replaceChildren();
+   if(!['roof','fence'].includes(activeTab)){colorArea.hidden=true;return}
+   colorArea.hidden=false;
+   const key=activeTab==='roof'?'roofColor':'fenceColor';
+   const caption=document.createElement('strong');caption.textContent=activeTab==='roof'?'Цвет кровли':'Цвет металлических элементов';
+   colorArea.append(caption);
+   const row=document.createElement('div');row.className='builder-swatch-row';
+   row.setAttribute('role','group');row.setAttribute('aria-label',caption.textContent);
+   colorArea.append(row);
+   for(const opt of colors){
+     const b=document.createElement('button');b.type='button';b.className='builder-swatch';
+     b.title=opt.title;b.style.setProperty('--swatch',opt.color);
+     b.setAttribute('aria-label',opt.title);b.setAttribute('aria-pressed',String(fields[key].value===opt.value));
+     const dot=document.createElement('span');dot.className='builder-swatch-dot';
+     const title=document.createElement('span');title.className='builder-swatch-name';title.textContent=opt.title;
+     b.append(dot,title);
+     b.addEventListener('click',()=>{
+       if(fields[key].value!==opt.value){
+         fields[key].value=opt.value;fields[key].dispatchEvent(new Event('change',{bubbles:true}));
+       }
+       render(true);
+     });
+     row.append(b);
+   }
+ }
+ function render(keepScroll=false){
+   const scroll=keepScroll?cardList.scrollLeft:0;
+   for(const tab of nav.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===activeTab));
+   cardList.replaceChildren();
+   for(const item of data[activeTab]){
+     const button=document.createElement('button');button.type='button';button.className='builder-material-card';
+     button.dataset.option=item.value;
+     button.setAttribute('aria-pressed',String(selected(item)));
+     button.setAttribute('aria-label',item.title+'. '+item.sub+'. Выбрать');
+     const img=document.createElement('img');img.src=src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
+     const title=document.createElement('strong');title.textContent=item.title;
+     const caption=document.createElement('span');caption.textContent=item.sub;
+     button.append(img,title,caption);
+     button.addEventListener('click',()=>choose(item));
+     cardList.append(button);
+   }
+   if(keepScroll)cardList.scrollLeft=scroll;
+   palette();
+   summary.textContent='Ваш вариант: '+findName('facade',fields.facade.value)+' · '+
+     findName('roof',fields.roof.value)+' ('+colorName(fields.roofColor.value)+') · '+
+     findName('fence',fields.fence.value)+' ('+colorName(fields.fenceColor.value)+')';
+ }
+ for(const input of Object.values(fields))input.addEventListener('change',()=>render(true));
+ render();
+ // Embedded mobile: keep every row reachable rather than clipping within iframe.
+ if(window.parent!==window&&'ResizeObserver' in window){
+   let lastHeight=0;
+   const fit=()=>{
+     // Use actual content rather than document.scrollHeight (which cannot shrink
+     // below a previously expanded iframe viewport).
+     const frameContent=document.querySelector('main.embed')||document.querySelector('main');
+     const height=Math.ceil(frameContent?.getBoundingClientRect().height||document.body.scrollHeight);
+     if(Math.abs(lastHeight-height)>2){
+       lastHeight=height;
+       window.parent.postMessage({type:'kaskad-3d-frame-height',height},location.origin);
+     }
+   };
+   new ResizeObserver(fit).observe(document.querySelector('main.embed')||document.body);
+   window.addEventListener('load',fit);
+   document.fonts?.ready?.then(fit).catch(()=>{});
+   requestAnimationFrame(fit);
+ }
+ document.getElementById('builderDiscuss')?.addEventListener('click',()=>{
+   const config=Object.fromEntries(Object.entries(fields).map(([key,input])=>[key,input.value]));
+   if(window.parent!==window){
+     window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);
+   }else{
+     const params=new URLSearchParams(config);location.href='./?'+params+'#interactive-home';
+   }
+ });
 })();

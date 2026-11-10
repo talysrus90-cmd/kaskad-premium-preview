@@ -22,3 +22,20 @@
 .builder-discuss:active{transform:scale(.99)}
 @media(max-width:730px){.builder-material-list{grid-auto-columns:39%}.builder-material-card img{height:62px}.builder-gallery-tabs button{font-size:11px}}
 @media(max-width:390px){.builder-material-list{grid-auto-columns:43%}.builder-material-card img{height:60px}.builder-material-card strong{font-size:10px}.builder-gallery-tabs button{font-size:10px;padding:6px 8px}}
+
+
+/* Small but accessible palette, independent from the chosen roof/fence geometry. */
+.builder-colors{margin:9px 0 2px;border-top:1px solid #e8e6db;padding:10px 1px 2px}
+.builder-colors[hidden]{display:none}
+.builder-colors>strong{font:800 11px/1.5 Manrope,system-ui,sans-serif;color:#3a503f}
+.builder-swatch-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.builder-swatch{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;min-height:62px;padding:5px 1px;border:1px solid #d8d9cd;background:#fffdf9;border-radius:6px;cursor:pointer}
+.builder-swatch[aria-pressed="true"]{border:2px solid #b57350;background:#f5eae1}
+.builder-swatch-dot{display:block;width:23px;height:23px;background:var(--swatch);border-radius:50%;border:1px solid #5554;box-shadow:0 1px 3px #3333}
+.builder-swatch[aria-pressed="true"] .builder-swatch-dot{outline:2px solid #fff;outline-offset:-4px}
+.builder-swatch-name{font:700 9px/1.25 Manrope,system-ui,sans-serif;color:#3d4d40;text-align:center}
+.builder-swatch:focus-visible{outline:3px solid #af694a;outline-offset:2px}
+.builder-quality{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 5px;color:#566657;font:800 11px/1.3 Manrope,system-ui,sans-serif}
+.builder-quality select{width:auto;max-width:64%;height:40px;padding:7px;border:1px solid #d9d9d0;background:#fffdf8;border-radius:5px;font:700 11px/1.3 Manrope,system-ui,sans-serif;color:#304638}
+@media(min-width:731px){.builder-swatch-row{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:390px){.builder-swatch-name{font-size:9px}.builder-swatch-row{gap:5px}}
