@@ -42,6 +42,57 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
  .scene-tip{font-size:9px}.secondary{font-size:10px}
 }
 </style>
+<style id="builder-v18-layout">
+/* Main site embeds this iframe at a deliberate height on mobile.
+   Scroll choices INSIDE it: sticky 3D stays visible above every choice. */
+.builder-advanced{border-top:1px solid #dedfd5;margin-top:5px;min-width:0}
+.builder-advanced summary{padding:10px 3px;min-height:40px;cursor:pointer;font:750 11px/1.4 Manrope,system-ui,sans-serif;color:#526658;list-style-position:inside}
+.builder-advanced .builder-advanced-content{display:flex;flex-direction:column;gap:8px;padding:4px 0 12px}
+.builder-advanced .builder-select-fallback{width:100%}
+.scene #autoRotate{position:absolute;right:10px;bottom:9px;z-index:6;margin:0;min-height:32px;padding:5px 9px;background:#e8f0eced;border:1px solid #c9d3cc;border-radius:6px;font-size:10px;color:#315342;box-shadow:0 2px 9px #1f3c3044}
+.scene .scene-tip{max-width:60%;text-align:left}
+.controls>.builder-gallery{margin-top:3px}
+.controls>.builder-discuss{min-height:38px;margin-top:2px}
+@media(max-width:730px){
+ html{height:100%;overflow-x:hidden;overflow-y:auto;scroll-behavior:auto}
+ body{height:auto;min-height:100%;overflow:visible!important}
+ .embed{min-height:100%}
+ .workspace{display:flex!important;flex-direction:column;min-height:100%;overflow:visible}
+ .viewer-col{position:sticky;top:0;z-index:10;background:#e3e8e7;flex:0 0 auto}
+ .scene{height:clamp(248px,43dvh,322px)!important;min-height:0;border-bottom:1px solid #ced8d3}
+ .scene .scene-caption{top:7px;left:8px;font-size:9px;padding:6px 7px}
+ .scene .scene-tip{bottom:8px;left:7px;transform:none;width:auto;font-size:8px;padding:6px 7px;max-width:54%;white-space:normal}
+ .scene #autoRotate{bottom:7px;right:7px;font-size:10px;min-height:32px;width:auto!important;white-space:nowrap;max-width:43%}
+ .controls{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:3px!important;min-height:0!important;padding:8px 10px 13px!important}
+ .builder-gallery{margin:0!important;width:100%!important;max-width:100%;min-width:0}
+ .builder-gallery-tabs{gap:4px;padding:1px 0 5px}
+ .builder-gallery-tabs button{font-size:11px;min-height:33px;padding:6px 12px}
+ .builder-material-list{grid-auto-columns:34%;gap:6px;padding:2px 1px 4px}
+ .builder-material-card{gap:3px;border-radius:7px}
+ .builder-material-card img{height:57px!important}
+ .builder-material-card strong{font-size:10px}
+ .builder-material-card span{font-size:9px;padding-bottom:3px}
+ .builder-colors{margin:3px 0 0;padding:5px 0 0}
+ .builder-colors>strong{font-size:10px}
+ .builder-swatch-row{grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;margin-top:4px}
+ .builder-swatch{min-height:54px;gap:3px;padding:3px 0;border-radius:6px}
+ .builder-swatch-dot{width:20px;height:20px}
+ .builder-swatch-name{font-size:8px;line-height:1.1;word-break:normal;hyphens:auto}
+ .builder-choice-summary{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin:3px 0 2px}
+ .builder-discuss{min-height:38px!important;padding:7px 10px;margin-top:3px!important}
+ .builder-advanced{width:100%}
+ .builder-advanced summary{min-height:34px;padding:7px 2px}
+ .builder-advanced .slider-row{margin-top:4px}
+ .builder-advanced .builder-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .builder-advanced .toggle-row{margin:4px 0 0}
+ .controls>.note{display:none}
+}
+@media(max-width:400px){
+ .scene{height:clamp(248px,42dvh,307px)!important}
+ .builder-material-list{grid-auto-columns:37%}
+ .builder-gallery-tabs button{padding:6px 10px}
+}
+</style>
 </head>
 <body>
 <main class="embed">
@@ -52,20 +103,27 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div id="loading3d" class="loading" role="status">Загружаем 3D-модель…</div>
 <div class="scene-caption"><span class="scene-dot"></span> 3D · АРХИТЕКТУРНЫЙ КОНСТРУКТОР</div>
 <div class="scene-tip">Поверните дом пальцем · двумя пальцами измените масштаб</div>
+<button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Автообзор</button>
 </div>
 <div class="footbar"><span>Дом и участок</span><span id="modelFPS">Загрузка</span></div>
 </div>
 <aside class="controls" aria-label="Управление трёхмерной моделью">
+<div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
+  <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
+</div>
+<button class="builder-discuss" id="builderDiscuss" type="button">Обсудить этот вариант ↗</button>
+<details class="builder-advanced" id="builderAdvanced"><summary>☀ Свет, качество и дополнительные настройки</summary>
+<div class="builder-advanced-content">
+
 <div class="control-head"><h2>Освещение</h2></div>
 <label class="slider-row" for="hourInput"><span>Время суток</span><output id="hourLabel" for="hourInput">16:00</output></label>
 <input id="hourInput" type="range" min="6" max="22" value="16" step=".5" aria-label="Изменить время суток">
 <div class="time-markers"><span>06:00</span><span>14:00</span><span>22:00</span></div>
-<div class="rule"></div>
+
 <div class="toggle-row"><div><strong>Свет в окнах</strong><span>Включить или выключить</span></div><label class="switch" aria-label="Свет в окнах"><input type="checkbox" id="windowsToggle" checked><span class="track"></span></label></div>
-<div class="rule"></div>
-<div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
-  <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
-</div>
+
+
+<label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">Высокая чёткость</option><option value="economy">Экономный режим</option></select></label>
 <details class="builder-select-fallback">
   <summary>Все материалы списком</summary>
 <div class="builder-options" aria-label="Дополнительный выбор материалов">
@@ -76,15 +134,12 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
     <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
   </div>
 </details>
-
-        <label class="builder-quality" for="qualitySelect">Качество 3D<select id="qualitySelect" aria-label="Качество визуализации 3D"><option value="balanced">Оптимальное</option><option value="high">Высокая чёткость</option><option value="economy">Экономный режим</option></select></label>
-<button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Вращать дом</button>
-<button class="builder-discuss" id="builderDiscuss" type="button">Обсудить этот вариант ↗</button>
+</div></details>
 <div class="note">Демонстрационная 3D-модель. Не фото построенного объекта и не проектная документация.</div>
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=2" defer></script>
-<script type="module" src="house-3d.bundle.js?v=6"></script>
+<script src="builder-gallery.js?v=3" defer></script>
+<script type="module" src="house-3d.bundle.js?v=7"></script>
 </body>
 </html>

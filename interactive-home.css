@@ -15,3 +15,13 @@
 }
 @media(max-width:400px){.kaskad-3d-feature iframe{height:1040px}}
 
+
+/* v18 mobile single-frame configurator: 3D viewer stays in place while choices scroll inside the iframe. */
+@media(max-width:730px){
+ .kaskad-3d-feature{padding-top:26px;padding-bottom:30px}
+ .kaskad-3d-feature .k3d-header{margin-bottom:12px}
+ .kaskad-3d-feature .k3d-header h2{font-size:clamp(30px,7vw,38px);line-height:1.12;margin:8px 0}
+ .kaskad-3d-feature .k3d-header p{line-height:1.45;font-size:11px}
+ .kaskad-3d-feature .k3d-eyebrow{font-size:10px;letter-spacing:.11em}
+ .kaskad-3d-feature iframe{height:clamp(510px,73dvh,690px)!important;overscroll-behavior:contain}
+}

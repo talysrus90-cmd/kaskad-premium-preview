@@ -373,27 +373,59 @@ try {
     graphite:'#52595e',chocolate:'#594438',burgundy:'#873c48',green:'#426047',
     black:'#252b30',gray:'#898f93',terracotta:'#bd7254',sand:'#beb3a0'
   };
-  // Building materials, roof profile, roof color, fence type and fence color
-  // stay independent; every choice changes actual WebGL meshes.
-  const updateDesign=()=>{
+  // Independent model branches. Selecting a fence must NOT reapply the facade.
+  // Presets deliberately update multiple branches and are labeled as such.
+  let activeFacade=null;
+  const applyFacade=(force=false)=>{
     const facade=facadeSelect?.value||'brick';
-    const roofStyle=roofSelect?.value||'slate';
-    const fenceStyle=fenceSelect?.value||'iron';
-    const roofColor=palette[roofColorSelect?.value]||palette.graphite;
-    const fenceColor=palette[fenceColorSelect?.value]||palette.graphite;
-    brick.map=facadeTextures[facade]||facadeTextures.brick;brick.needsUpdate=true;
-    roofSystem.setType(roofStyle);
-    roofSystem.setColor(roofColor);
-    roofMat.color.set(roofColor);
-    fenceSystem.setType(fenceStyle);
-    fenceSystem.setColor(fenceColor);
+    const tex=facadeTextures[facade]||facadeTextures.brick;
+    if(!force&&activeFacade===facade&&brick.map===tex)return;
+    activeFacade=facade;
+    brick.map=tex;
+    // A subtle texture-matched emissive fill keeps the physical BRICK COLOR
+    // stable on the sunny and shaded walls without removing 3D shadows.
+    brick.emissive.set('#ffffff');
+    brick.emissiveMap=tex;
+    brick.emissiveIntensity=.62;
+    brick.needsUpdate=true;
   };
-  [facadeSelect,roofSelect,fenceSelect,roofColorSelect,fenceColorSelect].forEach(el=>el?.addEventListener('change',updateDesign));
-  updateDesign();
+  const applyRoof=()=>{
+    const roofStyle=roofSelect?.value||'slate';
+    const roofColor=palette[roofColorSelect?.value]||palette.graphite;
+    roofSystem.setType(roofStyle);roofSystem.setColor(roofColor);
+    roofMat.color.set(roofColor);
+  };
+  const applyFence=()=>{
+    const fenceStyle=fenceSelect?.value||'iron';
+    const fenceColor=palette[fenceColorSelect?.value]||palette.graphite;
+    fenceSystem.setType(fenceStyle);fenceSystem.setColor(fenceColor);
+  };
+  facadeSelect?.addEventListener('change',()=>applyFacade());
+  [roofSelect,roofColorSelect].forEach(el=>el?.addEventListener('change',applyRoof));
+  [fenceSelect,fenceColorSelect].forEach(el=>el?.addEventListener('change',applyFence));
+  applyFacade();applyRoof();applyFence();
 
   // Licensed CC0 Poly Haven 1K photo textures; stored locally as small WebP files.
   // Real images improve masonry/tile details; procedural maps remain offline fallback.
   const photoLoader=new THREE.TextureLoader();
+  // Suppress the procedural-to-photo mid-interaction jump: reveal the 3D only
+  // after all facade photo maps have resolved (or use the procedural fallback).
+  const criticalFacadeFiles=new Set(['red_brick','stone_tile_wall','rustic_brick_diff','italian_brick_diff']);
+  let facadePending=criticalFacadeFiles.size,facadeReady=false;
+  const revealFacade=()=>{
+    if(facadeReady)return;
+    facadeReady=true;
+    applyFacade(true);
+    renderer.domElement.style.visibility='visible';
+    fallback.style.display='none';
+    loading.hidden=true;
+    status.textContent='3D готов · Вращение 360°';
+  };
+  const finishCritical=(file)=>{
+    if(!criticalFacadeFiles.has(file))return;
+    criticalFacadeFiles.delete(file);facadePending--;
+    if(facadePending<=0)revealFacade();
+  };
   const loadPhotoTexture=(file,repeatX,repeatY,accept)=>{
     photoLoader.load(new URL('assets/3d/'+file+'.webp',document.baseURI).href,tex=>{
       tex.colorSpace=THREE.SRGBColorSpace;
@@ -401,9 +433,12 @@ try {
       tex.repeat.set(repeatX,repeatY);
       tex.anisotropy=4;
       accept(tex);
-      updateDesign();
-    },undefined,()=>{ /* On network/cache failure keep generated texture. */ });
+      if(criticalFacadeFiles.has(file))applyFacade(true);
+      finishCritical(file);
+    },undefined,()=>{finishCritical(file);});
   };
+  renderer.domElement.style.visibility='hidden';
+  window.setTimeout(revealFacade,4500);
   loadPhotoTexture('red_brick',3.25,2.15,tex=>{
     facadeTextures.brick=tex;
     postBrick.map=tex;postBrick.color.set('#ffffff');postBrick.needsUpdate=true;
@@ -514,8 +549,8 @@ try {
   autoButton.addEventListener('click',()=>{
     controls.autoRotate=!controls.autoRotate;
     autoButton.setAttribute('aria-pressed',String(controls.autoRotate));
-    if(controls.autoRotate)autoButton.textContent='■ Остановить вращение';
-    else autoButton.textContent='↻ Автоматический обзор';
+    if(controls.autoRotate)autoButton.textContent='■ Стоп';
+    else autoButton.textContent='↻ Автообзор';
   });
   // Higher detail is opt-in, avoiding permanent heavy GPU use on mobile.
   qualitySelect?.addEventListener('change',()=>{
@@ -540,9 +575,7 @@ try {
   const observer=new ResizeObserver(resize);
   observer.observe(container);
   resize();
-  fallback.style.display='none';
-  loading.hidden=true;
-  status.textContent='3D готов · Вращение 360°';
+  // The renderer is shown by revealFacade() once the critical textures settle.
   let last=0;
   let viewerVisible=true;
   const visibilityObserver=new IntersectionObserver(entries=>{

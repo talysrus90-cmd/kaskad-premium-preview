@@ -23,10 +23,10 @@
    {value:'sand',title:'Песочный',color:'#beb3a0'}
  ];
  const tabs=[
-   {key:'presets',label:'Готовые образы'},
    {key:'facade',label:'Фасад'},
    {key:'roof',label:'Кровля'},
-   {key:'fence',label:'Забор'}
+   {key:'fence',label:'Забор'},
+   {key:'presets',label:'Стили (всё)'}
  ];
  const data={
   presets:[
@@ -74,7 +74,7 @@
     {value:'wood',title:'Деревянные ламели',sub:'Горизонтальная обшивка',image:'fence_wood'}
   ]
  };
- let activeTab='presets';
+ let activeTab='facade';
  root.replaceChildren();
  const nav=document.createElement('div');nav.className='builder-gallery-tabs';
  nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Галерея конструктора');

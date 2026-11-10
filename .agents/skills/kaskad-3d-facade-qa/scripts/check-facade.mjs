@@ -13,7 +13,10 @@ const checks=[
  ['shared front + rear gable material',/const gableFacades=new THREE\.Mesh\(gableG,brick\)/],
  ['physical-scale side UV mapping',/bodyUvs\.setX\(vertex,bodyUvs\.getX\(vertex\)\*\(9\/12\.8\)\)/],
  ['gable UV attribute',/gableG\.setAttribute\('uv',new THREE\.Float32BufferAttribute/],
- ['chosen facade mapped onto shared material',/brick\.map=facadeTextures\[facade\]\|\|facadeTextures\.brick/],
+ ['chosen facade texture selected',/const tex=facadeTextures\[facade\]\|\|facadeTextures\.brick/],
+ ['selected facade map applied',/brick\.map=tex;/],
+ ['matching texture fill on shaded side',/brick\.emissiveMap=tex;/],
+ ['fence has a dedicated change handler',/\[fenceSelect,fenceColorSelect\]\.forEach\(el=>el\?\.addEventListener\('change',applyFence\)\)/],
  ['balanced daylight illumination',/rearBounce\.intensity=/]
 ];
 for(const [name,re] of checks){

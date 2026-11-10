@@ -42,7 +42,7 @@
    if(event.origin!==location.origin||!iframe||event.source!==iframe.contentWindow)return;
    if(event.data?.type==='kaskad-3d-frame-height'){
      const h=Number(event.data.height);
-     if(Number.isFinite(h)&&h>=400&&h<=1600){
+     if(!window.matchMedia('(max-width:730px)').matches&&Number.isFinite(h)&&h>=400&&h<=1600){
        const styleHeight=Math.ceil(h+2)+'px';
        if(iframe.style.height!==styleHeight)iframe.style.height=styleHeight;
      }

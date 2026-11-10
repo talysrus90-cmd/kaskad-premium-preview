@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-facade-sync-v17';
+const VERSION='kaskad-pwa-20261110-compact-configurator-v18';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -14,15 +14,15 @@ const core=[
  './gallery-fullscreen-20261109.css?v=1',
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
- './interactive-home.css?v=6',
- './3d-house-embed.html?v=6',
- './house-3d.bundle.js?v=6',
+ './interactive-home.css?v=7',
+ './3d-house-embed.html?v=7',
+ './house-3d.bundle.js?v=7',
  './3d-house.css?v=4',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=2',
+ './builder-gallery.js?v=3',
  './builder-gallery.css?v=2',
- './builder-lead-bridge.js?v=2',
+ './builder-lead-bridge.js?v=3',
  './assets/3d/roof_tile_neutral.webp',
  './roof-market-v16.js',
  './fence-market-v16.js',

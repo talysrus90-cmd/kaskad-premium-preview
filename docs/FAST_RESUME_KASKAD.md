@@ -85,3 +85,7 @@ https://talysrus90-cmd.github.io/kaskad-premium-preview/
 ## Фасады синхронизированы, 3D-QA v17 (10.11.2026)
 
 Устранено расхождение цвета основного фасада и фронтонов: единый материал brick и общая карта facadeTextures, фронтоны с продолженной UV, торцы с физическим масштабом 9/12.8, мягче дневное освещение и back bounce. Локальный WebGL аудит 5 фасадов × 4 ракурса =20 без ошибок. См. docs/3D_FACADE_AUDIT_20261110.md. Версии house-3d.bundle.js?v=6, 3d-house-embed.html?v=6, SW kaskad-pwa-20261110-facade-sync-v17. В репозитории созданы два Codex навыка .agents/skills/kaskad-3d-facade-qa и .agents/skills/kaskad-3d-model-pipeline. Отладочный хук временного теста удалён. Не возвращать отдельную окраску фронтонов!
+
+## Компактный мобильный 3D-конструктор v18
+
+Раздельные applyFacade/applyRoof/applyFence, мягкий цветовой баланс смежных стен через emissiveMap=текущая карта фасада. Сцена раскрывается после загрузки четырёх критических фототекстур либо 4.5 сек fallback. На мобильных iframe фиксированной высоты, сцена sticky, материалы прокручиваются внутри iframe; цвета одной строкой, настройки свёрнуты. Исправлен overflow ширины галереи из-за align-items:center. house-3d.bundle.js?v=7, 3d-house-embed.html?v=7, builder-gallery.js?v=3, builder-lead-bridge.js?v=3, interactive-home.css?v=7, SW compact-configurator-v18. Документация docs/3D_MOBILE_CONFIGURATOR_FIX_20261110.md.
