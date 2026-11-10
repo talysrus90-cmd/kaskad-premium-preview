@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-stepback-v8';
+const VERSION='kaskad-pwa-20261110-mobile-dock-v9';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -14,6 +14,8 @@ const core=[
  './gallery-fullscreen-20261109.css?v=1',
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
+ './mobile-dock-20261110.css?v=1',
+ './mobile-dock-20261110.js?v=1',
  './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261109-fullscreen',
  './preview-runtime.js','./smart/lead-integration-20261108.js?v=3',
  './call-routing.js?v=samsung-dial-20261110-v2',
