@@ -426,6 +426,32 @@ try {
   [facadeSelect,roofSelect,fenceSelect].forEach(el=>el?.addEventListener('change',updateDesign));
   updateDesign();
 
+  // Licensed CC0 Poly Haven 1K photo textures; stored locally as small WebP files.
+  // Real images improve masonry/tile details; procedural maps remain offline fallback.
+  const photoLoader=new THREE.TextureLoader();
+  const loadPhotoTexture=(file,repeatX,repeatY,accept)=>{
+    photoLoader.load(new URL('assets/3d/'+file+'.webp',document.baseURI).href,tex=>{
+      tex.colorSpace=THREE.SRGBColorSpace;
+      tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+      tex.repeat.set(repeatX,repeatY);
+      tex.anisotropy=4;
+      accept(tex);
+      updateDesign();
+    },undefined,()=>{ /* On network/cache failure keep generated texture. */ });
+  };
+  loadPhotoTexture('red_brick',3.25,2.15,tex=>{
+    facadeTextures.brick=tex;
+    postBrick.map=tex;postBrick.color.set('#ffffff');postBrick.needsUpdate=true;
+  });
+  loadPhotoTexture('stone_tile_wall',2,1.75,tex=>{
+    facadeTextures.stone=tex;
+    gardenStone.map=tex;gardenStone.color.set('#ffffff');gardenStone.needsUpdate=true;
+  });
+  loadPhotoTexture('roof_tiles',3,3,tex=>{roofTextures.terracotta=tex;});
+  loadPhotoTexture('wood_planks',1,1,tex=>{
+    timber.map=tex;timber.color.set('#ffffff');timber.needsUpdate=true;
+  });
+
   // Ambient and sunlight respond to user-selected time of day.
   const hemi=new THREE.HemisphereLight('#d8e9ff','#b2a28c',2.1);
   scene.add(hemi);

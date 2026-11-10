@@ -73,3 +73,5 @@ https://talysrus90-cmd.github.io/kaskad-premium-preview/
 - Нижняя мобильная панель: **Позвонить / Конструктор / Заявка**. Средняя кнопка переключена с `#before-after` на `#interactive-home`. Старые кнопки не возвращать, остальные разделы остаются.
 - Опорные файлы: `house-3d.source.js` → собранный `house-3d.bundle.js?v=2`, `3d-house-embed.html?v=2`, `3d-house.css?v=2`, `interactive-home.css?v=4`, `mobile-dock-20261110.js?v=3`, `service-worker.js` версия `kaskad-pwa-20261110-builder-v13`.
 - Подробности мировых примеров и границ реализма в `docs/3D_BUILDER_WORLD_PRACTICE_20261110.md`. Пока модель процедурная, а не фотореалистичная glTF; не путать архитектурный концепт с фото и сметой.
+
+- Добавлены локальные фототекстуры Poly Haven CC0 (1K/WebP) фасада, кровли, камня и деревянного забора; house-3d.bundle.js?v=3, 3d-house-embed.html?v=3, PWA kaskad-pwa-20261110-builder-photo-v14. Лицензия assets/3d/ATTRIBUTION.md. При ошибках загрузки остаются процедурные материалы.
