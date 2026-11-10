@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#f8f5ee">
 <title>КАСКАД · 3D-обзор дома</title>
 <link rel="stylesheet" href="fonts.css?v=pwa1">
-<link rel="stylesheet" href="3d-house.css?v=1">
+<link rel="stylesheet" href="3d-house.css?v=2">
 <style>
 html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .embed{padding:0;margin:0}.workspace{max-width:none;margin:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;gap:0;align-items:stretch}
@@ -15,7 +15,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .controls{border-radius:0;border:0;box-shadow:none;padding:18px 16px;background:#faf8f3;min-height:412px}
 .control-head{display:none}.rule{margin:14px 0}.controls p{display:none}
 .slider-row{margin:3px 0}.controls .time-markers{margin-bottom:2px}
-.note{padding-top:10px;margin-top:13px;line-height:1.45}
+.note{padding-top:10px;margin-top:13px;line-height:1.45}.builder-options{grid-template-columns:1fr;margin:14px 0}
 .secondary{min-height:41px;margin-top:9px}
 .toggle-row{gap:9px}
 @media(max-width:730px){
@@ -28,11 +28,16 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
  .time-markers{grid-column:1/-1;margin-bottom:6px!important}
  .rule{display:none}
  .toggle-row{grid-column:1/-1;margin:3px 0 7px}
+ .builder-options{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:7px 0 10px}
+ .builder-options label{font-size:10px}
+ .builder-options label:last-child{grid-column:auto}
+ .builder-options select{font-size:11px;padding:7px 5px;min-height:41px}
+ #autoRotate{grid-column:1/-1}
  .secondary{margin-top:0;min-height:41px;font-size:11px;padding:8px}
  .note{display:none}
 }
 @media(max-width:400px){
- .scene{height:300px}.controls{padding:10px 12px 12px}.scene-caption{padding:7px 9px}
+ .scene{height:300px}.controls{padding:10px 12px 12px}.builder-options{grid-template-columns:1fr 1fr}.builder-options label:last-child{grid-column:1/-1}.scene-caption{padding:7px 9px}
  .scene-tip{font-size:9px}.secondary{font-size:10px}
 }
 </style>
@@ -44,7 +49,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="scene" id="sceneContainer" aria-label="Вращаемая трёхмерная модель двухэтажной виллы и благоустроенного участка">
 <img id="modelFallback" src="assets/ideas/card/hero-960.webp" alt="Фотография загородного дома — резерв при отсутствии WebGL" loading="eager" decoding="async">
 <div id="loading3d" class="loading" role="status">Загружаем 3D-модель…</div>
-<div class="scene-caption"><span class="scene-dot"></span> 3D · ИНТЕРАКТИВНАЯ КОНЦЕПЦИЯ</div>
+<div class="scene-caption"><span class="scene-dot"></span> 3D · КОНСТРУКТОР ДОМА</div>
 <div class="scene-tip">Поверните дом пальцем · двумя пальцами измените масштаб</div>
 </div>
 <div class="footbar"><span>Дом и участок</span><span id="modelFPS">Загрузка</span></div>
@@ -57,12 +62,16 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="rule"></div>
 <div class="toggle-row"><div><strong>Свет в окнах</strong><span>Включить или выключить</span></div><label class="switch" aria-label="Свет в окнах"><input type="checkbox" id="windowsToggle" checked><span class="track"></span></label></div>
 <div class="rule"></div>
-<button class="secondary" id="resetCamera" type="button">↺ Начальный вид</button>
-<button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Автовращение</button>
+<div class="builder-options" aria-label="Конструктор экстерьера">
+  <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный кирпич</option><option value="stone">Светлый камень</option><option value="plaster">Тёплая штукатурка</option></select></label>
+  <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая</option><option value="graphite">Графитовая</option></select></label>
+  <label for="fenceSelect">Ограждение<select id="fenceSelect"><option value="iron">Кованый забор</option><option value="wood">Деревянные ламели</option><option value="stone">Каменные секции</option></select></label>
+</div>
+        <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Вращать дом</button>
 <div class="note">Демонстрационная 3D-модель. Не фото построенного объекта и не проектная документация.</div>
 </aside>
 </div>
 </main>
-<script type="module" src="house-3d.bundle.js?v=1"></script>
+<script type="module" src="house-3d.bundle.js?v=2"></script>
 </body>
 </html>

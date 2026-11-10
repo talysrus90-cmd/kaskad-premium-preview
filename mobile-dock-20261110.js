@@ -13,8 +13,8 @@
   dock.innerHTML=
     '<a data-kaskad-call href="'+href+'" aria-label="Позвонить в Каскад">'+
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h3l1.4 4.2-2 1.8a16 16 0 0 0 5.6 5.6l1.8-2L21 14v3.2c0 2-1.5 3.6-3.5 3.6A16.5 16.5 0 0 1 3.2 6.5C3.2 4.5 4.9 3 7 3Z"/></svg><span>Позвонить</span></a>'+
-    '<a href="#before-after" aria-label="Посмотреть интерактивное сравнение до и после ремонта">'+
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="4" width="18.4" height="16" rx="2"/><path d="M12 4v16M8.5 11.5l-2.5 2.5 2.5 2.5m7-7 2.5 2.5-2.5 2.5"/></svg><span>До / после</span></a>'+
+    '<a href="#interactive-home" aria-label="Открыть конструктор фасада, кровли и ограждения дома">'+
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="4" width="18.4" height="16" rx="2"/><path d="M12 4v16M8.5 11.5l-2.5 2.5 2.5 2.5m7-7 2.5 2.5-2.5 2.5"/></svg><span>Конструктор</span></a>'+
     '<button class="kaskad-dock-request" type="button" aria-label="Подготовить заявку">'+
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-8"/><path d="m10 15 9-9 2 2-9 9-3 1z"/></svg><span>Заявка</span></button>';
   document.body.appendChild(dock);

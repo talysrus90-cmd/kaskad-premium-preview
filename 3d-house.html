@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/kaskad-apple-180.png">
   <link rel="stylesheet" href="fonts.css?v=pwa1">
-  <link rel="stylesheet" href="3d-house.css?v=1">
+  <link rel="stylesheet" href="3d-house.css?v=2">
 </head>
 <body>
 <header class="header">
@@ -55,8 +55,12 @@
           <label class="switch" aria-label="Свет в окнах"><input type="checkbox" id="windowsToggle" checked><span class="track"></span></label>
         </div>
         <div class="rule"></div>
-        <button class="secondary" id="resetCamera" type="button">↺ Вернуть вид спереди</button>
-        <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Автоматический обзор</button>
+        <div class="builder-options" aria-label="Конструктор экстерьера">
+  <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный кирпич</option><option value="stone">Светлый камень</option><option value="plaster">Тёплая штукатурка</option></select></label>
+  <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая</option><option value="graphite">Графитовая</option></select></label>
+  <label for="fenceSelect">Ограждение<select id="fenceSelect"><option value="iron">Кованый забор</option><option value="wood">Деревянные ламели</option><option value="stone">Каменные секции</option></select></label>
+</div>
+        <button class="secondary" id="autoRotate" type="button" aria-pressed="false">↻ Быстрое вращение</button>
         <div class="note">Демонстрационная архитектурная модель. Не является проектной документацией или визуализацией построенного объекта.</div>
       </aside>
     </div>
@@ -64,6 +68,6 @@
 </main>
 <footer>© 2026 КАСКАД · Архитектура и строительство · <a href="./#home">Главная</a></footer>
 <script src="pwa.js?v=1" defer></script>
-<script type="module" src="house-3d.bundle.js?v=1"></script>
+<script type="module" src="house-3d.bundle.js?v=2"></script>
 </body>
 </html>

@@ -8,7 +8,9 @@ const loading=document.getElementById('loading3d');
 const hourInput=document.getElementById('hourInput');
 const hourLabel=document.getElementById('hourLabel');
 const windowsToggle=document.getElementById('windowsToggle');
-const resetButton=document.getElementById('resetCamera');
+const facadeSelect=document.getElementById('facadeSelect');
+const roofSelect=document.getElementById('roofSelect');
+const fenceSelect=document.getElementById('fenceSelect');
 const autoButton=document.getElementById('autoRotate');
 const status=document.getElementById('modelFPS');
 const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,11 +42,84 @@ const brickImage=()=>{
   tex.anisotropy=4;
   return tex;
 };
+// PBR-friendly procedural materials. Local textures, no remote image requests or tracking.
+const makeTexture=(render,repeatX=1,repeatY=1)=>{
+  const canvas=document.createElement('canvas');
+  canvas.width=512;canvas.height=512;
+  const c=canvas.getContext('2d',{alpha:false});
+  let seed=29617;
+  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+  render(c,random);
+  const tex=new THREE.CanvasTexture(canvas);
+  tex.colorSpace=THREE.SRGBColorSpace;
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.repeat.set(repeatX,repeatY);
+  tex.anisotropy=4;
+  return tex;
+};
+const roofTile=(base)=>{
+  const palettes={
+    slate:['#354044','#434a4b','#30383d','#4e5353','#44484a','#353a3e'],
+    terracotta:['#9b513f','#ad6147','#864333','#b46f53','#a75b42','#8b4a37'],
+    graphite:['#282c30','#34393a','#3b3f43','#292e33','#44474b','#343a3d']
+  };
+  return makeTexture((g,rnd)=>{
+    g.fillStyle='#272b2b';g.fillRect(0,0,512,512);
+    const colors=palettes[base],w=59,h=33;
+    for(let row=-1;row<18;row++)for(let col=-1;col<11;col++){
+      const x=col*w+(row%2)*w/2,y=row*h;
+      g.fillStyle=colors[Math.floor(rnd()*colors.length)];
+      g.fillRect(x+1,y+1,w-2,h-2);
+      g.fillStyle='rgba(255,255,255,.075)';g.fillRect(x+3,y+2,w-7,2);
+      g.fillStyle='rgba(0,0,0,.11)';g.fillRect(x+1,y+h-5,w-2,3);
+    }
+    for(let i=0;i<4700;i++){
+      g.fillStyle=rnd()>.5?'rgba(255,255,255,.035)':'rgba(0,0,0,.05)';
+      g.fillRect(rnd()*512,rnd()*512,1+rnd()*3,1+rnd()*2);
+    }
+  },3,3);
+};
+const stoneImage=()=>makeTexture((g,rnd)=>{
+  g.fillStyle='#d8c9b4';g.fillRect(0,0,512,512);
+  const palettes=['#e6daca','#d3c0a8','#ccbea9','#e5d3bc','#c4b49e'];
+  for(let row=0;row<12;row++)for(let col=-1;col<7;col++){
+    const w=85,h=44,x=col*w+((row%2)*w/2),y=row*h;
+    g.fillStyle=palettes[Math.floor(rnd()*palettes.length)];
+    g.fillRect(x+1,y+1,w-2,h-2);
+    g.fillStyle='rgba(255,255,255,.13)';g.fillRect(x+3,y+2,w-6,2);
+  }
+  for(let i=0;i<9400;i++){const v=rnd()>.5?'rgba(67,54,42,.045)':'rgba(255,255,255,.08)';
+    g.fillStyle=v;g.fillRect(rnd()*512,rnd()*512,1+rnd()*4,1+rnd()*3);}
+},2,1.75);
+const plasterImage=()=>makeTexture((g,rnd)=>{
+  g.fillStyle='#e7dfd0';g.fillRect(0,0,512,512);
+  for(let i=0;i<28000;i++){g.fillStyle=rnd()>.53?'rgba(255,255,255,.12)':'rgba(107,94,74,.09)';
+    g.fillRect(rnd()*512,rnd()*512,1+rnd()*3,1+rnd()*3);}
+},2,2);
+const lawnImage=()=>makeTexture((g,rnd)=>{
+  g.fillStyle='#63794e';g.fillRect(0,0,512,512);
+  for(let i=0;i<22000;i++){
+    g.fillStyle=rnd()>.52?'rgba(173,194,123,.17)':'rgba(35,69,35,.20)';
+    g.fillRect(rnd()*512,rnd()*512,1+rnd()*2,2+rnd()*7);
+  }
+},18,18);
+const paverImage=()=>makeTexture((g,rnd)=>{
+  g.fillStyle='#c0baab';g.fillRect(0,0,512,512);
+  for(let row=0;row<14;row++)for(let col=-1;col<9;col++){
+    const w=69,h=38,x=col*w+(row%2?w/2:0),y=row*h;
+    const shade=Math.floor(168+rnd()*37);
+    g.fillStyle='rgb('+shade+','+(shade-3)+','+(shade-10)+')';
+    g.fillRect(x+2,y+2,w-4,h-4);
+    g.fillStyle='rgba(255,255,255,.10)';g.fillRect(x+3,y+3,w-6,2);
+    for(let i=0;i<6;i++){g.fillStyle='rgba(65,63,50,.04)';g.fillRect(x+rnd()*w,y+rnd()*h,2,2);}
+  }
+},2,5);
+
 try {
   if(!window.WebGLRenderingContext)throw new Error('WebGL unavailable');
   const scene=new THREE.Scene();
   const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power',alpha:false,stencil:false});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.65));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.85));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.35;
@@ -54,7 +129,7 @@ try {
   container.appendChild(renderer.domElement);
 
   const camera=new THREE.PerspectiveCamera(48,1,.2,130);
-  const initialPos=new THREE.Vector3(20,13,25);
+  const initialPos=new THREE.Vector3(23,16.5,33);
   camera.position.copy(initialPos);
   const controls=new OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;
@@ -65,22 +140,24 @@ try {
   controls.minPolarAngle=.18;
   controls.maxPolarAngle=Math.PI*.49;
   controls.autoRotate=false;
-  controls.autoRotateSpeed=.6;
-  controls.target.set(0,3.05,0);
+  controls.autoRotateSpeed=2.15;
+  controls.target.set(0,3.05,5);
   controls.update();
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
-  const brick=M('#ffffff',.88,{map:brickImage()});
+  const facadeTextures={brick:brickImage(),stone:stoneImage(),plaster:plasterImage()};
+  const roofTextures={slate:roofTile('slate'),terracotta:roofTile('terracotta'),graphite:roofTile('graphite')};
+  const brick=M('#ffffff',.82,{map:facadeTextures.brick});
   const limestone=M('#e6dece',.79);
   const quartz=M('#ede7da',.57);
-  const roofMat=M('#3e4849',.88);
+  const roofMat=M('#3e4849',.82);
   const doorMat=M('#4a3a31',.67,{metalness:.08});
   const bronze=M('#6f6555',.53,{metalness:.48});
   const rail=M('#a9b2aa',.35,{metalness:.52});
-  const gravel=M('#aca99f',.98);
-  const meadow=M('#687f53',.97);
+  const gravel=M('#ffffff',.86,{map:paverImage()});
+  const meadow=M('#ffffff',.97,{map:lawnImage()});
   const asphalt=M('#777f7b',.9);
-  const water=M('#167f92',.15,{metalness:.14,transparent:true,opacity:.84});
+  const water=M('#256d7a',.17,{metalness:.23,transparent:true,opacity:.85});
   const grass=new THREE.Mesh(new THREE.PlaneGeometry(135,135),meadow);
   grass.rotation.x=-Math.PI/2;
   grass.receiveShadow=true;
@@ -125,7 +202,14 @@ try {
   ]);
   roofGeo.setAttribute('position',new THREE.BufferAttribute(roofPoints,3));
   roofGeo.computeVertexNormals();
-  const roof=new THREE.Mesh(roofGeo,new THREE.MeshStandardMaterial({color:'#434847',roughness:.87,side:THREE.DoubleSide}));
+  roofGeo.setAttribute('uv',new THREE.Float32BufferAttribute([
+    0,0, 0.5,1, 0.5,0,
+    0,0, 0.5,0, 0,1,
+    0.5,1, 1,0, 1,1,
+    0.5,1, 1,1, 0.5,0
+  ],2));
+  const roofSurface=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.78,map:roofTextures.slate,side:THREE.DoubleSide});
+  const roof=new THREE.Mesh(roofGeo,roofSurface);
   roof.castShadow=true;roof.receiveShadow=true;scene.add(roof);
   const gableG=new THREE.BufferGeometry();
   gableG.setAttribute('position',new THREE.Float32BufferAttribute([
@@ -133,7 +217,8 @@ try {
     -6.43,7.03,-4.51, 0,8.77,-4.51, 6.43,7.03,-4.51
   ],3));
   gableG.computeVertexNormals();
-  scene.add(new THREE.Mesh(gableG,new THREE.MeshStandardMaterial({color:'#ac7766',roughness:.85,side:THREE.DoubleSide})));
+  const gableMaterial=new THREE.MeshStandardMaterial({color:'#ac7766',roughness:.85,side:THREE.DoubleSide});
+  scene.add(new THREE.Mesh(gableG,gableMaterial));
   box(.2,.24,10.6,roofMat,0,9.03,0);
   // Door, sill, facade windows and balconies.
   box(1.72,2.58,.13,limestone,0,1.58,4.67);
@@ -207,6 +292,140 @@ try {
     shrub.scale.set(.9, .5+(i%3)*.1,.9);
     shrub.castShadow=true;scene.add(shrub);
   }
+
+  // Complete landscaped plot: low foundation walls, operable-looking gates,
+  // detailed planting and three alternative fence treatments. All drawn on device.
+  const gardenStone=M('#e1d8c6',.84,{map:stoneImage()});
+  const fenceIron=M('#262c2c',.54,{metalness:.63});
+  const timber=M('#665747',.73,{metalness:.05});
+  const postBrick=M('#b07c67',.85,{map:facadeTextures.brick});
+  const leafGreen=[M('#466c45',.94),M('#5b7c51',.96),M('#3a6549',.96),M('#7b8355',.97)];
+  const flowerPink=M('#b88c82',.95);
+  const flowerWhite=M('#ded4b9',.96);
+  const styleGroups={};
+  const styleSegments=[
+    [[-19,-17],[19,-17]], [[-19,-17],[-19,20.5]], [[19,-17],[19,20.5]],
+    [[-19,20.5],[-3.65,20.5]],[[3.65,20.5],[19,20.5]]
+  ];
+  function buildFence(kind){
+    const group=new THREE.Group();group.name='Fence: '+kind;scene.add(group);
+    const wallMat=kind==='stone'?gardenStone:(kind==='wood'?timber:fenceIron);
+    const rails=[];
+    const upright=[];
+    const postLocations=[];
+    const placeBox=(w,h,d,material,x,y,z)=>{
+      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+      mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh;
+    };
+    styleSegments.forEach(([[x1,z1],[x2,z2]])=>{
+      const vx=x2-x1,vz=z2-z1,L=Math.hypot(vx,vz),alongX=Math.abs(vx)>.1;
+      const rows=kind==='wood'?7:kind==='stone'?1:2;
+      for(let i=0;i<rows;i++){
+        const y=kind==='wood'?.36+i*.19:kind==='stone'?.34:.48+i*.75;
+        placeBox(alongX?L:.09,kind==='stone'?.58:.08,alongX?.09:L,wallMat,
+          (x1+x2)/2,y,(z1+z2)/2);
+      }
+      const n=Math.max(1,Math.round(L/3.0));
+      for(let j=0;j<=n;j++){
+        const x=x1+vx*j/n,z=z1+vz*j/n;
+        postLocations.push([x,z]);
+      }
+      if(kind==='iron'){
+        const count=Math.max(1,Math.ceil(L/.40));
+        for(let k=1;k<count;k++){
+          const x=x1+vx*k/count,z=z1+vz*k/count;
+          upright.push([x,z]);
+        }
+      }
+    });
+    const mastMat=kind==='iron'?postBrick:gardenStone;
+    for(const [x,z] of postLocations){
+      placeBox(.36,1.38,.36,mastMat,x,.72,z);
+      placeBox(.47,.10,.47,gardenStone,x,1.47,z);
+    }
+    if(upright.length){
+      const geometry=new THREE.BoxGeometry(.067,1.28,.067);
+      const inst=new THREE.InstancedMesh(geometry,fenceIron,upright.length);
+      const matrix=new THREE.Matrix4();
+      upright.forEach(([x,z],index)=>{matrix.makeTranslation(x,.81,z);inst.setMatrixAt(index,matrix);});
+      inst.instanceMatrix.needsUpdate=true;inst.castShadow=true;group.add(inst);
+    }
+    // Entrance piers and double leaf gates with small open angles.
+    const entranceLeft=-3.65,entranceRight=3.65,frontZ=20.5;
+    [entranceLeft,entranceRight].forEach(x=>{
+      placeBox(.74,1.85,.74,postBrick,x,.925,frontZ);
+      placeBox(.88,.15,.88,gardenStone,x,1.93,frontZ);
+      const lamp=new THREE.Mesh(new THREE.SphereGeometry(.15,10,8),M('#f8ddb2',.3,{emissive:'#d3945a',emissiveIntensity:.25}));
+      lamp.position.set(x,2.13,frontZ);group.add(lamp);
+    });
+    if(kind!=='stone'){
+      const gatePanel=(side)=>{
+        const panel=new THREE.Group();panel.position.set(side*3.45,0,frontZ);panel.rotation.y=side*.22;group.add(panel);
+        const gateWidth=2.98;
+        const meshBox=(w,h,d,x,y,z,mat=fenceIron)=>{
+          const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);panel.add(m);return m;
+        };
+        for(let y of [.55,1.35])meshBox(gateWidth,.075,.07,-side*gateWidth/2,y,0);
+        for(let i=0;i<9;i++){
+          meshBox(.06,1.45,.065,-side*(.16+i*.32),.96,0,kind==='wood'?timber:fenceIron);
+        }
+        meshBox(.13,1.46,.12,-side*2.94,.94,0);
+      };
+      gatePanel(1);gatePanel(-1);
+    }else{
+      // Stone: a solid low wall and open central entrance.
+      placeBox(2.9,.12,.55,gardenStone,0,.06,frontZ);
+    }
+    return group;
+  }
+  styleGroups.iron=buildFence('iron');
+  styleGroups.wood=buildFence('wood');
+  styleGroups.stone=buildFence('stone');
+  // Landscaped beds flank the path; rounded crowns avoid toy-like cone trees.
+  const bedMat=M('#5e5042',1);
+  const bed=(x,z,w,d)=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(w,.08,d),bedMat);
+    m.position.set(x,.09,z);m.receiveShadow=true;scene.add(m);
+  };
+  bed(-7.85,12,3.7,10.2);bed(6.65,14,2.75,6.8);
+  const canopyG=new THREE.SphereGeometry(1,10,7);
+  function broadleaf(x,z,size=1.0){
+    const h=5.1*size;
+    cyl(.22*size,.27*size,h*.75,trunkMat,x,h*.40,z,9);
+    for(let i=0;i<8;i++){
+      const angle=i/8*Math.PI*2;
+      const radius=(i%3===0?.70:1.12)*size;
+      const ball=new THREE.Mesh(canopyG,leafGreen[(i+Math.floor(x+z+50))%leafGreen.length]);
+      ball.position.set(x+Math.cos(angle)*radius,h*.91+(i%3)*.25*size,z+Math.sin(angle)*radius);
+      ball.scale.set(1.45*size,.96*size,1.15*size);
+      ball.castShadow=true;ball.receiveShadow=true;scene.add(ball);
+    }
+  }
+  [[-14.8,-10.6,1.1],[13.6,-11.6,.95],[-14.7,13.2,.78],[15.8,14.2,.85],[-6.8,-13,.75]].forEach(args=>broadleaf(...args));
+  for(let i=0;i<32;i++){
+    const x=i<16?-9.2+(i%4)*.73:5.7+(i%4)*.62;
+    const z=i<16?8.2+Math.floor(i/4)*2.5:11+Math.floor((i-16)/4)*1.7;
+    const m=new THREE.Mesh(new THREE.SphereGeometry(.43,10,7),leafGreen[i%leafGreen.length]);
+    m.scale.set(1,.58,.85);m.position.set(x,.45,z);m.castShadow=true;scene.add(m);
+    if(i%2===0){
+      const petal=new THREE.Mesh(new THREE.SphereGeometry(.11,8,6),i%4?flowerWhite:flowerPink);
+      petal.position.set(x+.15,.75,z+.18);scene.add(petal);
+    }
+  }
+  // House and garden design controls change the 3D scene immediately.
+  const updateDesign=()=>{
+    const facade=facadeSelect?.value||'brick';
+    const roofing=roofSelect?.value||'slate';
+    const fencing=fenceSelect?.value||'iron';
+    brick.map=facadeTextures[facade]||facadeTextures.brick;brick.needsUpdate=true;
+    gableMaterial.color.set(facade==='brick'?'#ac7766':facade==='stone'?'#d8c6ae':'#e7ddcd');
+    roofSurface.map=roofTextures[roofing]||roofTextures.slate;roofSurface.needsUpdate=true;
+    roofMat.color.set(roofing==='terracotta'?'#9b5844':roofing==='graphite'?'#2d3133':'#464d4c');
+    Object.keys(styleGroups).forEach(key=>styleGroups[key].visible=key===fencing);
+  };
+  [facadeSelect,roofSelect,fenceSelect].forEach(el=>el?.addEventListener('change',updateDesign));
+  updateDesign();
+
   // Ambient and sunlight respond to user-selected time of day.
   const hemi=new THREE.HemisphereLight('#d8e9ff','#b2a28c',2.1);
   scene.add(hemi);
@@ -223,7 +442,7 @@ try {
   const warm=new THREE.PointLight('#ffcc82',0,15,2);
   warm.position.set(0,4.1,5.6);
   scene.add(warm);
-  scene.fog=new THREE.Fog('#e7e9e4',38,100);
+  scene.fog=new THREE.Fog('#e7e9e4',50,110);
   const skyDay=new THREE.Color('#e0e9ea'),skyDusk=new THREE.Color('#bb8d80'),skyNight=new THREE.Color('#151e2c');
   const tmpSky=new THREE.Color();
   const timeLabel=(time)=>{
@@ -256,18 +475,10 @@ try {
   };
   hourInput.addEventListener('input',updateLighting);
   windowsToggle.addEventListener('change',updateLighting);
-  resetButton.addEventListener('click',()=>{
-    camera.position.copy(initialPos);
-    controls.target.set(0,3.05,0);
-    controls.update();
-    controls.autoRotate=false;
-    autoButton.setAttribute('aria-pressed','false');
-    autoButton.textContent='↻ Автоматический обзор';
-  });
   autoButton.addEventListener('click',()=>{
     controls.autoRotate=!controls.autoRotate;
     autoButton.setAttribute('aria-pressed',String(controls.autoRotate));
-    if(controls.autoRotate)autoButton.textContent='◼ Остановить вращение';
+    if(controls.autoRotate)autoButton.textContent='■ Остановить вращение';
     else autoButton.textContent='↻ Автоматический обзор';
   });
   // Start with the same time of day as the UI. Model loaded only on this separate page.
@@ -305,6 +516,6 @@ try {
   loading.textContent='3D недоступен на этом устройстве. Показываем фотографию дома.';
   loading.style.whiteSpace='normal';
   status.textContent='Фото вместо 3D';
-  for(const el of [hourInput,windowsToggle,resetButton,autoButton])if(el)el.disabled=true;
+  for(const el of [hourInput,windowsToggle,facadeSelect,roofSelect,fenceSelect,autoButton])if(el)el.disabled=true;
   // The static page, project photo and navigation remain available.
 }
