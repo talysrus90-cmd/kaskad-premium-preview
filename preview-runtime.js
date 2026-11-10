@@ -20,16 +20,46 @@
     }
     return originalFetch(input, options);
   };
+  const requestForms = '#smartLeadForm,#estimateForm,#constructionForm';
+  const fieldLabels = {
+    name:'Имя',phone:'Телефон',comment:'Комментарий',client_name:'Имя',client_phone:'Телефон',
+    room:'Помещение',level:'Уровень работ',area:'Площадь, м²',height:'Высота потолков, м',
+    electric:'Электрика',condition:'Состояние',city:'Город',materials:'Материалы',
+    start:'Начало работ',budget:'Бюджет, ₽',notes:'Пожелания',
+    contact_method:'Удобный способ связи',contact_time:'Удобное время',
+    type:'Тип объекта',floors:'Этажность',bedrooms:'Спальни',wall:'Материал стен',
+    scope:'Состав работ',plot:'Участок',project:'Проект',extras:'Дополнительно'
+  };
   document.addEventListener('submit',function(e){
-    if(e.target?.matches('#smartLeadForm,#estimateForm,#constructionForm,#loginForm,#settingsForm')){
+    const form=e.target;
+    if(form?.matches(requestForms)){
       e.preventDefault();e.stopImmediatePropagation();
-      const status=e.target.querySelector('.request-status,.status,[role=status]');
-      if(status) status.textContent='Демонстрационный просмотр: ничего не отправлено.';
-      else alert('Это демонстрационный сайт. Заявка не отправлена.');
+      if(!form.reportValidity())return;
+      const status=form.querySelector('.request-status,.status,[role=status]');
+      const values=new FormData(form);
+      if(String(values.get('website')||'').trim()){if(status)status.textContent='Проверьте заполнение формы.';return;}
+      const direction=form.id==='estimateForm'?'Ремонт':form.id==='constructionForm'?'Строительство':'Предварительная заявка';
+      const body=['ЗАЯВКА НА ПРЕДВАРИТЕЛЬНЫЙ РАСЧЁТ — КАСКАД','Направление: '+direction,''];
+      for(const [key,value] of values.entries()){
+        if(['website','agreement','consent','turnstile_token'].includes(key))continue;
+        const v=String(value||'').trim();
+        if(v)body.push((fieldLabels[key]||key)+': '+v);
+      }
+      body.push('','Согласие на обработку персональных данных: отмечено при заполнении формы.');
+      if(window.KaskadEmail&&typeof window.KaskadEmail.open==='function'){
+        window.KaskadEmail.open({subject:'КАСКАД — '+direction.toLowerCase(),body:body.join('\n').slice(0,4400)});
+        if(status)status.textContent='Письмо подготовлено. Для поступления заявки подтвердите отправку в своей почте.';
+      }else if(status)status.textContent='Не удалось открыть редактор письма. Попробуйте ещё раз или позвоните нам.';
+      return;
+    }
+    if(form?.matches('#loginForm,#settingsForm')){
+      e.preventDefault();e.stopImmediatePropagation();
+      const status=form.querySelector('.request-status,.status,[role=status]');
+      if(status) status.textContent='Демонстрационный режим: вход и настройки пока не подключены.';
     }
   },true);
   document.addEventListener('DOMContentLoaded',()=>{
-    const message='ПРЕДПРОСМОТР: онлайн-заявки и кабинет не подключены. Черновик можно отправить вручную через почтовое приложение.';
+    const message='ПРЕДПРОСМОТР: серверный приём заявок пока не подключён. Заполненные обращения открываются готовым письмом, которое нужно отправить из своей почты.';
     const notice=document.createElement('div');
     notice.textContent=message;
     notice.setAttribute('role','status');
