@@ -470,8 +470,29 @@ h1,h2,h3{color:var(--ink)}
   let toastTimer;
   function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),4600)}
   const menu=one('#mobileMenu'), menuBtn=one('#menuBtn');
-  menuBtn.addEventListener('click',()=>{const open=menu.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(open));menuBtn.textContent=open?'×':'☰'});
-  all('#mobileMenu a, #mobileMenu button').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰'}));
+  function setMenu(open){
+    menu.classList.toggle('open',open);
+    menuBtn.setAttribute('aria-expanded',String(open));
+    menuBtn.textContent=open?'×':'☰';
+  }
+  menuBtn.addEventListener('click',()=>{
+    const open=!menu.classList.contains('open');
+    if(open){
+      try{history.pushState({...history.state,kaskadLayer:'mobile-menu',kaskadMenuReturnHash:location.hash},'',location.pathname+location.search+'#site-menu');}catch(e){}
+    }else if(history.state?.kaskadLayer==='mobile-menu')history.back();
+    setMenu(open);
+  });
+  all('#mobileMenu a, #mobileMenu button').forEach(a=>a.addEventListener('click',()=>{
+    setMenu(false);
+    if(history.state?.kaskadLayer==='mobile-menu'){
+      const prevHash=history.state.kaskadMenuReturnHash||'';
+      history.replaceState({...history.state,kaskadLayer:'site-menu-closed'},'',location.pathname+location.search+prevHash);
+    }
+  }));
+  window.addEventListener('popstate',e=>{
+    if(e.state?.kaskadLayer==='mobile-menu')setMenu(true);
+    else if(menu.classList.contains('open'))setMenu(false);
+  });
   all('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{all('[data-filter]').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',String(b===btn))});all('.service').forEach(card=>{card.classList.toggle('hidden',btn.dataset.filter!=='all'&&!card.dataset.cats.split(' ').includes(btn.dataset.filter))})}));
   const request=one('#requestModal'), imgModal=one('#imageModal');
   let returnFocus=null;
