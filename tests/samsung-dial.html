@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#213e34"><title>КАСКАД — проверка звонка Samsung</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f7f5ef;color:#24372e;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{max-width:550px;margin:0 auto;padding:35px 22px 60px}.brand{color:#3b624e;font-size:13px;font-weight:800;letter-spacing:.12em}.card{background:white;border:1px solid #e5e9df;border-radius:14px;padding:24px;margin-top:28px}h1{font-size:26px;line-height:1.25;margin:0 0 12px}p{font-size:15px;line-height:1.6;color:#5d6e64}.button{display:flex;align-items:center;justify-content:center;min-height:60px;width:100%;padding:12px 17px;background:#23503b;color:white;text-align:center;font-size:16px;font-weight:750;text-decoration:none;border-radius:11px;margin:20px 0 12px}.note{font-size:13px}.warning{background:#fff3e5;padding:15px;border-radius:9px;color:#67452b}.back{display:inline-block;margin-top:20px;color:#23503b}</style>
+</head><body><main class="wrap"><div class="brand">КАСКАД · ТЕХНИЧЕСКАЯ ПРОВЕРКА</div><div class="card"><h1>Проверка звонка без выбора Сбербанка</h1>
+<p>Это отдельный тест для телефона Samsung, который не меняет рабочую кнопку на сайте.</p>
+<a id="samsung-dial" class="button" href="intent:+79284062212#Intent;scheme=tel;action=android.intent.action.DIAL;package=com.samsung.android.dialer;S.browser_fallback_url=https%3A%2F%2Ftalysrus90-cmd.github.io%2Fkaskad-premium-preview%2Ftests%2Fsamsung-dial.html%3Funsupported%3D1;end">☎ Открыть номеронабиратель Samsung</a>
+<p class="note">Запрашивается стандартный экран набора номера; сам звонок автоматически не совершается. Банковское приложение не вызывается этой ссылкой.</p>
+<p id="unsupported" class="warning" hidden>Встроенный браузер не смог открыть штатную звонилку Samsung через специальную команду. Для этого браузера способ не подходит. Это не ошибка телефона и не повод устанавливать другие приложения.</p>
+<a class="back" href="../">← Вернуться на сайт «КАСКАД»</a></div></main>
+<script>if(new URLSearchParams(location.search).has('unsupported'))document.getElementById('unsupported').hidden=false;</script>
+</body></html>
