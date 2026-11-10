@@ -88,8 +88,19 @@
     bodyField.value=draft&&draft.body || '';
     help.textContent='Выберите свою почту один раз — сайт запомнит выбор на этом устройстве. Письмо отправится только после вашего подтверждения в почте.';
     syncOptions();
-    if(typeof root.showModal==='function') root.showModal(); else root.setAttribute('open','');
+    if(!root.open){
+      try{
+        history.pushState({...history.state,kaskadLayer:'email',kaskadEmailStep:true},'',
+          location.pathname+location.search+'#write-email');
+      }catch(e){}
+      if(typeof root.showModal==='function')root.showModal();else root.setAttribute('open','');
+    }
     setTimeout(function(){bodyField.focus({preventScroll:true});},60);
+  }
+  function dismiss(){
+    if(!root||!root.open)return;
+    root.close();
+    if(history.state?.kaskadLayer==='email')history.back();
   }
   function initialize() {
     if(root)return;
@@ -139,9 +150,16 @@
     });
     mainBtn.addEventListener('click',function(){if(chosen)launch(chosen);});
     root.querySelector('#kaskadMailChange').addEventListener('click',function(){chosen=null;syncOptions();});
-    root.querySelector('#kaskadMailClose').addEventListener('click',function(){root.close();});
-    root.addEventListener('click',function(e){if(e.target===root)root.close();});
+    root.querySelector('#kaskadMailClose').addEventListener('click',dismiss);
+    root.addEventListener('click',function(e){if(e.target===root)dismiss();});
+    root.addEventListener('cancel',function(e){e.preventDefault();dismiss();});
   }
+  window.addEventListener('popstate',function(e){
+    if(!root)return;
+    if(e.state?.kaskadLayer==='email'){
+      if(!root.open){if(typeof root.showModal==='function')root.showModal();else root.setAttribute('open','');}
+    }else if(root.open)root.close();
+  });
   window.KaskadEmail={open:openDraft};
   document.addEventListener('click',function(event){
     var a=event.target&&event.target.closest&&event.target.closest('a[href^="mailto:kaskad123ai@mail.ru"]');
