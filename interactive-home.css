@@ -15,8 +15,8 @@
  .kaskad-3d-feature{padding-top:48px;padding-bottom:50px;scroll-margin-top:78px}
  .kaskad-3d-feature .k3d-header{display:block}
  .kaskad-3d-feature .k3d-header p{font-size:12px;max-width:none}
- .kaskad-3d-feature iframe{height:515px}
+ .kaskad-3d-feature iframe{height:575px}
  .kaskad-3d-feature .k3d-actions{align-items:flex-start}
 }
-@media(max-width:400px){.kaskad-3d-feature iframe{height:475px}}
+@media(max-width:400px){.kaskad-3d-feature iframe{height:545px}}
 @media(prefers-reduced-motion:reduce){.kaskad-3d-feature .k3d-full{transition:none}}
