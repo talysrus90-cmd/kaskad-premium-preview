@@ -105,11 +105,11 @@
       '#kaskadMailDlg textarea{min-height:135px;resize:vertical}'+
       '#kaskadMailDlg .km-to{display:block;font-size:14px;color:#315943;font-weight:750;overflow-wrap:anywhere}'+
       '#kaskadMailDlg .km-close{position:absolute;right:16px;top:13px;border:0;border-radius:10px;background:#ebeee6;color:#304638;font-size:25px;line-height:1;padding:5px 11px;cursor:pointer}'+
-      '#kaskadMailDlg .km-action{width:100%;min-height:50px;background:#244c38;color:#fff;border:0;border-radius:10px;cursor:pointer;font:700 14px/1.4 inherit;padding:12px 14px;box-sizing:border-box;margin-top:10px}'+
+      '#kaskadMailDlg .km-action{width:100%;min-height:50px;background:#244c38;color:#fff;border:0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;line-height:1.4;font-family:inherit;padding:12px 14px;box-sizing:border-box;margin-top:10px}'+
       '#kaskadMailDlg .km-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}'+
-      '#kaskadMailDlg .km-options button{min-height:49px;background:#e9f0e8;color:#264938;border:1px solid #c9dac9;border-radius:10px;font:700 13px/1.25 inherit;padding:10px;cursor:pointer}'+
+      '#kaskadMailDlg .km-options button{min-height:49px;background:#e9f0e8;color:#264938;border:1px solid #c9dac9;border-radius:10px;font-size:13px;font-weight:700;line-height:1.25;font-family:inherit;padding:10px;cursor:pointer}'+
       '#kaskadMailDlg .km-options button:last-child{grid-column:1/-1}'+
-      '#kaskadMailDlg .km-change{display:block;background:none;border:0;color:#315d46;text-decoration:underline;text-underline-offset:3px;font:700 12px/1.5 inherit;cursor:pointer;margin:12px auto 0}'+
+      '#kaskadMailDlg .km-change{display:block;background:none;border:0;color:#315d46;text-decoration:underline;text-underline-offset:3px;font-size:12px;font-weight:700;line-height:1.5;font-family:inherit;cursor:pointer;margin:12px auto 0}'+
       '#kaskadMailDlg .km-note{font-size:12px!important;margin-top:12px!important;color:#61766a!important}'+
       '#kaskadMailDlg [hidden]{display:none!important}'+
       '@media(max-width:420px){#kaskadMailDlg .km-inner{padding:23px 17px 17px}#kaskadMailDlg h2{font-size:21px}}';
