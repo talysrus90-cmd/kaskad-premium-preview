@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-compact-configurator-v18';
+const VERSION='kaskad-pwa-20261110-unified-house-styles-v19';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -15,12 +15,21 @@ const core=[
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
  './interactive-home.css?v=7',
- './3d-house-embed.html?v=7',
- './house-3d.bundle.js?v=7',
+ './3d-house-embed.html?v=8',
+ './house-3d.bundle.js?v=8',
  './3d-house.css?v=4',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=3',
+ './builder-gallery.js?v=4',
+ './architecture-styles-v19.js',
+ './assets/3d/cards/preset_classic_v19.webp',
+ './assets/3d/cards/preset_italian_v19.webp',
+ './assets/3d/cards/preset_modern_v19.webp',
+ './assets/3d/cards/preset_estate_v19.webp',
+ './assets/3d/cards/preset_kavkaz_v19.webp',
+ './assets/3d/cards/preset_coastal_v19.webp',
+ './assets/3d/cards/preset_practical_v19.webp',
+ './assets/3d/cards/preset_craft_v19.webp',
  './builder-gallery.css?v=2',
  './builder-lead-bridge.js?v=3',
  './assets/3d/roof_tile_neutral.webp',

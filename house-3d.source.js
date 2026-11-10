@@ -5,6 +5,7 @@ import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {createFenceSystem} from './fence-market-v16.js';
 import {createRoofSystem} from './roof-market-v16.js';
 import {addNaturalFoliage} from './foliage-v16.js';
+import {createArchitectureStyles} from './architecture-styles-v19.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -17,6 +18,7 @@ const roofSelect=document.getElementById('roofSelect');
 const fenceSelect=document.getElementById('fenceSelect');
 const roofColorSelect=document.getElementById('roofColorSelect');
 const fenceColorSelect=document.getElementById('fenceColorSelect');
+const houseStyleSelect=document.getElementById('houseStyleSelect');
 const qualitySelect=document.getElementById('qualitySelect');
 const autoButton=document.getElementById('autoRotate');
 const status=document.getElementById('modelFPS');
@@ -150,12 +152,35 @@ try {
   controls.autoRotateSpeed=2.15;
   controls.target.set(0,3.05,5);
   controls.update();
+  // Contextual viewpoint: show the house (not just the fence) when selecting
+  // architecture, but reveal the whole plot when editing the fence.
+  const focusViews={
+    facade:{camera:[17.5,12.8,24],target:[0,3.8,2.0]},
+    roof:{camera:[17.7,16.8,22],target:[0,4.5,1.7]},
+    fence:{camera:[23,16.5,33],target:[0,3.05,5]},
+    presets:{camera:[13.1,11.6,20.0],target:[0,3.65,1.5]}
+  };
+  let focusTransition=null;
+  window.addEventListener('kaskad:focus-view',event=>{
+    const cfg=focusViews[event.detail?.tab];
+    if(!cfg)return;
+    focusTransition={
+      camera:new THREE.Vector3(...cfg.camera),
+      target:new THREE.Vector3(...cfg.target)
+    };
+  });
+  controls.addEventListener('start',()=>{focusTransition=null});
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
   const facadeTextures={brick:brickImage(),stone:stoneImage(),plaster:plasterImage(),
     tuscan:brickImage(),gray:stoneImage()};
   const roofTextures={slate:roofTile('slate'),terracotta:roofTile('terracotta'),graphite:roofTile('graphite')};
-  const brick=M('#ffffff',.82,{map:facadeTextures.brick});
+  // MeshBasicMaterial gives ALL walls the EXACT same sampled masonry color,
+  // regardless of whether one wall faces the sunlight. The 3D trim, windows,
+  // roof and landscape continue to use PBR shading and physical shadows.
+  const brick=new THREE.MeshBasicMaterial({
+    color:'#ffffff',map:facadeTextures.brick,toneMapped:true
+  });
   const limestone=M('#e6dece',.79);
   const quartz=M('#ede7da',.57);
   const roofMat=M('#3e4849',.82);
@@ -202,6 +227,7 @@ try {
   box(13.2,.18,9.45,quartz,0,3.66,0);
   box(13.4,.28,9.6,limestone,0,6.86,0);
   box(13.0,.16,9.35,quartz,0,7.1,0);
+  const porchStart=scene.children.length;
   box(12.2,.31,2.6,limestone,0,4.68,5.25);
   box(12.4,.17,2.8,quartz,0,4.88,5.25);
   for(const x of [-5.1,-2.9,2.9,5.1]){
@@ -210,6 +236,7 @@ try {
     cyl(.36,.3,.2,limestone,x,4.53,6.34,24);
     box(.74,.19,.75,quartz,x,4.46,6.34);
   }
+  const porchElements=scene.children.slice(porchStart);
   // Brick gable and slate pitched roof: one mesh for both slopes, very few triangles.
   const roofGeo=new THREE.BufferGeometry();
   const roofPoints=new Float32Array([
@@ -285,7 +312,7 @@ try {
     color:'#a6bdc7',roughness:.17,metalness:.26,emissive:new THREE.Color('#ffd68c'),emissiveIntensity:0
   });
   const frames=[];
-  const windowFrame=(x,y,z,rot=0,w=1.78,h=1.72)=>{
+  const windowFrame=(x,y,z,rot=0,w=1.48,h=1.58)=>{
     const group=new THREE.Group();
     group.position.set(x,y,z);
     group.rotation.y=rot;
@@ -296,7 +323,9 @@ try {
       m.castShadow=true;
       group.add(m);return m;
     };
-    cell(w+.25,h+.32,.13,limestone,0,0,0);
+    // Backing around every window is the SAME facade texture, not a white
+    // decorative panel that makes the front appear to use another material.
+    cell(w+.25,h+.32,.13,brick,0,0,0);
     cell(w+.05,h+.10,.14,bronze,0,0,.09);
     const glass=cell(w-.10,h-.18,.025,glassMat,0,0,.18);
     frames.push(glass);
@@ -318,6 +347,7 @@ try {
     windowFrame(6.49,2.22,z,Math.PI/2,1.55,1.7);
     windowFrame(-6.49,5.43,z,-Math.PI/2,1.55,1.7);
   }
+  const balconyStart=scene.children.length;
   // Classic balcony railing, modest metal highlights.
   box(7.25,.28,1.2,quartz,0,3.82,5.15);
   for(let i=-9;i<=9;i++){
@@ -325,6 +355,15 @@ try {
     cyl(.024,.024,.85,rail,x,4.39,5.75,7);
   }
   box(7.45,.065,.07,bronze,0,4.83,5.75);
+  const balconyElements=scene.children.slice(balconyStart);
+  const architectureSystem=createArchitectureStyles(THREE,scene,{
+    limestone,quartz,bronze,doorMat,roofMat,porchElements,balconyElements
+  });
+  const applyHouseStyle=()=>{
+    architectureSystem.setStyle(houseStyleSelect?.value||'classic');
+  };
+  houseStyleSelect?.addEventListener('change',applyHouseStyle);
+  applyHouseStyle();
   // Stairs and paved path.
   for(let i=0;i<3;i++)box(3.5+i*.55,.17,.86,quartz,0,.26-i*.07,7.08+i*.83);
   box(3.8,.075,15,gravel,0,.05,13.6,false);
@@ -382,11 +421,8 @@ try {
     if(!force&&activeFacade===facade&&brick.map===tex)return;
     activeFacade=facade;
     brick.map=tex;
-    // A subtle texture-matched emissive fill keeps the physical BRICK COLOR
-    // stable on the sunny and shaded walls without removing 3D shadows.
-    brick.emissive.set('#ffffff');
-    brick.emissiveMap=tex;
-    brick.emissiveIntensity=.62;
+    // No separate per-face lighting multiplier or emissive map:
+    // one photograph = one identical color on all four sides.
     brick.needsUpdate=true;
   };
   const applyRoof=()=>{
@@ -587,6 +623,17 @@ try {
     if(document.hidden||!viewerVisible)return;
     if(time-last<31)return;
     last=time;
+    if(focusTransition){
+      const speed=reduceMotion?1:.17;
+      camera.position.lerp(focusTransition.camera,speed);
+      controls.target.lerp(focusTransition.target,speed);
+      if(camera.position.distanceToSquared(focusTransition.camera)<.01&&
+         controls.target.distanceToSquared(focusTransition.target)<.01){
+        camera.position.copy(focusTransition.camera);
+        controls.target.copy(focusTransition.target);
+        focusTransition=null;
+      }
+    }
     controls.update();
     renderer.render(scene,camera);
   };
@@ -596,6 +643,6 @@ try {
   loading.textContent='3D недоступен на этом устройстве. Показываем фотографию дома.';
   loading.style.whiteSpace='normal';
   status.textContent='Фото вместо 3D';
-  for(const el of [hourInput,windowsToggle,facadeSelect,roofSelect,fenceSelect,roofColorSelect,fenceColorSelect,qualitySelect,autoButton])if(el)el.disabled=true;
+  for(const el of [hourInput,windowsToggle,facadeSelect,roofSelect,fenceSelect,roofColorSelect,fenceColorSelect,houseStyleSelect,qualitySelect,autoButton])if(el)el.disabled=true;
   // The static page, project photo and navigation remain available.
 }

@@ -8,7 +8,8 @@
    roof:document.getElementById('roofSelect'),
    fence:document.getElementById('fenceSelect'),
    roofColor:document.getElementById('roofColorSelect'),
-   fenceColor:document.getElementById('fenceColorSelect')
+   fenceColor:document.getElementById('fenceColorSelect'),
+   houseStyle:document.getElementById('houseStyleSelect')
  };
  if(!root||Object.values(fields).some(x=>!x))return;
  const src='assets/3d/cards/';
@@ -26,18 +27,18 @@
    {key:'facade',label:'Фасад'},
    {key:'roof',label:'Кровля'},
    {key:'fence',label:'Забор'},
-   {key:'presets',label:'Стили (всё)'}
+   {key:'presets',label:'Стили домов'}
  ];
  const data={
   presets:[
-    {value:'classic',title:'Загородная классика',sub:'Кирпич · черепица · ковка',image:'preset_classic',set:['brick','slate','iron','graphite','black']},
-    {value:'italian',title:'Итальянский двор',sub:'Кирпич · терракота · ограда',image:'preset_italian',set:['tuscan','terracotta','tuscan','terracotta','chocolate']},
-    {value:'modern',title:'Современный дом',sub:'Камень · фальц · жалюзи',image:'preset_modern',set:['stone','standingSeam','louvers','graphite','graphite']},
-    {value:'estate',title:'Усадьба',sub:'Металлочерепица · кирпич с ковкой',image:'preset_estate',set:['gray','metalBurgundy','brickIron','burgundy','black']},
-    {value:'kavkaz',title:'Кавказский стиль',sub:'Камень · объёмная кровля · ограда',image:'preset_kavkaz',set:['stone','metal3d','tuscan','chocolate','chocolate']},
-    {value:'coastal',title:'Светлый минимализм',sub:'Штукатурка · модульная · ранчо',image:'preset_coastal',set:['plaster','metalModular','ranch','gray','chocolate']},
-    {value:'practical',title:'Практичный дом',sub:'Кирпич · профлист · забор сплошной',image:'preset_practical',set:['brick','profiled','profiled','green','graphite']},
-    {value:'craft',title:'Садовый особняк',sub:'Штукатурка · гибкая · штакетник',image:'preset_craft',set:['plaster','flexible','picket','black','black']}
+    {value:'classic',title:'Загородная классика',sub:'Колонны · карнизы · черепица',image:'preset_classic_v19',set:{facade:'brick',roof:'slate',roofColor:'graphite',houseStyle:'classic'}},
+    {value:'italian',title:'Итальянский двор',sub:'Арки · терракота · тёплый кирпич',image:'preset_italian_v19',set:{facade:'tuscan',roof:'terracotta',roofColor:'terracotta',houseStyle:'italian'}},
+    {value:'modern',title:'Современный дом',sub:'Стекло · козырёк · фальц',image:'preset_modern_v19',set:{facade:'stone',roof:'standingSeam',roofColor:'graphite',houseStyle:'modern'}},
+    {value:'estate',title:'Усадьба',sub:'Парадные пилоны · карнизы',image:'preset_estate_v19',set:{facade:'gray',roof:'metalBurgundy',roofColor:'burgundy',houseStyle:'estate'}},
+    {value:'kavkaz',title:'Кавказский стиль',sub:'Каменные арки · объёмная крыша',image:'preset_kavkaz_v19',set:{facade:'stone',roof:'metal3d',roofColor:'chocolate',houseStyle:'kavkaz'}},
+    {value:'coastal',title:'Светлый минимализм',sub:'Деревянные ламели · лёгкий козырёк',image:'preset_coastal_v19',set:{facade:'plaster',roof:'metalModular',roofColor:'gray',houseStyle:'coastal'}},
+    {value:'practical',title:'Практичный дом',sub:'Простой портик · профлист',image:'preset_practical_v19',set:{facade:'brick',roof:'profiled',roofColor:'green',houseStyle:'practical'}},
+    {value:'craft',title:'Садовый особняк',sub:'Балки · ставни · пергола',image:'preset_craft_v19',set:{facade:'plaster',roof:'flexible',roofColor:'black',houseStyle:'craft'}}
   ],
   facade:[
     {value:'brick',title:'Красный кирпич',sub:'Классическая кладка',image:'facade_brick'},
@@ -88,19 +89,28 @@
  for(const t of tabs){
    const button=document.createElement('button');
    button.type='button';button.textContent=t.label;button.dataset.builderTab=t.key;
-   button.setAttribute('role','tab');button.addEventListener('click',()=>{activeTab=t.key;render()});
+   button.setAttribute('role','tab');button.addEventListener('click',()=>{
+     activeTab=t.key;render();
+     window.dispatchEvent(new CustomEvent('kaskad:focus-view',{detail:{tab:activeTab}}));
+   });
    nav.appendChild(button);
  }
  const findName=(key,val)=>data[key].find(x=>x.value===val)?.title||val;
  const colorName=(val)=>colors.find(x=>x.value===val)?.title||val;
  const choices=()=>Object.values(fields).map(el=>el.value);
- const selected=(item)=>activeTab==='presets'?choices().every((v,i)=>item.set[i]===v):fields[activeTab].value===item.value;
+ const selected=(item)=>activeTab==='presets'?fields.houseStyle.value===item.value:fields[activeTab].value===item.value;
  function choose(item){
    if(activeTab==='presets'){
-     for(const [index,key] of Object.keys(fields).entries()){
+     // Stage all fields first. A style is a new architectural design,
+     // not another fence variant; apply the complete look atomically.
+     const touched=[];
+     // Architectural styles deliberately NEVER modify the separately selected
+     // fence or its color. Otherwise Styles duplicates the Fence controls.
+     for(const [key,value] of Object.entries(item.set)){
        const input=fields[key];
-       if(input.value!==item.set[index]){input.value=item.set[index];input.dispatchEvent(new Event('change',{bubbles:true}))}
+       if(input&&input.value!==value){input.value=value;touched.push(input)}
      }
+     for(const input of touched)input.dispatchEvent(new Event('change',{bubbles:true}));
    }else{
      const input=fields[activeTab];
      if(input.value!==item.value){input.value=item.value;input.dispatchEvent(new Event('change',{bubbles:true}))}
@@ -154,7 +164,7 @@
    }
    if(keepScroll)cardList.scrollLeft=scroll;
    palette();
-   summary.textContent='Ваш вариант: '+findName('facade',fields.facade.value)+' · '+
+   summary.textContent='Стиль: '+findName('presets',fields.houseStyle.value)+' · '+findName('facade',fields.facade.value)+' · '+
      findName('roof',fields.roof.value)+' ('+colorName(fields.roofColor.value)+') · '+
      findName('fence',fields.fence.value)+' ('+colorName(fields.fenceColor.value)+')';
  }
@@ -178,12 +188,5 @@
    document.fonts?.ready?.then(fit).catch(()=>{});
    requestAnimationFrame(fit);
  }
- document.getElementById('builderDiscuss')?.addEventListener('click',()=>{
-   const config=Object.fromEntries(Object.entries(fields).map(([key,input])=>[key,input.value]));
-   if(window.parent!==window){
-     window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);
-   }else{
-     const params=new URLSearchParams(config);location.href='./?'+params+'#interactive-home';
-   }
- });
+
 })();
