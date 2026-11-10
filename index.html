@@ -579,7 +579,7 @@ h1,h2,h3{color:var(--ink)}
   all('.service [data-service]').forEach(b=>b.addEventListener('click',()=>{one('#leadService').value=b.dataset.service;openModal(request)}));
   one('#closeRequest').addEventListener('click',()=>closeModal(request));one('#closeImage').addEventListener('click',()=>closeModal(imgModal));one('#galleryReturn').addEventListener('click',()=>closeModal(imgModal));
   [request,imgModal].forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m)}));
-  window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal(request);closeModal(imgModal)}});
+  window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.querySelector('#kaskadMailDlg[open]'))return;closeModal(request);closeModal(imgModal)}});
   if(new URLSearchParams(location.search).has('preview-request'))openModal(request);
   const galleryViewport=window.matchMedia('(max-width:550px)');const galleryBatch=()=>Number.MAX_SAFE_INTEGER;let galleryCategory='all',galleryLimit=galleryBatch();
   function filterGallery(){const cards=all('.project');const matching=cards.filter(p=>galleryCategory==='all'||p.dataset.category===galleryCategory);cards.forEach(p=>p.classList.toggle('hidden',!matching.includes(p)||matching.indexOf(p)>=galleryLimit));one('#moreIdeas').classList.toggle('hidden',matching.length<=galleryLimit);one('#galleryStatus').textContent=matching.length+' подборки · '+matching.reduce((total,card)=>total+Number(card.dataset.photoCount||0),0)+' фото';}
@@ -641,7 +641,7 @@ h1,h2,h3{color:var(--ink)}
 <script src="gallery-zoom.js?v=20261109-fullscreen" defer></script>
 <script src="pwa.js?v=1" defer></script>
 <script src="call-routing.js?v=samsung-dial-20261110-v2"></script>
-<script src="email-compose.js?v=20261110-inpage-v2"></script>
+<script src="email-compose.js?v=20261110-inpage-v3"></script>
 <script src="calculator-share.js?v=20261110-share-v1"></script>
 <script src="site-back-navigation.js?v=20261110-stepback-v1"></script>
 </body>
