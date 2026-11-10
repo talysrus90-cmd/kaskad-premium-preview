@@ -1,6 +1,7 @@
 /* КАСКАД – independent lightweight demo scene. Bundled Three.js, never loaded on the homepage. */
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -145,7 +146,8 @@ try {
   controls.update();
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
-  const facadeTextures={brick:brickImage(),stone:stoneImage(),plaster:plasterImage()};
+  const facadeTextures={brick:brickImage(),stone:stoneImage(),plaster:plasterImage(),
+    tuscan:brickImage(),gray:stoneImage()};
   const roofTextures={slate:roofTile('slate'),terracotta:roofTile('terracotta'),graphite:roofTile('graphite')};
   const brick=M('#ffffff',.82,{map:facadeTextures.brick});
   const limestone=M('#e6dece',.79);
@@ -211,6 +213,46 @@ try {
   const roofSurface=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.78,map:roofTextures.slate,side:THREE.DoubleSide});
   const roof=new THREE.Mesh(roofGeo,roofSurface);
   roof.castShadow=true;roof.receiveShadow=true;scene.add(roof);
+
+  // Actual pressed metal-tile roof geometry, not a flat recolored photograph.
+  // Two pitched sheets with repeated transverse profile and stepped courses.
+  const pressedRoof=new THREE.Group();pressedRoof.name='Pressed metal-tile roof';
+  const metalMat=new THREE.MeshStandardMaterial({
+    color:'#50585d',roughness:.42,metalness:.48,side:THREE.DoubleSide
+  });
+  const metalTileSlope=(side)=>{
+    const positions=[],uvs=[],triangles=[];
+    const across=32,along=74;
+    for(let i=0;i<=across;i++){
+      const t=i/across;
+      for(let j=0;j<=along;j++){
+        const v=j/along;
+        const z=-5.30+10.60*v;
+        const x=side*7.25*(1-t);
+        // Rib lines run from eaves to ridge; raised tile-rows cross the slope.
+        const rib=Math.pow(Math.max(0,Math.cos(2*Math.PI*(z+5.3)/.82)),5)*.065;
+        const wave=Math.sin(2*Math.PI*(z+5.3)/.82)*.035;
+        const tileStep=Math.pow(Math.max(0,Math.sin(2*Math.PI*t*6.0)),9)*.052;
+        const y=6.98+2.07*t+.045+rib+wave+tileStep;
+        positions.push(x,y,z);
+        uvs.push(v*2.5,t*2.3);
+      }
+    }
+    for(let i=0;i<across;i++)for(let j=0;j<along;j++){
+      const a=i*(along+1)+j,b=a+along+1;
+      triangles.push(a,b,a+1,b,b+1,a+1);
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+    g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+    g.setIndex(triangles);
+    g.computeVertexNormals();
+    const mesh=new THREE.Mesh(g,metalMat);
+    mesh.castShadow=true;mesh.receiveShadow=true;pressedRoof.add(mesh);
+  };
+  metalTileSlope(-1);metalTileSlope(1);
+  scene.add(pressedRoof);
+  pressedRoof.visible=false;
   const gableG=new THREE.BufferGeometry();
   gableG.setAttribute('position',new THREE.Float32BufferAttribute([
     -6.43,7.03,4.51, 6.43,7.03,4.51, 0,8.77,4.51,
@@ -299,6 +341,10 @@ try {
   const fenceIron=M('#262c2c',.54,{metalness:.63});
   const timber=M('#665747',.73,{metalness:.05});
   const postBrick=M('#b07c67',.85,{map:facadeTextures.brick});
+  // Decorative Tuscan-style brick, not an identified imported Italian brand.
+  const tuscanBrick=M('#ffffff',.88,{map:brickImage()});
+  const tuscanFenceWall=M('#ffffff',.88,{map:brickImage()});
+  const copingStone=M('#e2d6c2',.64);
   const leafGreen=[M('#466c45',.94),M('#5b7c51',.96),M('#3a6549',.96),M('#7b8355',.97)];
   const flowerPink=M('#b88c82',.95);
   const flowerWhite=M('#ded4b9',.96);
@@ -308,79 +354,87 @@ try {
     [[-19,20.5],[-3.65,20.5]],[[3.65,20.5],[19,20.5]]
   ];
   function buildFence(kind){
-    const group=new THREE.Group();group.name='Fence: '+kind;scene.add(group);
-    const wallMat=kind==='stone'?gardenStone:(kind==='wood'?timber:fenceIron);
-    const rails=[];
-    const upright=[];
-    const postLocations=[];
-    const placeBox=(w,h,d,material,x,y,z)=>{
-      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
-      mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh;
+    const g=new THREE.Group();g.name='Fence '+kind;scene.add(g);
+    const segments=styleSegments;
+    const isTuscan=kind==='tuscan',isStone=kind==='stone',isWood=kind==='wood';
+    const mat=isTuscan?tuscanBrick:isStone?gardenStone:isWood?timber:fenceIron;
+    const install=(w,h,d,material,x,y,z)=>{
+      const object=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+      object.position.set(x,y,z);object.castShadow=true;object.receiveShadow=true;g.add(object);
+      return object;
     };
-    styleSegments.forEach(([[x1,z1],[x2,z2]])=>{
-      const vx=x2-x1,vz=z2-z1,L=Math.hypot(vx,vz),alongX=Math.abs(vx)>.1;
-      const rows=kind==='wood'?7:kind==='stone'?1:2;
-      for(let i=0;i<rows;i++){
-        const y=kind==='wood'?.36+i*.19:kind==='stone'?.34:.48+i*.75;
-        placeBox(alongX?L:.09,kind==='stone'?.58:.08,alongX?.09:L,wallMat,
-          (x1+x2)/2,y,(z1+z2)/2);
-      }
-      const n=Math.max(1,Math.round(L/3.0));
-      for(let j=0;j<=n;j++){
-        const x=x1+vx*j/n,z=z1+vz*j/n;
-        postLocations.push([x,z]);
-      }
-      if(kind==='iron'){
-        const count=Math.max(1,Math.ceil(L/.40));
-        for(let k=1;k<count;k++){
-          const x=x1+vx*k/count,z=z1+vz*k/count;
-          upright.push([x,z]);
+    const pillarPositions=new Map();
+    for(const [[x1,z1],[x2,z2]] of segments){
+      const length=Math.hypot(x2-x1,z2-z1),alongX=Math.abs(x2-x1)>1;
+      const cx=(x1+x2)/2,cz=(z1+z2)/2;
+      if(isTuscan){
+        install(alongX?length:.28,.22,alongX?.28:length,copingStone,cx,.19,cz);
+        install(alongX?length:.23,1.58,alongX?.23:length,tuscanFenceWall,cx,1.09,cz);
+        install(alongX?length+.18:.43,.13,alongX?.43:length+.18,copingStone,cx,1.95,cz);
+      }else if(isStone){
+        install(alongX?length:.23,.85,alongX?.23:length,gardenStone,cx,.48,cz);
+        install(alongX?length+.12:.36,.09,alongX?.36:length+.12,copingStone,cx,.96,cz);
+      }else if(isWood){
+        for(let i=0;i<8;i++) install(alongX?length:.075,.115,alongX?.075:length,timber,cx,.35+i*.183,cz);
+      }else{
+        for(const y of [.50,1.38])install(alongX?length:.09,.085,alongX?.09:length,fenceIron,cx,y,cz);
+        const n=Math.max(1,Math.ceil(length/.35));
+        const geom=new THREE.BoxGeometry(.062,1.36,.062);
+        const mesh=new THREE.InstancedMesh(geom,fenceIron,n);
+        const m=new THREE.Matrix4();
+        for(let i=0;i<n;i++){
+          const t=(i+.5)/n;
+          m.makeTranslation(x1+(x2-x1)*t,.91,z1+(z2-z1)*t);
+          mesh.setMatrixAt(i,m);
         }
+        mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=true;g.add(mesh);
       }
-    });
-    const mastMat=kind==='iron'?postBrick:gardenStone;
-    for(const [x,z] of postLocations){
-      placeBox(.36,1.38,.36,mastMat,x,.72,z);
-      placeBox(.47,.10,.47,gardenStone,x,1.47,z);
+      const count=Math.max(1,Math.ceil(length/(isTuscan?3.4:3.7)));
+      for(let i=0;i<=count;i++){
+        const t=i/count,x=x1+(x2-x1)*t,z=z1+(z2-z1)*t;
+        pillarPositions.set(x.toFixed(2)+','+z.toFixed(2),[x,z]);
+      }
     }
-    if(upright.length){
-      const geometry=new THREE.BoxGeometry(.067,1.28,.067);
-      const inst=new THREE.InstancedMesh(geometry,fenceIron,upright.length);
-      const matrix=new THREE.Matrix4();
-      upright.forEach(([x,z],index)=>{matrix.makeTranslation(x,.81,z);inst.setMatrixAt(index,matrix);});
-      inst.instanceMatrix.needsUpdate=true;inst.castShadow=true;group.add(inst);
+    for(const [x,z] of pillarPositions.values()){
+      const height=isTuscan?2.13:1.45;
+      const pillarMaterial=isTuscan?tuscanBrick:isStone?gardenStone:postBrick;
+      install(isTuscan?.51:.34,height,isTuscan?.51:.34,pillarMaterial,x,height/2+.06,z);
+      install(isTuscan?.63:.45,.13,isTuscan?.63:.45,copingStone,x,height+.11,z);
     }
-    // Entrance piers and double leaf gates with small open angles.
-    const entranceLeft=-3.65,entranceRight=3.65,frontZ=20.5;
-    [entranceLeft,entranceRight].forEach(x=>{
-      placeBox(.74,1.85,.74,postBrick,x,.925,frontZ);
-      placeBox(.88,.15,.88,gardenStone,x,1.93,frontZ);
-      const lamp=new THREE.Mesh(new THREE.SphereGeometry(.15,10,8),M('#f8ddb2',.3,{emissive:'#d3945a',emissiveIntensity:.25}));
-      lamp.position.set(x,2.13,frontZ);group.add(lamp);
-    });
-    if(kind!=='stone'){
-      const gatePanel=(side)=>{
-        const panel=new THREE.Group();panel.position.set(side*3.45,0,frontZ);panel.rotation.y=side*.22;group.add(panel);
-        const gateWidth=2.98;
-        const meshBox=(w,h,d,x,y,z,mat=fenceIron)=>{
-          const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);panel.add(m);return m;
-        };
-        for(let y of [.55,1.35])meshBox(gateWidth,.075,.07,-side*gateWidth/2,y,0);
-        for(let i=0;i<9;i++){
-          meshBox(.06,1.45,.065,-side*(.16+i*.32),.96,0,kind==='wood'?timber:fenceIron);
-        }
-        meshBox(.13,1.46,.12,-side*2.94,.94,0);
-      };
-      gatePanel(1);gatePanel(-1);
+    const frontZ=20.5;
+    for(const x of [-3.65,3.65]){
+      const height=isTuscan?2.52:1.87;
+      install(.76,height,.76,isTuscan?tuscanBrick:postBrick,x,height/2,frontZ);
+      install(.94,.16,.94,copingStone,x,height+.08,frontZ);
+      const lamp=new THREE.Mesh(new THREE.SphereGeometry(.135,12,8),
+        M('#f5d6a5',.27,{emissive:'#b27c4b',emissiveIntensity:.22}));
+      lamp.position.set(x,height+.27,frontZ);g.add(lamp);
+    }
+    if(isStone){
+      install(2.9,.12,.6,gardenStone,0,.08,frontZ);
     }else{
-      // Stone: a solid low wall and open central entrance.
-      placeBox(2.9,.12,.55,gardenStone,0,.06,frontZ);
+      const panel=(side)=>{
+        const pivot=new THREE.Group();pivot.position.set(side*3.42,0,frontZ);
+        pivot.rotation.y=side*.17;g.add(pivot);
+        const gate=(w,h,d,x,y,z,material=fenceIron)=>{
+          const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+          m.position.set(x,y,z);m.castShadow=true;pivot.add(m);
+        };
+        for(const y of [.47,1.33])gate(3.0,.078,.09,-side*1.5,y,0);
+        for(let i=0;i<11;i++){
+          gate(.066,1.44,.075,-side*(.11+i*.276),.90,0,isWood?timber:fenceIron);
+        }
+        gate(.12,1.57,.11,-side*2.96,.95,0);
+        if(isTuscan) gate(2.96,.085,.08,-side*1.5,1.63,0);
+      };
+      panel(-1);panel(1);
     }
-    return group;
+    return g;
   }
   styleGroups.iron=buildFence('iron');
   styleGroups.wood=buildFence('wood');
   styleGroups.stone=buildFence('stone');
+  styleGroups.tuscan=buildFence('tuscan');
   // Landscaped beds flank the path; rounded crowns avoid toy-like cone trees.
   const bedMat=M('#5e5042',1);
   const bed=(x,z,w,d)=>{
@@ -418,9 +472,12 @@ try {
     const roofing=roofSelect?.value||'slate';
     const fencing=fenceSelect?.value||'iron';
     brick.map=facadeTextures[facade]||facadeTextures.brick;brick.needsUpdate=true;
-    gableMaterial.color.set(facade==='brick'?'#ac7766':facade==='stone'?'#d8c6ae':'#e7ddcd');
+    gableMaterial.color.set(facade==='brick'?'#ac7766':facade==='tuscan'?'#be8061':facade==='gray'?'#938987':facade==='stone'?'#d8c6ae':'#e7ddcd');
+    const isMetal=roofing.startsWith('metal');
+    pressedRoof.visible=isMetal;roof.visible=!isMetal;
     roofSurface.map=roofTextures[roofing]||roofTextures.slate;roofSurface.needsUpdate=true;
-    roofMat.color.set(roofing==='terracotta'?'#9b5844':roofing==='graphite'?'#2d3133':'#464d4c');
+    if(isMetal)metalMat.color.set(roofing==='metalBurgundy'?'#ad5361':'#59666e');
+    roofMat.color.set(roofing==='terracotta'?'#9b5844':roofing==='metalBurgundy'?'#873747':roofing==='graphite'||isMetal?'#343a3c':'#464d4c');
     Object.keys(styleGroups).forEach(key=>styleGroups[key].visible=key===fencing);
   };
   [facadeSelect,roofSelect,fenceSelect].forEach(el=>el?.addEventListener('change',updateDesign));
@@ -451,11 +508,45 @@ try {
   loadPhotoTexture('wood_planks',1,1,tex=>{
     timber.map=tex;timber.color.set('#ffffff');timber.needsUpdate=true;
   });
+  loadPhotoTexture('rustic_brick_diff',3.2,2.2,tex=>{
+    facadeTextures.tuscan=tex;
+    tuscanBrick.map=tex.clone();
+    tuscanBrick.map.wrapS=tuscanBrick.map.wrapT=THREE.RepeatWrapping;
+    tuscanBrick.map.repeat.set(1.9,2.4);
+    tuscanBrick.map.needsUpdate=true;tuscanBrick.needsUpdate=true;
+    tuscanFenceWall.map=tex.clone();
+    tuscanFenceWall.map.wrapS=tuscanFenceWall.map.wrapT=THREE.RepeatWrapping;
+    tuscanFenceWall.map.repeat.set(12,2.9);
+    tuscanFenceWall.map.needsUpdate=true;tuscanFenceWall.needsUpdate=true;
+  });
+  loadPhotoTexture('italian_brick_diff',3.1,2.2,tex=>{facadeTextures.gray=tex;});
+  loadPhotoTexture('metal_roof_base',2.0,2.0,tex=>{metalMat.map=tex;metalMat.needsUpdate=true;});
+  normalLoaderLater();
+  function normalLoaderLater(){
+    // Roughness stays grayscale linear, no colorSpace override.
+    new THREE.TextureLoader().load(new URL('assets/3d/metal_roof_rough.webp',document.baseURI).href,
+      tex=>{tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,2);
+        metalMat.roughnessMap=tex;metalMat.needsUpdate=true;},undefined,()=>{});
+  }
+  // Normal maps are linear data; preserve the right light response.
+  const normalLoader=new THREE.TextureLoader();
+  const applyNormal=(file,mat)=>{
+    normalLoader.load(new URL('assets/3d/'+file+'.webp',document.baseURI).href,tex=>{
+      tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2.3,2);
+      mat.normalMap=tex;mat.normalScale.set(.36,.36);mat.needsUpdate=true;
+    },undefined,()=>{});
+  };
+  applyNormal('rustic_brick_nor_gl',tuscanBrick);
+  applyNormal('metal_roof_nor_gl',metalMat);
+  // HDR environment supplies actual sky/surrounding light reflections to metal/glass.
+  new RGBELoader().load(new URL('assets/3d/rooitou_park_1k.hdr',document.baseURI).href,
+    tex=>{tex.mapping=THREE.EquirectangularReflectionMapping;scene.environment=tex;
+      scene.environmentIntensity=.52;},undefined,()=>{/* Hemisphere light remains. */});
 
   // Ambient and sunlight respond to user-selected time of day.
-  const hemi=new THREE.HemisphereLight('#d8e9ff','#b2a28c',2.1);
+  const hemi=new THREE.HemisphereLight('#d8e9ff','#b2a28c',1.35);
   scene.add(hemi);
-  const sun=new THREE.DirectionalLight('#fff1d7',3.4);
+  const sun=new THREE.DirectionalLight('#fff1d7',2.65);
   sun.position.set(14,17,14);
   sun.castShadow=true;
   sun.shadow.mapSize.set(1024,1024);
@@ -482,16 +573,17 @@ try {
     const evening=clamp((t-17)/5,0,1);
     const dusk=clamp((t-15)/3,0,1)*(1-clamp((t-20)/2,0,1));
     sun.position.set(Math.cos((t-6)/16*Math.PI)*22, 1.5+sunHeight*27,Math.sin((t-6)/16*Math.PI)*22);
-    sun.intensity= Math.max(.06,3.4*sunHeight);
+    sun.intensity= Math.max(.06,2.65*sunHeight);
     sun.color.set('#fff6e9').lerp(new THREE.Color('#efaa72'),dusk*.75);
-    hemi.intensity=1.05+sunHeight*.85;
+    hemi.intensity=.68+sunHeight*.64;
     if(t<17)tmpSky.copy(skyDay);
     else if(t<20)tmpSky.copy(skyDay).lerp(skyDusk,(t-17)/3);
     else tmpSky.copy(skyDusk).lerp(skyNight,clamp((t-20)/2,0,1));
     if(t<8)tmpSky.lerp(skyDusk,(8-t)/2*.48);
     scene.background=tmpSky.clone();
     scene.fog.color.copy(tmpSky);
-    renderer.toneMappingExposure=t>20?1.0:1.25+sunHeight*.2;
+    renderer.toneMappingExposure=t>20?.94:1.07+sunHeight*.12;
+    if(scene.environment)scene.environmentIntensity=.12+sunHeight*.45;
     const on=windowsToggle.checked;
     const warmth=on?(.15+evening*1.9):0;
     glassMat.emissiveIntensity=warmth;

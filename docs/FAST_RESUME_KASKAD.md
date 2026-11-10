@@ -75,3 +75,5 @@ https://talysrus90-cmd.github.io/kaskad-premium-preview/
 - Подробности мировых примеров и границ реализма в `docs/3D_BUILDER_WORLD_PRACTICE_20261110.md`. Пока модель процедурная, а не фотореалистичная glTF; не путать архитектурный концепт с фото и сметой.
 
 - Добавлены локальные фототекстуры Poly Haven CC0 (1K/WebP) фасада, кровли, камня и деревянного забора; house-3d.bundle.js?v=3, 3d-house-embed.html?v=3, PWA kaskad-pwa-20261110-builder-photo-v14. Лицензия assets/3d/ATTRIBUTION.md. При ошибках загрузки остаются процедурные материалы.
+
+- Галерея 3D: 4 готовых комплекта, 5 фасадов, 5 кровель (металлочерепица графит/бордо), 4 забора (высокая кирпичная итальянская кладка), фото-образцы, конструктор -> существующая форма заявки через builder-lead-bridge.js без автоматической отправки. Металлочерепица с геометрическими рёбрами, HDRI и PBR normal maps. house-3d.bundle.js?v=4, 3d-house-embed.html?v=4, builder-gallery.js/css?v=1, PWA world-gallery-v15. Детали в docs/3D_BUILDER_WORLD_PRACTICE_20261110.md. GitHub перенос отдельно и только после авторизации владельца.

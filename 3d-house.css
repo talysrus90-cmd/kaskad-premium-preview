@@ -68,3 +68,8 @@ footer a{color:#975c43}
 body:has(.layout) .controls .builder-options{grid-template-columns:1fr}
 @media(max-width:980px){body:has(.layout) .controls .builder-options{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){body:has(.layout) .controls .builder-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* The gallery is intentionally one swipeable row in the mobile constructor. */
+.controls .builder-gallery,.controls .builder-discuss,.controls .builder-select-fallback{min-width:0}
+.controls .builder-discuss{margin-top:10px}
+@media(max-width:980px){.controls .builder-gallery,.controls .builder-discuss,.controls .builder-select-fallback{grid-column:1/-1}}

@@ -1,0 +1,24 @@
+/* КАСКАД · визуальный каталог материалов 3D-конструктора */
+.builder-gallery{grid-column:1/-1;min-width:0;margin-top:9px}
+.builder-gallery-tabs{display:flex;gap:5px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding:2px 1px 9px}
+.builder-gallery-tabs::-webkit-scrollbar{display:none}
+.builder-gallery-tabs button{flex:0 0 auto;border:1px solid #d5d7ce;background:#f6f4ed;color:#526458;border-radius:18px;min-height:34px;padding:6px 10px;font:800 10px/1.2 Manrope,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.builder-gallery-tabs button[aria-selected="true"]{color:#fff;background:#385847;border-color:#385847}
+.builder-material-list{display:grid;grid-auto-flow:column;grid-auto-columns:126px;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#a2ac9e transparent;padding:3px 2px 9px}
+.builder-material-card{min-width:0;background:#fffdf8;border:2px solid #deded5;border-radius:8px;padding:4px;text-align:left;cursor:pointer;scroll-snap-align:start;display:flex;flex-direction:column;gap:5px;color:#304337;box-shadow:0 2px 9px rgba(29,45,35,.045);position:relative}
+.builder-material-card[aria-pressed="true"]{border-color:#a96343;box-shadow:0 0 0 1px #a96343,0 3px 14px rgba(92,56,31,.14)}
+.builder-material-card[aria-pressed="true"]:after{content:"✓";position:absolute;right:7px;top:7px;border-radius:50%;color:white;background:#355c44;width:22px;height:22px;display:grid;place-items:center;font:800 13px sans-serif}
+.builder-material-card img{display:block;width:100%;height:65px;object-fit:cover;border-radius:5px;background:#c9c9c1}
+.builder-material-card strong{font:800 11px/1.2 Manrope,system-ui,sans-serif;padding:0 3px}
+.builder-material-card span{font:500 9px/1.35 Manrope,system-ui,sans-serif;color:#687469;padding:0 3px 5px}
+.builder-material-card:focus-visible,.builder-gallery-tabs button:focus-visible{outline:3px solid #b87956;outline-offset:2px}
+.builder-choice-summary{font:600 10px/1.55 Manrope,system-ui,sans-serif;color:#657166;margin:6px 0 0}
+.builder-select-fallback{grid-column:1/-1;border-top:1px solid #e6e4db;margin-top:8px;padding-top:8px}
+.builder-select-fallback summary{cursor:pointer;font:700 11px/1.4 Manrope,system-ui,sans-serif;color:#526352}
+.builder-select-fallback .builder-options{display:grid;margin:9px 0}
+.builder-select-fallback:not([open]) .builder-options{display:none}
+.builder-discuss{grid-column:1/-1;width:100%;border:0;border-radius:7px;background:#a76344;color:#fff;min-height:41px;font:800 12px/1.3 Manrope,system-ui,sans-serif;cursor:pointer;margin:7px 0 0}
+.builder-discuss:focus-visible{outline:3px solid #355c44;outline-offset:3px}
+.builder-discuss:active{transform:scale(.99)}
+@media(max-width:730px){.builder-material-list{grid-auto-columns:39%}.builder-material-card img{height:62px}.builder-gallery-tabs button{font-size:11px}}
+@media(max-width:390px){.builder-material-list{grid-auto-columns:43%}.builder-material-card img{height:60px}.builder-material-card strong{font-size:10px}.builder-gallery-tabs button{font-size:10px;padding:6px 8px}}
