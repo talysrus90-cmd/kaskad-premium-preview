@@ -86,7 +86,7 @@
     chosen=preferred();
     subjectField.value=draft&&draft.subject || 'Вопрос с сайта КАСКАД';
     bodyField.value=draft&&draft.body || '';
-    help.textContent='Адрес получателя уже указан. Выберите вашу почту один раз; после перехода нажмите «Отправить» в почтовом приложении.';
+    help.textContent='Выберите свою почту один раз — сайт запомнит выбор на этом устройстве. Письмо отправится только после вашего подтверждения в почте.';
     syncOptions();
     if(typeof root.showModal==='function') root.showModal(); else root.setAttribute('open','');
     setTimeout(function(){bodyField.focus({preventScroll:true});},60);
@@ -118,7 +118,7 @@
     root.innerHTML=
       '<div class="km-inner"><button id="kaskadMailClose" class="km-close" aria-label="Закрыть письмо" type="button">×</button>'+
       '<h2 id="kaskadMailTitle">Написать в КАСКАД</h2>'+
-      '<p>Напишите письмо здесь. Окно выбора приложений Android не появится при открытии этой формы.</p>'+
+      '<p>Напишите ваш вопрос — адрес получателя уже указан. Затем откройте письмо в своей почте.</p>'+ 
       '<div class="km-to">Кому: '+TO+'</div>'+
       '<label for="kaskadMailSubject">Тема</label><input id="kaskadMailSubject" maxlength="180" autocomplete="off">'+
       '<label for="kaskadMailText">Ваше письмо</label><textarea id="kaskadMailText" maxlength="4500" placeholder="Здравствуйте! Хочу узнать о строительстве или ремонте…"></textarea>'+
