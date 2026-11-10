@@ -29,12 +29,12 @@
     }
   },true);
   document.addEventListener('DOMContentLoaded',()=>{
-    const message='ДЕМОНСТРАЦИЯ: заявки и авторизация не работают — персональные данные не отправляются';
+    const message='ПРЕДПРОСМОТР: онлайн-заявки и кабинет не подключены. Черновик можно отправить вручную через почтовое приложение.';
     const notice=document.createElement('div');
     notice.textContent=message;
     notice.setAttribute('role','status');
     notice.style.cssText='position:relative;z-index:100;text-align:center;background:#fff1df;color:#653e22;font:700 11px/1.5 system-ui,sans-serif;padding:8px 12px;border-bottom:1px solid #dfbc98';
     document.body.prepend(notice);
-    document.querySelectorAll('form').forEach(f=>f.setAttribute('data-demo-only','true'));
+    document.querySelectorAll('form').forEach(f=>{if(f.id!=='leadForm')f.setAttribute('data-demo-only','true')});
   });
 })();
