@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-short-lead-v3';
+const VERSION='kaskad-pwa-20261110-estimate-share-v4';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -17,6 +17,7 @@ const core=[
  './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261109-fullscreen',
  './preview-runtime.js','./smart/lead-integration-20261108.js?v=3',
  './call-routing.js?v=samsung-dial-20261110-v2',
+ './calculator-share.js?v=20261110-share-v1',
  './email-compose.js?v=20261110-inpage-v2',
  './icons/kaskad-192.png','./icons/kaskad-512.png','./icons/kaskad-apple-180.png',
  './fonts/manrope-cyrillic.woff2','./fonts/manrope-latin.woff2',
