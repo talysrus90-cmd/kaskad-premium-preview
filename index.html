@@ -626,7 +626,7 @@ h1,h2,h3{color:var(--ink)}
   leadForm.addEventListener('change',()=>{if(!currentLead)return;currentLead='';one('#leadOutput').classList.add('hidden')});
   one('#leadComment').addEventListener('input',()=>one('#leadComment').setCustomValidity(''));
   request.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const items=all('button,input,textarea,select,summary,a[href]',request).filter(el=>el.getClientRects().length&&!el.disabled);const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}});
-  one('#emailLead').addEventListener('click',()=>{if(!currentLead)return;const subject='КАСКАД — предварительная заявка';const mailto='mailto:kaskad123ai@mail.ru?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(currentLead);if(mailto.length>1800){notify('Заявка слишком большая для открытия через почту. Нажмите «Скопировать» или «Скачать TXT» и отправьте её вручную.');one('#copyLead').focus();return}notify('Откроется ваше почтовое приложение. Проверьте заявку и нажмите «Отправить» — письмо ещё не отправлено.');window.location.href=mailto});
+  one('#emailLead').addEventListener('click',()=>{if(!currentLead)return;const subject='КАСКАД — предварительная заявка';if(window.KaskadEmail&&window.KaskadEmail.open){window.KaskadEmail.open({subject:subject,body:currentLead});notify('Заявка добавлена в письмо. Выберите свою почту и подтвердите отправку в ней.');return}const mailto='mailto:kaskad123ai@mail.ru?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(currentLead);notify('Откроется ваше почтовое приложение. Письмо ещё не отправлено.');window.location.href=mailto});
   one('#copyLead').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(currentLead);notify('Текст заявки скопирован.')}catch(err){const txt=one('#leadPreview');const range=document.createRange();range.selectNodeContents(txt);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);notify('Текст выделен — нажмите Ctrl+C для копирования.')}});
   one('#downloadLead').addEventListener('click',()=>{if(!currentLead)return;const blob=new Blob(['\uFEFF',currentLead],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='zayavka_kaskad_zayavka.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);notify('Файл заявки сохранён. Автоматической отправки не было.')});
 })();
@@ -641,5 +641,6 @@ h1,h2,h3{color:var(--ink)}
 <script src="gallery-zoom.js?v=20261109-fullscreen" defer></script>
 <script src="pwa.js?v=1" defer></script>
 <script src="call-routing.js?v=samsung-dial-20261110-v2"></script>
+<script src="email-compose.js?v=20261110-inpage-v1"></script>
 </body>
 </html>
