@@ -2,6 +2,8 @@
 (async()=>{
 if(!/^https?:$/.test(location.protocol))return;
 let config;try{const r=await fetch('/api/bootstrap',{credentials:'same-origin'});if(!r.ok)return;config=await r.json()}catch{return}
+// On static GitHub Pages the real API is intentionally unavailable. Preserve the local two-step draft/mailto flow.
+if(config.mode==='local')return;
 if(!document.querySelector('#personal-data-consent')&&!document.querySelector('script[data-kaskad-legal]')){const script=document.createElement('script');script.src='/kaskad-premium-preview/smart/legal.js?v=3';script.dataset.kaskadLegal='';document.head.append(script)}
 const consentLabel=document.querySelector('#leadAgree')?.closest('label');if(consentLabel){for(const child of [...consentLabel.childNodes])if(child.nodeType===3||child.nodeType===1&&child.tagName!=='INPUT')child.remove();const span=document.createElement('span');span.append('Даю согласие на обработку персональных данных. ');span.append('Текст согласия — в конце сайта.');consentLabel.append(span)}
 const links=document.querySelector('.navlinks');if(links&&!document.querySelector('[data-smart-entry]')){const a=document.createElement('a');a.href='/kaskad-premium-preview/smart/'+location.search+'#estimate';a.textContent='Параметры проекта';a.dataset.smartEntry='';links.append(a)}
