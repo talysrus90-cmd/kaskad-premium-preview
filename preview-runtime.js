@@ -21,7 +21,7 @@
     return originalFetch(input, options);
   };
   document.addEventListener('submit',function(e){
-    if(e.target?.matches('#leadForm,#smartLeadForm,#estimateForm,#constructionForm,#loginForm,#settingsForm')){
+    if(e.target?.matches('#smartLeadForm,#estimateForm,#constructionForm,#loginForm,#settingsForm')){
       e.preventDefault();e.stopImmediatePropagation();
       const status=e.target.querySelector('.request-status,.status,[role=status]');
       if(status) status.textContent='Демонстрационный просмотр: ничего не отправлено.';
