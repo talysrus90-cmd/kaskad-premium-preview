@@ -188,7 +188,17 @@ try {
   };
   // Foundations, warm brick masonry, cornices, porch with stone columns.
   box(13.6,.42,9.65,limestone,0,.29,0);
-  box(12.8,6.45,9,brick,0,3.66,0);
+  // A single facade material is shared by all four walls and BOTH roof gables.
+  // Side UV is scaled to its actual 9m width (front/back 12.8m), so the
+  // masonry pattern has the same physical size around every corner.
+  const facadeBodyGeo=new THREE.BoxGeometry(12.8,6.45,9);
+  const bodyUvs=facadeBodyGeo.getAttribute('uv');
+  for(let vertex=0;vertex<8;vertex++)bodyUvs.setX(vertex,bodyUvs.getX(vertex)*(9/12.8));
+  bodyUvs.needsUpdate=true;
+  const facadeBody=new THREE.Mesh(facadeBodyGeo,brick);
+  facadeBody.name='КАСКАД · единый кирпичный фасад 4 стороны';
+  facadeBody.position.set(0,3.66,0);
+  facadeBody.castShadow=true;facadeBody.receiveShadow=true;scene.add(facadeBody);
   box(13.2,.18,9.45,quartz,0,3.66,0);
   box(13.4,.28,9.6,limestone,0,6.86,0);
   box(13.0,.16,9.35,quartz,0,7.1,0);
@@ -228,9 +238,20 @@ try {
     -6.43,7.03,4.51, 6.43,7.03,4.51, 0,8.77,4.51,
     -6.43,7.03,-4.51, 0,8.77,-4.51, 6.43,7.03,-4.51
   ],3));
+  // The original gables were SOLID-COLORED regardless of selected brick.
+  // That caused the visible mismatch when turning from front to side.
+  // Continue the facade texture upward with UVs aligned to the wall scale.
+  const bottomGableV=(7.03-(3.66-6.45/2))/6.45;
+  const topGableV=(8.77-(3.66-6.45/2))/6.45;
+  gableG.setAttribute('uv',new THREE.Float32BufferAttribute([
+    0,bottomGableV, 1,bottomGableV, .5,topGableV,
+    1,bottomGableV, .5,topGableV, 0,bottomGableV
+  ],2));
   gableG.computeVertexNormals();
-  const gableMaterial=new THREE.MeshStandardMaterial({color:'#ac7766',roughness:.85,side:THREE.DoubleSide});
-  scene.add(new THREE.Mesh(gableG,gableMaterial));
+  const gableFacades=new THREE.Mesh(gableG,brick);
+  gableFacades.name='КАСКАД · фронтоны того же материала';
+  gableFacades.castShadow=true;gableFacades.receiveShadow=true;
+  scene.add(gableFacades);
   box(.2,.24,10.6,roofMat,0,9.03,0);
   // Architectural ornaments: gutters, downspouts, stone quoins and cornices.
   // These details are visible in close-up instead of relying on an enlarged photo.
@@ -361,7 +382,6 @@ try {
     const roofColor=palette[roofColorSelect?.value]||palette.graphite;
     const fenceColor=palette[fenceColorSelect?.value]||palette.graphite;
     brick.map=facadeTextures[facade]||facadeTextures.brick;brick.needsUpdate=true;
-    gableMaterial.color.set(facade==='brick'?'#ac7766':facade==='tuscan'?'#be8061':facade==='gray'?'#938987':facade==='stone'?'#d8c6ae':'#e7ddcd');
     roofSystem.setType(roofStyle);
     roofSystem.setColor(roofColor);
     roofMat.color.set(roofColor);
@@ -437,7 +457,7 @@ try {
   // Ambient and sunlight respond to user-selected time of day.
   const hemi=new THREE.HemisphereLight('#d8e9ff','#b2a28c',1.35);
   scene.add(hemi);
-  const sun=new THREE.DirectionalLight('#fff1d7',2.65);
+  const sun=new THREE.DirectionalLight('#fff1d7',2.15);
   sun.position.set(14,17,14);
   sun.castShadow=true;
   sun.shadow.mapSize.set(1024,1024);
@@ -446,6 +466,12 @@ try {
   sun.shadow.camera.near=.5;sun.shadow.camera.far=65;
   sun.shadow.bias=-.00035;
   scene.add(sun,sun.target);
+  // Neutral reflected sky from the rear. A single harsh sun previously made
+  // an identical brick texture look like a different facade color on the back.
+  const rearBounce=new THREE.DirectionalLight('#eef3fa',0.4);
+  rearBounce.position.set(-19,14,-19);
+  rearBounce.castShadow=false;
+  scene.add(rearBounce);
   sun.target.position.set(0,2.4,0);
   const warm=new THREE.PointLight('#ffcc82',0,15,2);
   warm.position.set(0,4.1,5.6);
@@ -464,9 +490,9 @@ try {
     const evening=clamp((t-17)/5,0,1);
     const dusk=clamp((t-15)/3,0,1)*(1-clamp((t-20)/2,0,1));
     sun.position.set(Math.cos((t-6)/16*Math.PI)*22, 1.5+sunHeight*27,Math.sin((t-6)/16*Math.PI)*22);
-    sun.intensity= Math.max(.06,2.65*sunHeight);
+    sun.intensity= Math.max(.06,2.15*sunHeight);
     sun.color.set('#fff6e9').lerp(new THREE.Color('#efaa72'),dusk*.75);
-    hemi.intensity=.68+sunHeight*.64;
+    hemi.intensity=.78+sunHeight*.78;
     if(t<17)tmpSky.copy(skyDay);
     else if(t<20)tmpSky.copy(skyDay).lerp(skyDusk,(t-17)/3);
     else tmpSky.copy(skyDusk).lerp(skyNight,clamp((t-20)/2,0,1));
@@ -474,7 +500,8 @@ try {
     scene.background=tmpSky.clone();
     scene.fog.color.copy(tmpSky);
     renderer.toneMappingExposure=t>20?.94:1.07+sunHeight*.12;
-    if(scene.environment)scene.environmentIntensity=.12+sunHeight*.45;
+    rearBounce.intensity=.15+sunHeight*1.20;
+    if(scene.environment)scene.environmentIntensity=.20+sunHeight*.47;
     const on=windowsToggle.checked;
     const warmth=on?(.15+evening*1.9):0;
     glassMat.emissiveIntensity=warmth;

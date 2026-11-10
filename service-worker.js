@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-russian-market-v16';
+const VERSION='kaskad-pwa-20261110-facade-sync-v17';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -15,8 +15,8 @@ const core=[
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
  './interactive-home.css?v=6',
- './3d-house-embed.html?v=5',
- './house-3d.bundle.js?v=5',
+ './3d-house-embed.html?v=6',
+ './house-3d.bundle.js?v=6',
  './3d-house.css?v=4',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
