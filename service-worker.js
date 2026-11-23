@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261123-mobile-experience-v23';
+const VERSION='kaskad-pwa-20261123-touch-roofs-v24';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -11,24 +11,24 @@ const core=[
  './manifest.webmanifest','./pwa.js?v=1','./fonts.css?v=pwa1',
  './premium.css?v=houses-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
  './site-clarity-20261109.css?v=1',
- './gallery-fullscreen-20261109.css?v=2',
+ './gallery-fullscreen-20261109.css?v=3',
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
  './interactive-home.css?v=7',
  './mobile-usability-20261123.css?v=1',
- './3d-house-embed.html?v=9',
- './house-3d.bundle.js?v=9',
+ './3d-house-embed.html?v=10',
+ './house-3d.bundle.js?v=10',
  './3d-house.css?v=4',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=5',
+ './builder-gallery.js?v=6',
  './architecture-styles-v19.js',
  './assets/3d/cards/preset_classic_v20.webp',
  './assets/3d/cards/preset_italian_v20.webp',
  './assets/3d/cards/preset_modern_v20.webp',
  './assets/3d/cards/preset_estate_v20.webp',
  './assets/3d/cards/preset_kavkaz_v20.webp',
- './assets/3d/cards/preset_coastal_v20.webp',
+ './assets/3d/cards/preset_coastal_v24.webp',
  './assets/3d/cards/preset_practical_v20.webp',
  './assets/3d/cards/preset_craft_v20.webp',
  './builder-gallery.css?v=3',
@@ -83,7 +83,7 @@ const core=[
  './assets/3d/cards/roof_metalGraphite.webp',
  './assets/3d/cards/roof_slate.webp',
  './assets/3d/cards/roof_terracotta.webp',
- './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261109-fullscreen',
+ './premium.js?v=request-slider-v3-20261108','./gallery-zoom.js?v=20261123-finger-anchor-v24',
  './preview-runtime.js','./smart/lead-integration-20261108.js?v=3',
  './call-routing.js?v=samsung-dial-20261110-v2',
  './calculator-share.js?v=20261110-share-v1',

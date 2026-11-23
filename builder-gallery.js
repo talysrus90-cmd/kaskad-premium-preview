@@ -38,7 +38,7 @@
     {value:'modern',title:'Современный дом',sub:'Стекло · козырёк · фальц',image:'preset_modern_v20',set:{facade:'stone',roof:'standingSeam',roofColor:'graphite',houseStyle:'modern',houseSize:'350',roofShape:'flat'}},
     {value:'estate',title:'Усадьба',sub:'Парадные пилоны · карнизы',image:'preset_estate_v20',set:{facade:'gray',roof:'metalBurgundy',roofColor:'burgundy',houseStyle:'estate',houseSize:'350',roofShape:'mansard'}},
     {value:'kavkaz',title:'Кавказский стиль',sub:'Каменные арки · объёмная крыша',image:'preset_kavkaz_v20',set:{facade:'stone',roof:'metal3d',roofColor:'chocolate',houseStyle:'kavkaz',houseSize:'300',roofShape:'hip'}},
-    {value:'coastal',title:'Светлый минимализм',sub:'Деревянные ламели · лёгкий козырёк',image:'preset_coastal_v20',set:{facade:'plaster',roof:'metalModular',roofColor:'gray',houseStyle:'coastal',houseSize:'220',roofShape:'shed'}},
+    {value:'coastal',title:'Светлый минимализм',sub:'Деревянные ламели · лёгкий козырёк',image:'preset_coastal_v24',set:{facade:'plaster',roof:'metalModular',roofColor:'gray',houseStyle:'coastal',houseSize:'220',roofShape:'hip'}},
     {value:'practical',title:'Практичный дом',sub:'Простой портик · профлист',image:'preset_practical_v20',set:{facade:'brick',roof:'profiled',roofColor:'green',houseStyle:'practical',houseSize:'150',roofShape:'gable'}},
     {value:'craft',title:'Садовый особняк',sub:'Балки · ставни · пергола',image:'preset_craft_v20',set:{facade:'plaster',roof:'flexible',roofColor:'black',houseStyle:'craft',houseSize:'180',roofShape:'mansard'}}
   ],
@@ -166,7 +166,7 @@
    }
    if(keepScroll)cardList.scrollLeft=scroll;
    palette();
-   summary.textContent='≈ '+fields.houseSize.value+' м² · '+({gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',shed:'Односкатная',mansard:'Мансардная'}[fields.roofShape.value]||'Крыша')+' · '+findName('presets',fields.houseStyle.value)+' · '+findName('facade',fields.facade.value)+' · '+
+   summary.textContent='≈ '+fields.houseSize.value+' м² · '+({gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'}[fields.roofShape.value]||'Крыша')+' · '+findName('presets',fields.houseStyle.value)+' · '+findName('facade',fields.facade.value)+' · '+
      findName('roof',fields.roof.value)+' ('+colorName(fields.roofColor.value)+') · '+
      findName('fence',fields.fence.value)+' ('+colorName(fields.fenceColor.value)+')';
  }

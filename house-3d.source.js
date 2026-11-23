@@ -131,7 +131,8 @@ const paverImage=()=>makeTexture((g,rnd)=>{
 try {
   if(!window.WebGLRenderingContext)throw new Error('WebGL unavailable');
   const scene=new THREE.Scene();
-  const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power',alpha:false,stencil:false});
+  const desktopGPU=window.matchMedia('(min-width:850px) and (pointer:fine)').matches;
+  const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:desktopGPU?'high-performance':'low-power',alpha:false,stencil:false});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.95));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -194,7 +195,7 @@ try {
   const gravel=M('#ffffff',.86,{map:paverImage()});
   const meadow=M('#ffffff',.97,{map:lawnImage()});
   const asphalt=M('#777f7b',.9);
-  const water=M('#3f92a1',.12,{metalness:.23,transparent:true,opacity:.87});
+  const water=new THREE.MeshPhysicalMaterial({color:'#4f9eaa',roughness:.075,metalness:.04,transparent:true,opacity:.88,clearcoat:.95,clearcoatRoughness:.09,envMapIntensity:1.1,side:THREE.DoubleSide});
   const grass=new THREE.Mesh(new THREE.PlaneGeometry(135,135),meadow);
   grass.rotation.x=-Math.PI/2;
   grass.receiveShadow=true;
@@ -435,7 +436,13 @@ try {
   for(let i=0;i<12;i++)box(3.65,.016,.09,limestone,0,.094,7.9+i*.95,false);
   // Pool and borders on the lawn; do not use video or external heavy textures.
   box(6.4,.21,10.3,quartz,14.35,.15,2.4,false);
+  // Ceramic pool liner below translucent, reflective water; thin grout lines
+  // and a real stair ledge make the basin read as an object, not a flat color.
+  const poolLiner=M('#a1c6c6',.72,{metalness:.03});
+  box(5.87,.035,9.84,poolLiner,14.35,.24,2.4,false);
   box(5.85,.015,9.82,water,14.35,.269,2.4,false);
+  const poolStep=M('#dfdfd1',.62);
+  for(let i=0;i<3;i++)box(3.35-i*.34,.045,.56,poolStep,14.35,.23+i*.008,-2.08+i*.40,false);
   for(const x of [11.18,17.52])box(.2,.24,10.4,limestone,x,.20,2.4,false);
   for(const z of [-2.7,7.5])box(6.5,.24,.2,limestone,14.35,.20,z,false);
   const trunkMat=M('#6b5847',.96);
@@ -691,7 +698,10 @@ try {
     const maxDpr=quality==='ultra'?3:quality==='high'?2.4:quality==='economy'?1:1.95;
     const dpr=window.devicePixelRatio||1;
     // In opt-in modes supersample above the physical DPR when performance permits.
-    const budget=quality==='ultra'?dpr*1.5:quality==='high'?dpr*1.25:dpr;
+    // High-resolution desktop: allow true supersampling on powerful GPUs;
+    // phones keep the existing memory-conscious DPR budget.
+    const budget=desktopGPU?(quality==='ultra'?Math.max(3,dpr):quality==='high'?Math.max(2.25,dpr):dpr):
+      (quality==='ultra'?dpr*1.5:quality==='high'?dpr*1.25:dpr);
     renderer.setPixelRatio(Math.min(maxDpr,budget));
     if(quality==='high'||quality==='ultra')upgradeTextures();
     const shadowSize=quality==='ultra'?2048:quality==='high'?1536:quality==='economy'?512:1024;

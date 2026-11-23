@@ -99,3 +99,10 @@ https://talysrus90-cmd.github.io/kaskad-premium-preview/
 ## 3D parametric massing + HD on demand v20 (10.11.2026)
 
 Building root scales all roof/window/facade geometry for 6 illustrative two-story areas 150/180/220/260/300/350m². roof-forms-v20.js implements real gable/hip/flat/shed/mansard silhouettes distinct from 12 roof coverings. houseStyle profiles select distinct roof/area/aspect/windows; selected fence/fence color persist. Responsive mobile strip contains 2 area/roof selectors, smaller spacing; HD button on scene; balanced 1K DPR1.95, opt-in 2K local CC0 with HD DPR2.4 and Ultra DPR3. Eight new gallery cards v20. Portable visual-only manifest and JSON schema contracts/house_*v20*. Renderer uses Three.js GLTF-ready; not photoreal or engineering BIM. Reuse Zhivoy is candidate only, canonical Metric Twin untouched. Published references: 3d-house-embed.html?v=9, house-3d.bundle.js?v=9, builder-gallery.js?v=5, builder-gallery.css?v=3, SW kaskad-pwa-20261110-parametric-hd-v20. Details docs/3D_ROOFS_SCALE_REALISM_AND_ZHIVOY_REUSE_20261110.md.
+
+## 23.11.2026 v24 — галерея жестов и карнизы крыши
+- gallery-zoom.js: увеличение в точке между пальцами, перемещение масштабированного фото по реальным границам, свайп при масштабе 1×, двойной тап и максимум 6×. Убраны кнопки +/-/100%.
+- roof-forms-v20.js: четыре формы без односкатной; панели подшивки, фасции и обрамление свесов. Стиль coastal теперь использует hip, карточка изображает обновлённую сцену.
+- house-3d.source.js → house-3d.bundle.js: вода бассейна MeshPhysical, чаша и ступени; HD на desktop до 2.25× render DPR, ultra до 3×; мобильный бюджет сохранён.
+- Развёрнутые тесты на новом ПК и технические границы: docs/GALLERY_TOUCH_AND_3D_REALISM_V24_20261123.md. До полноценного фотореализма требуются лицензированные детализированные GLB/PBR/растительность; не выдавать концепт за реальные объекты.
+- НЕ менять Samsung Dial Intent, историю Back, ручной путь отправки писем без подтверждённой серверной доставки. Публикация: GitHub Pages того же репозитория.
