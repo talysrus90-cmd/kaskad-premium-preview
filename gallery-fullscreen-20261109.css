@@ -78,9 +78,45 @@
 #imageModal.immersive #imageTitle,
 #imageModal.immersive #imageDesc,
 #imageModal.immersive #imageThumbs,
-#imageModal.immersive #chooseIdea,
 #imageModal.immersive .photo-zoom-hint{
   display:none!important;
+}
+/* A single low-clutter lead action: the original button previously vanished
+   inside the immersive viewer, leaving no path to inquire about the photo. */
+#imageModal.immersive #chooseIdea{
+  display:inline-flex!important;
+  position:absolute!important;
+  z-index:31!important;
+  top:calc(env(safe-area-inset-top,0px) + 14px)!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:max-content!important;
+  max-width:calc(100vw - 28px)!important;
+  min-height:43px!important;
+  padding:10px 16px!important;
+  margin:0!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+  border-radius:99px!important;
+  background:rgba(176,88,54,.95)!important;
+  color:white!important;
+  font:750 12px/1.25 Manrope,system-ui,sans-serif!important;
+  box-shadow:0 4px 16px rgba(0,0,0,.20)!important;
+  backdrop-filter:blur(8px);
+  white-space:normal!important;
+  text-align:center;
+}
+#imageModal.immersive #chooseIdea:focus-visible{
+  outline:3px solid #f5dab7!important;outline-offset:3px!important;
+}
+@media(max-width:560px){
+  #imageModal.immersive #chooseIdea{
+    top:calc(env(safe-area-inset-top,0px) + 66px)!important;
+    min-height:39px!important;
+    font-size:11px!important;
+    padding:9px 14px!important;
+  }
 }
 #imageModal .gallery-back{display:none}
 #imageModal.immersive .gallery-back{
