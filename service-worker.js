@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261110-parametric-hd-v20';
+const VERSION='kaskad-pwa-20261123-light-shell-v21';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -99,6 +99,10 @@ const core=[
  './assets/ideas/card/gallery-four-64f507d46cca-640.webp',
  './assets/offline-photo.svg'
 ];
+// Install a light, reliable offline shell. The 3D builder, HDR textures, and its
+// previews are fetched and cached on first use, not downloaded by every visitor.
+// Previously install preloaded 102 resources (~5.7 MB), even on mobile data.
+const offlineCore=core.filter(p=>!/^(?:\.\/assets\/3d\/|\.\/3d-house-embed\.html|\.\/house-3d\.bundle\.js|\.\/3d-house\.css|\.\/builder-gallery\.(?:js|css)|\.\/architecture-styles-v19\.js|\.\/builder-lead-bridge\.js|\.\/roof-market-v16\.js|\.\/roof-forms-v20\.js|\.\/fence-market-v16\.js|\.\/foliage-v16\.js)/.test(p));
 const URL_OF=p=>new URL(p,ROOT);
 const isInScope=url=>url.origin===new URL(ROOT).origin&&url.pathname.startsWith(new URL(ROOT).pathname);
 const isApi=p=>p.includes('/api/')||p.includes('/auth/')||p.includes('/admin/');
@@ -112,7 +116,7 @@ self.addEventListener('install',e=>{
  e.waitUntil((async()=>{
    const cache=await caches.open(SHELL);
    // Core stays small; original high-res images are loaded on demand and cached on access.
-   await cache.addAll(core.map(x=>URL_OF(x).href));
+   await cache.addAll(offlineCore.map(x=>URL_OF(x).href));
    await self.skipWaiting();
  })());
 });

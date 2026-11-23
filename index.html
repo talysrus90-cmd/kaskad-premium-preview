@@ -652,7 +652,22 @@ h1,h2,h3{color:var(--ink)}
   function recalc(){const n=Number(area.value);one('#areaValue').textContent=n+' м²';const band=rates[kind].comfort,factor=1;const low=fnum(n*band[0]*factor),high=fnum(n*band[1]*factor);latestEstimate=fmt(low)+'–'+fmt(high)+' ₽';one('#calcMoney').textContent=latestEstimate;one('#calcRate').textContent=fmt(band[0])+'–'+fmt(band[1])+' ₽/м²';}
   kindBtns.forEach(btn=>btn.addEventListener('click',()=>{kind=btn.dataset.kind;kindBtns.forEach(b=>b.classList.toggle('active',b===btn));if(kind==='house'){area.min=40;area.max=400;area.value=120}else{area.min=20;area.max=300;area.value=75}one('#areaMin').textContent=area.min+' м²';one('#areaMax').textContent=area.max+' м²';recalc()}));
   area.addEventListener('input',recalc);recalc();
-  one('#estimateBtn').addEventListener('click',()=>{const titles={renovation:'Ремонт квартиры',house:'Строительство дома, коттеджа или виллы',};one('#leadService').value=titles[kind];const text='Предварительный расчёт: '+titles[kind]+', '+area.value+' м²; ориентир за работу БЕЗ МАТЕРИАЛОВ: '+latestEstimate+'. Материалы и дополнительные расходы оплачиваются отдельно; сложный проект может стоить дороже.';one('#leadComment').value=one('#leadComment').value?one('#leadComment').value+'\n'+text:text;openModal(request);notify('Параметры расчёта добавлены в заявку.')});
+  let lastEstimateDraft='';
+  one('#estimateBtn').addEventListener('click',()=>{
+    const titles={renovation:'Ремонт квартиры',house:'Строительство дома, коттеджа или виллы'};
+    one('#leadService').value=titles[kind];
+    // The visitor has already selected the area: do not ask them to type it again.
+    one('#leadArea').value=area.value;
+    const text='Предварительный расчёт: '+titles[kind]+', '+area.value+' м²; ориентир за работу БЕЗ МАТЕРИАЛОВ: '+latestEstimate+'. Материалы и дополнительные расходы оплачиваются отдельно; сложный проект может стоить дороже.';
+    const comment=one('#leadComment');
+    const previous=comment.value.trim();
+    const withoutOld=lastEstimateDraft?previous.replace(lastEstimateDraft,'').trim():previous;
+    comment.value=[withoutOld,text].filter(Boolean).join('\n');
+    lastEstimateDraft=text;
+    one('#leadOutput').classList.add('hidden');
+    openModal(request);
+    notify('Площадь и расчёт добавлены в заявку.');
+  });
   let currentLead='';
   const leadForm=one('#leadForm');
   leadForm.addEventListener('submit',e=>{e.preventDefault();if(!leadForm.reportValidity())return;const details=one('#leadComment').value.trim();
