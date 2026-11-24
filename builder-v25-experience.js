@@ -17,7 +17,8 @@
  ];
  const fieldIds=['houseStyleSelect','houseSizeSelect','roofShapeSelect','facadeSelect',
   'roofSelect','roofColorSelect','fenceSelect','fenceColorSelect','frameColorSelect',
-  'doorColorSelect','glassTintSelect','landscapeSelect','poolToggle'];
+  'doorColorSelect','glassTintSelect','landscapeSelect','poolToggle',
+  'yardStyleSelect','parkingToggle','gazeboToggle'];
  const fields={};
  const geom=document.querySelector('.builder-geometry-strip');
  const advanced=document.getElementById('builderAdvanced');
@@ -61,14 +62,24 @@
      <option value="open">Открытый газон</option>
     </select>
    </label>
+   <label class="builder-v25-control">Оформление парадного двора
+    <select id="yardStyleSelect">
+     <option value="family">Семейный — дорожка, цветник, парковка</option>
+     <option value="classic">Классический — симметричные цветники</option>
+     <option value="modern">Современный — плитка и кустарники</option>
+     <option value="garden">Загородный сад — цветы и кустарники</option>
+    </select>
+   </label>
+   <label class="builder-v25-checkbox"><input id="parkingToggle" type="checkbox" checked> Парковка с отдельными воротами</label>
+   <label class="builder-v25-checkbox"><input id="gazeboToggle" type="checkbox"> Пергола / зона отдыха</label>
    <label class="builder-v25-checkbox"><input id="poolToggle" type="checkbox"> Бассейн на участке</label>
-   <p>Забор и цвет металлических элементов выбираются выше.</p>
+   <p>Главная дорожка соединяет калитку и вход. Парковка — справа, со своим въездом.</p>
   </section>
   <section class="builder-v25-panel" id="builderFinal" hidden aria-label="Итог выбранной комплектации">
    <h3>Ваш вариант дома</h3>
    <div class="builder-v25-summary" id="builderFinalSummary"></div>
    <button class="builder-v25-inline-btn" id="builderSave" type="button">Сохранить на этом устройстве</button>
-   <button class="builder-v25-inline-btn" id="builderReset" type="button">Начать заново</button>
+   <button class="builder-v25-inline-btn" id="builderReset" type="button">Вернуть исходный вариант</button>
    <p class="builder-v25-disclaimer">Это визуальная концепция. Размеры, комплектация, цены и технические решения уточняются при проектировании и расчёте.</p>
    <p class="builder-v25-toast" id="builderSaveMessage" aria-live="polite"></p>
   </section>`;
@@ -94,6 +105,9 @@
    ['Ограждение',name('fenceSelect')],
    ['Цвет забора',name('fenceColorSelect')],
    ['Озеленение',name('landscapeSelect')],
+   ['Парадный двор',name('yardStyleSelect')],
+   ['Парковка',fields.parkingToggle?.checked?'Есть':'Нет'],
+   ['Беседка',fields.gazeboToggle?.checked?'Есть':'Нет'],
    ['Бассейн',fields.poolToggle?.checked?'Есть':'Без бассейна']
   ];
   result.replaceChildren(...rows.map(([label,value])=>{
@@ -141,9 +155,10 @@
   houseStyleSelect:'family',houseSizeSelect:'150',roofShapeSelect:'hip',
   facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
-  doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false
+  doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
+  yardStyleSelect:'family',parkingToggle:true,gazeboToggle:false
  };
- const storageKey='kaskad-v26-visual-selection';
+ const storageKey='kaskad-v27-visual-selection';
  function apply(state){
   if(!state||typeof state!=='object')return;
   for(const [id,value] of Object.entries(defaults)){
@@ -166,7 +181,9 @@
    roofShape:fields.roofShapeSelect.value,
    frameColor:fields.frameColorSelect.value,doorColor:fields.doorColorSelect.value,
    glassTint:fields.glassTintSelect.value,landscape:fields.landscapeSelect.value,
-   pool:fields.poolToggle.checked};
+   pool:fields.poolToggle.checked,
+   yardStyle:fields.yardStyleSelect.value,parking:fields.parkingToggle.checked,
+   gazebo:fields.gazeboToggle.checked};
   if(window.parent!==window){
    window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);
   }else{

@@ -18,13 +18,14 @@
  };
  const fields=['facade','roof','fence','roofColor','fenceColor'];
  const optional={
-  houseStyle:{family:'Одноэтажный семейный',mansardHome:'Дом с жилой мансардой',cottage:'Кирпичный одноэтажный коттедж',country:'Одноэтажный светлый',classic:'Двухэтажный коттедж'},
+  houseStyle:{family:'Одноэтажный семейный',mansardHome:'Мансарда с люкарнами',gableAttic:'Мансарда с окнами во фронтоне',cottage:'Кирпичный одноэтажный коттедж',country:'Одноэтажный светлый',nordic:'Скандинавский дом',chalet:'Шале с террасой',barnhouse:'Барнхаус',modernOne:'Современный панорамный',minimal:'Светлый минимализм',estateOne:'Классическая усадьба',kavkaz:'Кавказский стиль',terrace:'Дом с садовой террасой',bungalow:'Дом с навесом для авто',italian:'Итальянский дворик',coastal:'Светлая вилла',practical:'Практичный кирпичный',craft:'Садовый дом',classic:'Двухэтажный коттедж'},
   houseSize:{150:'150 м²',180:'180 м²',220:'220 м²',260:'260 м²',300:'300 м²',350:'350 м²'},
   roofShape:{gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'},
   frameColor:{bronze:'Бронза',graphite:'Графит',white:'Белый',wood:'Тёплый орех'},
   doorColor:{walnut:'Тёмный орех',graphite:'Графит',oak:'Светлый дуб',white:'Белый'},
   glassTint:{clear:'Прозрачное',smoke:'Тонированное',blue:'Холодное голубое'},
-  landscape:{lush:'Сад с деревьями',modern:'Современное озеленение',open:'Открытый газон'}
+  landscape:{lush:'Сад с деревьями',modern:'Современное озеленение',open:'Открытый газон'},
+  yardStyle:{family:'Семейный двор',classic:'Симметричные цветники',modern:'Современный двор',garden:'Загородный сад'}
  };
  function intake(raw){
    if(!raw||typeof raw!=='object')return;
@@ -40,8 +41,10 @@
    const prior=comment.value.split('\n').filter(line=>!line.startsWith('3D-концепция КАСКАД:'));
    const extra=Object.entries(optional).filter(([key,values])=>
      typeof cfg[key]==='string'&&Object.hasOwn(values,cfg[key]))
-     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок'}[key]+' — '+values[cfg[key]]));
+     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок',yardStyle:'Благоустройство'}[key]+' — '+values[cfg[key]]));
    if(typeof cfg.pool==='boolean')extra.push('Бассейн — '+(cfg.pool?'есть':'нет'));
+   if(typeof cfg.parking==='boolean')extra.push('Парковка — '+(cfg.parking?'есть':'нет'));
+   if(typeof cfg.gazebo==='boolean')extra.push('Пергола — '+(cfg.gazebo?'есть':'нет'));
    const text='3D-концепция КАСКАД: фасад — '+valid.facade[cfg.facade]+
      '; кровля — '+valid.roof[cfg.roof]+', цвет — '+valid.roofColor[cfg.roofColor]+
      '; забор — '+valid.fence[cfg.fence]+', цвет металлических деталей — '+valid.fenceColor[cfg.fenceColor]+

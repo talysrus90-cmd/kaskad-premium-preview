@@ -8,6 +8,8 @@ import {createRoofForms} from './roof-forms-v20.js';
 import {addNaturalFoliage} from './foliage-v16.js';
 import {createArchitectureStyles} from './architecture-styles-v19.js';
 import {createRussianHouse} from './russian-home-v26.js';
+import {createFrontYard} from './front-yard-v27.js';
+import {HOME_VARIANTS} from './house-variants-v27.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -28,6 +30,9 @@ const doorColorSelect=document.getElementById('doorColorSelect');
 const glassTintSelect=document.getElementById('glassTintSelect');
 const landscapeSelect=document.getElementById('landscapeSelect');
 const poolToggle=document.getElementById('poolToggle');
+const yardStyleSelect=document.getElementById('yardStyleSelect');
+const parkingToggle=document.getElementById('parkingToggle');
+const gazeboToggle=document.getElementById('gazeboToggle');
 const highDetailButton=document.getElementById('highDetailButton');
 const qualitySelect=document.getElementById('qualitySelect');
 const autoButton=document.getElementById('autoRotate');
@@ -157,9 +162,9 @@ try {
   controls.dampingFactor=.085;
   controls.enablePan=false;
   controls.minDistance=13;
-  controls.maxDistance=47;
+  controls.maxDistance=57;
   controls.minPolarAngle=.18;
-  controls.maxPolarAngle=Math.PI*.49;
+  controls.maxPolarAngle=Math.PI*.475;
   controls.autoRotate=false;
   controls.autoRotateSpeed=2.15;
   controls.target.set(0,2.75,3);
@@ -167,6 +172,11 @@ try {
   // Contextual viewpoint: show the house (not just the fence) when selecting
   // architecture, but reveal the whole plot when editing the fence.
   const focusViews={
+    front:mobileView?{camera:[11.8,7.3,21.8],target:[0,2.68,2.4]}:{camera:[15.1,8.2,26],target:[0,2.72,2.6]},
+    side:{camera:[31,9,2.5],target:[0,2.8,0]},
+    back:{camera:[12,8,-28],target:[0,2.7,0]},
+    top:{camera:[8,49,12],target:[0,1.0,3]},
+    yard:{camera:[20,14.5,36],target:[2.4,1.5,9]},
     facade:{camera:[17.5,12.8,24],target:[0,3.8,2.0]},
     roof:{camera:[17.7,16.8,22],target:[0,4.5,1.7]},
     fence:{camera:[23,16.5,33],target:[0,3.05,5]},
@@ -182,6 +192,16 @@ try {
     };
   });
   controls.addEventListener('start',()=>{focusTransition=null});
+  const viewpointButtons=[...document.querySelectorAll('[data-kaskad-view]')];
+  function setView(key){
+    const cfg=focusViews[key]||focusViews.front;
+    focusTransition={camera:new THREE.Vector3(...cfg.camera),target:new THREE.Vector3(...cfg.target)};
+    controls.autoRotate=false;
+    autoButton.setAttribute('aria-pressed','false');autoButton.textContent='↻ Автообзор';
+    viewpointButtons.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.kaskadView===key)));
+  }
+  viewpointButtons.forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.kaskadView)));
+  setView('front');
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
   const facadeTextures={brick:brickImage(),stone:stoneImage(),plaster:plasterImage(),
@@ -407,7 +427,7 @@ try {
   const russianHome=createRussianHouse(THREE,scene,{
     brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat
   });
-  const oneStoreyStyles=new Set(['family','mansardHome','cottage','country']);
+  const oneStoreyStyles=new Set(HOME_VARIANTS.filter(item=>item.id!=='classic').map(item=>item.id));
   const styleAspects={classic:1.42,italian:1.50,modern:1.85,estate:1.56,
     kavkaz:1.40,coastal:1.70,practical:1.36,craft:1.30};
   const originalFacadeUvs=Float32Array.from(facadeBodyGeo.getAttribute('uv').array);
@@ -440,14 +460,13 @@ try {
     russianHome.setRoof(shape,roofSystem.getType());
   };
   const applyWholeStyle=()=>{applyHouseStyle();applyHouseSize();applyRoofShape();};
-  houseStyleSelect?.addEventListener('change',applyWholeStyle);
+  houseStyleSelect?.addEventListener('change',()=>{applyWholeStyle();setView('front');});
   houseSizeSelect?.addEventListener('change',applyHouseSize);
   roofShapeSelect?.addEventListener('change',applyRoofShape);
   applyWholeStyle();
-  // Stairs and paved path.
-  for(let i=0;i<3;i++)box(3.5+i*.55,.17,.86,quartz,0,.26-i*.07,7.08+i*.83);
-  box(3.8,.075,15,gravel,0,.05,13.6,false);
-  for(let i=0;i<12;i++)box(3.65,.016,.09,limestone,0,.094,7.9+i*.95,false);
+  // Connected entrance steps and a single central walkway, separate vehicle gate.
+  for(let i=0;i<3;i++)box(3.35+i*.42,.16,.69,quartz,0,.34-i*.09,6.54+i*.55);
+  const frontYard=createFrontYard(THREE,scene,{lawnMaterial:meadow});
   // Pool and borders on the lawn; do not use video or external heavy textures.
   const poolStart=scene.children.length;
   box(6.4,.21,10.3,quartz,14.35,.15,2.4,false);
@@ -490,23 +509,8 @@ try {
   const fenceSystem=createFenceSystem(THREE,scene,{
     gardenStone,postBrick,tuscanBrick,tuscanFenceWall,copingStone,fenceIron,timber
   });
-  // Planter borders and small flowering areas remain lightweight.
-  const bedStart=scene.children.length;
-  const bedMat=M('#55483d',1);
-  for(const [x,z,w,d] of [[-7.85,12,3.7,10.2],[6.65,14,2.75,6.8]]){
-    box(w,.08,d,bedMat,x,.09,z,false);
-  }
-  const flowers=[M('#c48a84',.95),M('#e7d8a9',.95),M('#bca1ad',.95)];
-  for(let k=0;k<55;k++){
-    const zone=k<28?0:1;
-    const x=zone?-0+5.35+(k%5)*.54:-9.1+(k%6)*.52;
-    const z=zone?11+Math.floor((k-28)/5)*.56:8.3+Math.floor(k/6)*1.1;
-    const bloom=new THREE.Mesh(new THREE.SphereGeometry(.085,7,6),flowers[k%3]);
-    bloom.position.set(x,.27,z);scene.add(bloom);
-  }
-  const flowerBeds=new THREE.Group();flowerBeds.name='КАСКАД · клумбы';
-  for(const part of scene.children.slice(bedStart))flowerBeds.add(part);
-  scene.add(flowerBeds);
+  // The old random floating dots and rectangular beds are removed.
+  // Front-yard flowers are stems/petals/bushes in raised bordered beds.
   const frameColors={bronze:'#6f6555',graphite:'#394348',white:'#f4eee2',wood:'#7b4b2d'};
   const doorColors={walnut:'#4a3a31',graphite:'#373d3e',oak:'#c29c6b',white:'#f4eee2'};
   const glassColors={clear:'#a6bdc7',smoke:'#768a91',blue:'#8ebdcc'};
@@ -517,7 +521,11 @@ try {
   const updateLandscape=()=>{
     const mode=landscapeSelect?.value||'lush';
     poolGroup.visible=poolToggle?.checked!==false;
-    foliageGroup.visible=mode!=='open';flowerBeds.visible=mode!=='open';
+    foliageGroup.visible=mode!=='open';
+    frontYard.setStyle(mode==='open'?'none':(yardStyleSelect?.value||'family'));
+    frontYard.setParking(parkingToggle?.checked!==false);
+    fenceSystem.setVehicleAccess(parkingToggle?.checked!==false);
+    frontYard.setGazebo(gazeboToggle?.checked===true);
     for(let i=0;i<foliageGroup.children.length;i++){
       const part=foliageGroup.children[i];
       part.visible=mode==='lush'||mode==='modern'&&i%4!==0;
@@ -525,7 +533,7 @@ try {
     }
   };
   [frameColorSelect,doorColorSelect].forEach(el=>el?.addEventListener('change',updateOpenings));
-  [landscapeSelect,poolToggle].forEach(el=>el?.addEventListener('change',updateLandscape));
+  [landscapeSelect,poolToggle,yardStyleSelect,parkingToggle,gazeboToggle].forEach(el=>el?.addEventListener('change',updateLandscape));
   updateOpenings();updateLandscape();
 
   // Color swatches reference common RAL-like palettes, with no claims of exact screen color.
@@ -627,12 +635,12 @@ try {
     loadPhotoTexture('wood_planks_hd',1,1,tex=>{timber.map=tex;timber.needsUpdate=true;});
     loadPhotoTexture('metal_roof_base_hd',2,2,tex=>roofSystem.setPhotoMap(tex));
     loadPhotoTexture('concrete_pavement_02_2k',2,5,tex=>{gravel.map=tex;gravel.needsUpdate=true});
-    loadPhotoTexture('leafy_grass_2k',2,5,tex=>{bedMat.map=tex;bedMat.color.set('#abc3a0');bedMat.needsUpdate=true});
+    // The new raised flower beds use lightweight modeled blossoms, not flat sprites.
   };
   // CC0 landscape textures load only after the 3D constructor is visited.
   // Leafy ground cover is used in flowerbeds; the lawn stays green.
   loadPhotoTexture('concrete_pavement_02_1k',2,5,tex=>{gravel.map=tex;gravel.needsUpdate=true});
-  loadPhotoTexture('leafy_grass_1k',2,5,tex=>{bedMat.map=tex;bedMat.color.set('#abc3a0');bedMat.needsUpdate=true});
+  // Green lawn remains untouched; flowers use geometry, not brown textures.
   renderer.domElement.style.visibility='hidden';
   window.setTimeout(revealFacade,4500);
   loadPhotoTexture('red_brick',3.25,2.15,tex=>{

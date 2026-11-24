@@ -4,6 +4,7 @@
  * Не является архитектурным или конструктивным проектом.
  */
 import {METAL_PROFILES,makeStampedSurface} from './roof-relief-v25.js';
+import {HOME_VARIANTS,createHouseVariations} from './house-variants-v27.js';
 
 export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat}){
  const root=new THREE.Group();root.name='КАСКАД · малоэтажный семейный дом';scene.add(root);
@@ -38,6 +39,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   parent.add(mesh);return mesh;
  };
  const main=new THREE.Group();main.name='Дом · первый этаж';root.add(main);
+ const variants=createHouseVariations(THREE,root,{stone:limestone,trim:frameTrim,windowFrame:windowFrameMetal,glass:glassMat,wood:timber,dark:darkMetal});
  // Real front door and external opening reveals; porch only in front of entrance,
  // never over the first/attic floor windows.
  box(main,13.28,.36,9.46,0,.27,0,limestone);
@@ -97,6 +99,17 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
     face(g,[[-6.37,3.68,z],[6.37,3.68,z],[0,6.34,z]],brick);
    }
    beam(g,[0,6.56,-edgeZ],[0,6.56,edgeZ],.13,darkMetal);
+   // Front gable: two true vertical attic windows. Only visible for the
+   // dedicated gable-attic home, never duplicated on ordinary cottages.
+   const gableAtticWindows=new THREE.Group();gableAtticWindows.name='Фронтонные окна мансарды';
+   g.add(gableAtticWindows);attics.set('gable',gableAtticWindows);
+   for(const xx of [-1.45,1.45]){
+     box(gableAtticWindows,1.00,1.16,.16,xx,4.92,4.70,frameTrim);
+     box(gableAtticWindows,.83,.95,.055,xx,4.93,4.80,darkMetal);
+     box(gableAtticWindows,.72,.85,.032,xx,4.93,4.84,skylightGlass);
+     box(gableAtticWindows,.06,.96,.058,xx,4.93,4.89,frameTrim);
+     box(gableAtticWindows,1.10,.12,.33,xx,4.29,4.89,limestone);
+   }
   }else if(shape==='hip'){
    const ridge=6.02,cut=2.14;
    addRoof([[-edgeX,eave,-edgeZ],[edgeX,eave,-edgeZ],[0,ridge,-cut]]);
@@ -118,19 +131,30 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
     addRoof([b[i],b[j],c[j],c[i]]);
    }
    addRoof(c);
-   // Skylights must sit FLUSH with the outer sloped planes, not float
-   // as separate ornaments above the facade.
-   const glazing=new THREE.Group();g.add(glazing);attics.set('mansard',glazing);
-   const angle=Math.atan2(5.53-eave,edgeX-5.28);
-   for(const side of [-1,1])for(const z of [-2.1,1.95]){
-    const xx=side*6.12,yy=eave+(edgeX-Math.abs(xx))*(5.53-eave)/(edgeX-5.28);
-    const unit=new THREE.Group();unit.position.set(xx,yy+.11,z);
-    unit.rotation.z=side===1?-angle:angle;
-    glazing.add(unit);
-    box(unit,1.10,.075,1.39,0,0,0,darkMetal);
-    box(unit,.94,.04,1.21,0,.055,0,skylightGlass);
-    for(const shift of [-.52,.52])box(unit,.07,.08,1.42,shift,.075,0,frameTrim);
-    for(const shift of [-.68,.68])box(unit,1.12,.08,.07,0,.075,shift,frameTrim);
+   // Two VERTICAL dormers face the formal entrance (+Z), replacing
+   // side-facing skylights. Dormers have real cheeks, lintels and small
+   // gable roofs; their walls embed into the front mansard roof pitch.
+   const dormers=new THREE.Group();dormers.name='Мансардные окна на парадном фасаде';g.add(dormers);
+   attics.set('mansard',dormers);
+   for(const xx of [-2.05,2.05]){
+    const front=5.34,rear=4.03;
+    box(dormers,1.36,1.47,.18,xx,4.82,front,frameTrim);
+    box(dormers,.92,1.04,.055,xx,4.92,front+.115,darkMetal);
+    box(dormers,.79,.87,.036,xx,4.92,front+.151,skylightGlass);
+    box(dormers,.07,1.03,.07,xx,4.92,front+.193,frameTrim);
+    box(dormers,1.11,.085,.32,xx,4.23,front+.10,limestone);
+    for(const side of [-1,1]){
+     const x=xx+side*.64;
+     box(dormers,.13,1.41,1.28,x,4.88,(front+rear)/2,frameTrim);
+     // Front-facing dormer roof: two distinct sloping planes.
+     face(dormers,[[xx,6.14,rear],[xx+side*.84,5.57,rear],
+       [xx+side*.84,5.57,front+.29],[xx,6.14,front+.29]],
+       roofSystem.getMaterial());
+    }
+    // Front triangular tympanum connects the walls to the pitched roof.
+    face(dormers,[[xx-.66,5.55,front+.10],[xx+.66,5.55,front+.10],
+      [xx,6.03,front+.10]],frameTrim);
+    beam(dormers,[xx,6.15,rear],[xx,6.15,front+.30],.12,darkMetal);
    }
   }else{
    addRoof([[-edgeX,3.88,-edgeZ],[edgeX,3.88,-edgeZ],[edgeX,3.88,edgeZ],[-edgeX,3.88,edgeZ]]);
@@ -150,11 +174,12 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   }
   return g;
  };
- let activeShape=null,roofType=null;
+ let activeShape=null,roofType=null,currentStyle='family';
  function setRoof(shape,kind){
   const safe=roofTypes.includes(shape)?shape:'hip';
   for(const [key,g] of shapes)g.visible=key===safe;
   const newRoof=makeRoof(safe);newRoof.visible=true;
+  if(attics.has('gable'))attics.get('gable').visible=currentStyle==='gableAttic';
   // In mansard style roof windows are meaningful; non-mansard roofs
   // show only complete unbroken roofs without orphaned attic windows.
   activeShape=safe;
@@ -173,9 +198,10 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   roofType=kind;
  }
  function setStyle(style){
-  // Reduced to plausible wall and roof massing. No unsupported arches,
-  // balcony beams through glazing, or fake second-storey ornaments.
-  root.visible=['family','mansardHome','cottage','country'].includes(style);
+  currentStyle=style;
+  root.visible=style!=='classic'&&HOME_VARIANTS.some(item=>item.id===style);
+  variants.setStyle(style);
+  if(attics.has('gable'))attics.get('gable').visible=style==='gableAttic';
  }
  function setSize(size,aspect=1.35,inhabitedAttic=false){
   const floors=inhabitedAttic?1.6:1;

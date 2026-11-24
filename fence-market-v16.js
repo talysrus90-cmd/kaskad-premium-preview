@@ -5,13 +5,13 @@ export function createFenceSystem(THREE,scene,options){
   const {gardenStone,postBrick,tuscanBrick,tuscanFenceWall,copingStone,fenceIron,timber}=options;
   const segments=[
     [[-19,-17],[19,-17]], [[-19,-17],[-19,20.5]], [[19,-17],[19,20.5]],
-    [[-19,20.5],[-3.65,20.5]],[[3.65,20.5],[19,20.5]]
+    [[-19,20.5],[-2.10,20.5]],[[2.10,20.5],[7.00,20.5]],[[12.00,20.5],[19,20.5]]
   ];
   const styles=new Map();
   const sheet=new THREE.MeshStandardMaterial({color:'#48525b',roughness:.47,metalness:.52,side:THREE.DoubleSide});
   const woodDark=timber;
   const rawMetals=[fenceIron,sheet];
-  let active='iron';
+  let active='iron',vehicleAccess=true;
 
   const mesh=(parent,w,h,d,mat,x,y,z,cast=true)=>{
     const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
@@ -107,6 +107,7 @@ export function createFenceSystem(THREE,scene,options){
 
   function build(kind){
     const root=new THREE.Group();root.name='Fence · '+kind;
+    const vehicleGatePivots=[];
     const postKeys=new Map();
     const masonry=['tuscan','stone','brickIron'].includes(kind);
     for(const [[x1,z1],[x2,z2]] of segments){
@@ -128,35 +129,37 @@ export function createFenceSystem(THREE,scene,options){
       mesh(root,w,postHeight,w,masonry?blockMat:fenceIron,x,postHeight/2+.05,z);
       if(masonry)mesh(root,w+.13,.105,w+.13,copingStone,x,postHeight+.12,z);
     }
-    // Entrance portal uses the same height and material as the perimeter.
-    const z=20.5,entryMaterial=masonry?blockMat:postBrick,entryH=masonry?2.60:2.25;
-    for(const x of [-3.65,3.65]){
-      mesh(root,.72,entryH,.72,entryMaterial,x,entryH/2,z);
-      mesh(root,.90,.16,.90,copingStone,x,entryH+.085,z);
-      const light=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8),
-        new THREE.MeshStandardMaterial({color:'#f4d7a6',emissive:'#a56d39',emissiveIntensity:.25}));
-      light.position.set(x,entryH+.27,z);root.add(light);
-    }
-    // Functional gate leaves are kept in the same architectural style.
-    for(const side of [-1,1]){
-      const pivot=new THREE.Group();
-      pivot.position.set(side*3.42,0,z);
-      pivot.rotation.y=side*.13;root.add(pivot);
-      const door=(w,h,d,x,y,material=sheet)=>{
-        mesh(pivot,w,h,d,material,x,y,0,false);
-      };
-      const width=2.96;
-      if(['louvers','ranch','wood','profiled'].includes(kind)){
-        const n=kind==='ranch'?5:kind==='wood'?8:12;
-        for(let k=0;k<n;k++){
-          door(width,kind==='ranch'?.24:kind==='wood'?.15:.12,.08,-side*width/2,.33+k*(1.52/(n-1)));
-        }
-      }else{
-        for(const y of [.42,1.61])door(width,.10,.10,-side*width/2,y);
-        for(let k=0;k<11;k++)door(.065,1.69,.07,-side*(.14+k*.264),1.04);
+    // Two physically distinct entrances on the front fence:
+    // pedestrian gate (x=-2.1…2.1), vehicle gate (x=7…12).
+    const z=20.5,entryMaterial=masonry?blockMat:postBrick,entryH=masonry?2.6:2.25;
+    for(const gate of [{a:-2.1,b:2.1,name:'Калитка'},{a:7,b:12,name:'Ворота для автомобиля'}]){
+      const width=gate.b-gate.a;
+      for(const x of [gate.a,gate.b]){
+        mesh(root,.38,entryH,.38,entryMaterial,x,entryH/2,z);
+        mesh(root,.51,.13,.51,copingStone,x,entryH+.085,z);
+        const light=new THREE.Mesh(new THREE.SphereGeometry(.1,10,7),
+          new THREE.MeshStandardMaterial({color:'#f4d7a6',emissive:'#a56d39',emissiveIntensity:.2}));
+        light.position.set(x,entryH+.22,z);root.add(light);
       }
-      door(.14,1.85,.14,-side*(width-.03),1.08,fenceIron);
+      // The leaves are drawn open toward the yard, without blocking either route.
+      for(const side of [-1,1]){
+        const pivot=new THREE.Group();
+        pivot.name=gate.name;
+        pivot.position.set(side===-1?gate.a+.12:gate.b-.12,0,z);
+        pivot.rotation.y=vehicleAccess?side*.48:0;
+        if(gate.name==='Ворота для автомобиля')vehicleGatePivots.push({pivot,side});
+        root.add(pivot);
+        const leafW=width/2-.24;
+        const x=side===-1?leafW/2:-leafW/2;
+        for(const y of [.40,1.61])mesh(pivot,leafW,.09,.09,fenceIron,x,y,0,false);
+        const n=Math.max(6,Math.round(leafW/.22));
+        for(let i=0;i<n;i++){
+          const sx=x-leafW/2+(i+.5)*leafW/n;
+          mesh(pivot,.055,1.65,.065,sheet,sx,1.01,0,false);
+        }
+      }
     }
+    root.userData.vehicleGatePivots=vehicleGatePivots;
     scene.add(root);styles.set(kind,root);
     return root;
   }
@@ -174,6 +177,10 @@ export function createFenceSystem(THREE,scene,options){
       for(const material of rawMetals)material.color.set(value);
     },
     getType(){return active;},
+    setVehicleAccess(on){vehicleAccess=!!on;
+      for(const group of styles.values())for(const {pivot,side} of group.userData.vehicleGatePivots||[])
+        pivot.rotation.y=vehicleAccess?side*.48:0;
+    },
     available:['iron','tuscan','wood','stone','brickIron','louvers','picket','chess','ranch','profiled','panel3d']
   };
 }

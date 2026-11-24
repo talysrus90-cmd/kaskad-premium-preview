@@ -15,6 +15,8 @@
  };
  if(!root||Object.values(fields).some(x=>!x))return;
  const src='assets/3d/cards/';
+ // Every architectural variant is backed by a distinct 3D geometry configuration.
+
  const colors=[
    {value:'graphite',title:'Графит',color:'#52595e'},
    {value:'chocolate',title:'Шоколад',color:'#594438'},
@@ -33,11 +35,25 @@
  ];
  const data={
   presets:[
-    {value:'family',title:'Семейный · 1 этаж',sub:'Одноэтажный · вальмовая кровля',image:'preset_family_v26',set:{facade:'gray',roof:'metalGraphite',roofColor:'graphite',houseStyle:'family',houseSize:'150',roofShape:'hip'}},
-    {value:'mansardHome',title:'Дом с мансардой',sub:'1 этаж + жилая мансарда · окна в крыше',image:'preset_mansard_v26',set:{facade:'plaster',roof:'metalGraphite',roofColor:'chocolate',houseStyle:'mansardHome',houseSize:'180',roofShape:'mansard'}},
-    {value:'cottage',title:'Кирпичный коттедж',sub:'1 этаж · двухскатная металлочерепица',image:'preset_cottage_v26',set:{facade:'brick',roof:'metal3d',roofColor:'graphite',houseStyle:'cottage',houseSize:'150',roofShape:'gable'}},
-    {value:'country',title:'Одноэтажный светлый',sub:'1 этаж · светлый камень и крыша',image:'preset_country_v26',set:{facade:'stone',roof:'metalModular',roofColor:'chocolate',houseStyle:'country',houseSize:'180',roofShape:'hip'}},
-    {value:'classic',title:'Двухэтажный коттедж',sub:'2 этажа · спокойная классика',image:'preset_twostorey_v26',set:{facade:'tuscan',roof:'metalGraphite',roofColor:'graphite',houseStyle:'classic',houseSize:'220',roofShape:'hip'}}
+    {value:"family",title:"Семейный · один этаж",sub:"1 этаж · 150 м²",image:"preset_family_v27",category:"Одноэтажные",set:{facade:"gray",roof:"metalGraphite",roofColor:"graphite",houseStyle:"family",houseSize:"150",roofShape:"hip"}},
+    {value:"mansardHome",title:"Мансарда с фасадными люкарнами",sub:"1 этаж + мансарда · 180 м²",image:"preset_mansardHome_v27",category:"Мансардные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"graphite",houseStyle:"mansardHome",houseSize:"180",roofShape:"mansard"}},
+    {value:"gableAttic",title:"Мансарда с окнами во фронтоне",sub:"1 этаж + мансарда · 180 м²",image:"preset_gableAttic_v27",category:"Мансардные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"gableAttic",houseSize:"180",roofShape:"gable"}},
+    {value:"cottage",title:"Кирпичный коттедж",sub:"1 этаж · 150 м²",image:"preset_cottage_v27",category:"Одноэтажные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"cottage",houseSize:"150",roofShape:"gable"}},
+    {value:"country",title:"Светлый загородный",sub:"1 этаж · 180 м²",image:"preset_country_v27",category:"Одноэтажные",set:{facade:"stone",roof:"metalGraphite",roofColor:"graphite",houseStyle:"country",houseSize:"180",roofShape:"hip"}},
+    {value:"nordic",title:"Скандинавский дом",sub:"Современная архитектура · 150 м²",image:"preset_nordic_v27",category:"Современные",set:{facade:"plaster",roof:"metal3d",roofColor:"graphite",houseStyle:"nordic",houseSize:"150",roofShape:"gable"}},
+    {value:"chalet",title:"Шале с террасой",sub:"Классический проект · 180 м²",image:"preset_chalet_v27",category:"Классические",set:{facade:"stone",roof:"metal3d",roofColor:"chocolate",houseStyle:"chalet",houseSize:"180",roofShape:"gable"}},
+    {value:"barnhouse",title:"Барнхаус",sub:"Современная архитектура · 150 м²",image:"preset_barnhouse_v27",category:"Современные",set:{facade:"gray",roof:"metal3d",roofColor:"graphite",houseStyle:"barnhouse",houseSize:"150",roofShape:"gable"}},
+    {value:"modernOne",title:"Современный с панорамными окнами",sub:"Современная архитектура · 180 м²",image:"preset_modernOne_v27",category:"Современные",set:{facade:"plaster",roof:"standingSeam",roofColor:"graphite",houseStyle:"modernOne",houseSize:"180",roofShape:"flat"}},
+    {value:"minimal",title:"Светлый минимализм",sub:"Современная архитектура · 150 м²",image:"preset_minimal_v27",category:"Современные",set:{facade:"plaster",roof:"standingSeam",roofColor:"graphite",houseStyle:"minimal",houseSize:"150",roofShape:"flat"}},
+    {value:"estateOne",title:"Классическая усадьба",sub:"Классический проект · 220 м²",image:"preset_estateOne_v27",category:"Классические",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"estateOne",houseSize:"220",roofShape:"hip"}},
+    {value:"kavkaz",title:"Кавказский стиль",sub:"Классический проект · 220 м²",image:"preset_kavkaz_v27",category:"Классические",set:{facade:"stone",roof:"metalGraphite",roofColor:"graphite",houseStyle:"kavkaz",houseSize:"220",roofShape:"hip"}},
+    {value:"terrace",title:"Дом с садовой террасой",sub:"1 этаж · 180 м²",image:"preset_terrace_v27",category:"Одноэтажные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"graphite",houseStyle:"terrace",houseSize:"180",roofShape:"hip"}},
+    {value:"bungalow",title:"Семейный с навесом для авто",sub:"1 этаж · 180 м²",image:"preset_bungalow_v27",category:"Одноэтажные",set:{facade:"gray",roof:"metalGraphite",roofColor:"graphite",houseStyle:"bungalow",houseSize:"180",roofShape:"hip"}},
+    {value:"italian",title:"Итальянский дворик",sub:"Классический проект · 220 м²",image:"preset_italian_v27",category:"Классические",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"italian",houseSize:"220",roofShape:"hip"}},
+    {value:"coastal",title:"Светлая загородная вилла",sub:"Современная архитектура · 180 м²",image:"preset_coastal_v27",category:"Современные",set:{facade:"plaster",roof:"standingSeam",roofColor:"graphite",houseStyle:"coastal",houseSize:"180",roofShape:"flat"}},
+    {value:"practical",title:"Практичный кирпичный",sub:"1 этаж · 150 м²",image:"preset_practical_v27",category:"Одноэтажные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"practical",houseSize:"150",roofShape:"gable"}},
+    {value:"craft",title:"Садовый дом",sub:"1 этаж · 150 м²",image:"preset_craft_v27",category:"Одноэтажные",set:{facade:"plaster",roof:"metal3d",roofColor:"graphite",houseStyle:"craft",houseSize:"150",roofShape:"gable"}},
+    {value:"classic",title:"Двухэтажный коттедж",sub:"2 этажа · 220 м²",image:"preset_classic_v27",category:"Двухэтажные",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"graphite",houseStyle:"classic",houseSize:"220",roofShape:"hip"}}
   ],
   facade:[
     {value:'brick',title:'Красный кирпич',sub:'Классическая кладка',image:'facade_brick'},
@@ -82,6 +98,18 @@
  const cardList=document.createElement('div');cardList.className='builder-material-list';
  cardList.id='builderMaterialList';cardList.setAttribute('aria-label','Варианты материалов');
  root.append(cardList);
+ const filter=document.createElement('select');filter.id='houseCategoryFilter';
+ filter.setAttribute('aria-label','Категория дома');
+ filter.className='builder-category-filter';
+ for(const category of ['Все дома','Одноэтажные','Мансардные','Современные','Классические','Двухэтажные']){
+   const option=document.createElement('option');option.value=category==='Все дома'?'all':category;
+   option.textContent=category;filter.append(option);
+ }
+ nav.after(filter);filter.addEventListener('change',()=>render());
+ // Sync the complete style library with the accessible select fallback.
+ const chosen=fields.houseStyle.value;
+ fields.houseStyle.replaceChildren(...data.presets.map(v=>new Option(v.title,v.value)));
+ fields.houseStyle.value=data.presets.some(x=>x.value===chosen)?chosen:'family';
  const colorArea=document.createElement('div');colorArea.className='builder-colors';root.append(colorArea);
  const summary=document.createElement('p');summary.className='builder-choice-summary';summary.id='builderChoiceSummary';
  summary.setAttribute('aria-live','polite');root.append(summary);
@@ -149,7 +177,10 @@
    const scroll=keepScroll?cardList.scrollLeft:0;
    for(const tab of nav.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===activeTab));
    cardList.replaceChildren();
-   for(const item of data[activeTab]){
+   filter.hidden=activeTab!=='presets';
+   const items=activeTab==='presets'&&filter.value!=='all'?
+     data.presets.filter(item=>item.category===filter.value):data[activeTab];
+   for(const item of items){
      const button=document.createElement('button');button.type='button';button.className='builder-material-card';
      button.dataset.option=item.value;
      button.setAttribute('aria-pressed',String(selected(item)));

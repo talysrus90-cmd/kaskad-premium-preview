@@ -63,10 +63,11 @@ export function addNaturalFoliage(THREE,scene,{trunkMat}){
     .forEach((entry,i)=>deciduous(...entry,i));
   [[-11.6,4],[-11.2,0],[-10.6,-4],[16.4,-4],[16.4,0],[16.4,4],[5,-9],[-6,-10],[-13,-10]]
     .forEach(([x,z],i)=>cypress(x,z,3.15+(i%3)*.65,i));
-  // Distinct small shrub clusters beside driveway and patio.
-  for(let k=0;k<28;k++){
-    const x=k<14?-8.9+(k%7)*.57:8.3+(k%7)*.58;
-    const z=k<14?8.2+(k%2)*1.0:9.3+(k%2)*1.2;
+  // Low shrubs are confined to the left lawn. The right-hand driveway
+  // must remain clear for a vehicle, not overgrown with floating leaves.
+  for(let k=0;k<14;k++){
+    const x=-8.9+(k%7)*.57;
+    const z=8.2+(k%2)*1.0;
     for(let t=0;t<5;t++){
       const a=t*6.28/5,rr=.25+(t%2)*.16;
       leaf(x+Math.cos(a)*rr,.40+(t%2)*.18,z+Math.sin(a)*rr,
