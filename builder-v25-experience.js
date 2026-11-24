@@ -108,6 +108,17 @@
       <select id="verandaSelect"><option value="none">Без веранды</option><option value="open">Открытая</option><option value="covered">Крытая</option><option value="columns">С колоннами</option><option value="modern">Современная</option><option value="garden">Со стороны сада</option></select>
     </label>
     <p id="siteCompatibilityNote" role="status" aria-live="polite"></p>
+    <section class="builder-addon-picks" aria-label="Дополнительные архитектурные решения">
+      <h3>Гараж и навес</h3>
+      <p>Гараж и навес пока доступны как готовые архитектурные варианты: выбор изменит тип дома, но сохранит материалы фасада.</p>
+      <div class="builder-addon-grid">
+       <button type="button" class="builder-addon-button" data-addon-style="krasnodarTwo" data-addon-roof="gable"><strong>Гаражное крыло</strong><small>2 этажа · встроенный гараж</small></button>
+       <button type="button" class="builder-addon-button" data-addon-style="bungalow" data-addon-roof="hip"><strong>Навес для авто</strong><small>1 этаж · крытая парковка</small></button>
+       <button type="button" class="builder-addon-button" data-addon-style="twoBalcony" data-addon-roof="gable"><strong>Дом с балконом</strong><small>2 этажа · балкон</small></button>
+       <button type="button" class="builder-addon-button" data-addon-veranda="covered"><strong>Крытая веранда</strong><small>Меняет только веранду</small></button>
+      </div>
+      <p id="builderAddonStatus" role="status" aria-live="polite"></p>
+    </section>
     <label class="builder-v25-control">Отмостка — материал
       <select id="blindAreaType"><option value="concrete">Бетонная</option><option value="tile">Плитка</option><option value="pavers">Брусчатка</option><option value="stone">Камень</option><option value="wide">Широкая декоративная</option><option value="none">Без отмостки (эскиз)</option></select>
     </label>
@@ -360,6 +371,38 @@
   });
  }
  renderQuickStages();
+ // Access existing 3D architecture, not decorative or fake toggles.
+ const addonStatus=document.getElementById('builderAddonStatus');
+ const addonButtons=[...document.querySelectorAll('.builder-addon-button')];
+ const syncAddons=()=>addonButtons.forEach(b=>{
+  const matches=b.dataset.addonStyle
+   ?fields.houseStyleSelect.value===b.dataset.addonStyle
+   :fields.verandaSelect.value===b.dataset.addonVeranda;
+  b.setAttribute('aria-pressed',String(matches));
+ });
+ for(const b of addonButtons)b.addEventListener('click',()=>{
+  if(b.dataset.addonStyle){
+   const choice=b.dataset.addonStyle;
+   if(![...fields.houseStyleSelect.options].some(o=>o.value===choice))return;
+   fields.houseStyleSelect.value=choice;
+   fields.houseStyleSelect.dispatchEvent(new Event('change',{bubbles:true}));
+   fields.roofShapeSelect.value=b.dataset.addonRoof;
+   fields.roofShapeSelect.dispatchEvent(new Event('change',{bubbles:true}));
+   if(!fields.parkingToggle.checked){
+    fields.parkingToggle.checked=true;
+    fields.parkingToggle.dispatchEvent(new Event('change',{bubbles:true}));
+   }
+   addonStatus.textContent='Модель дома изменена: '+b.querySelector('strong').textContent+'. Фасад и отделку можно выбрать отдельно.';
+  }else if(b.dataset.addonVeranda){
+   fields.verandaSelect.value=b.dataset.addonVeranda;
+   fields.verandaSelect.dispatchEvent(new Event('change',{bubbles:true}));
+   addonStatus.textContent='Крытая веранда добавлена к выбранному дому.';
+  }
+  syncAddons();
+ });
+ for(const el of [fields.houseStyleSelect,fields.verandaSelect])
+  el.addEventListener('change',syncAddons);
+ syncAddons();
  function name(id){const el=fields[id];return el?.selectedOptions?.[0]?.textContent?.trim()||
    (el?.checked?'Да':'Нет')||'—';}
  const plotWidth=document.getElementById('plotWidthSlider');
