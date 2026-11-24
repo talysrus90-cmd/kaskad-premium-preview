@@ -228,7 +228,7 @@
   if(widthSlider){widthSlider.value=String(width);document.getElementById('houseWidthValue').textContent=width+' м'}
   if(lengthSlider){lengthSlider.value=String(length);document.getElementById('houseLengthValue').textContent=length+' м'}
   const sceneHouse=document.getElementById('sceneHouseDimensions');
-  if(sceneHouse)sceneHouse.textContent=width+' × '+length+' м';
+  if(sceneHouse)sceneHouse.textContent='Ш: '+width+' м · Д: '+length+' м';
   const footprint=Math.round(width*length*100)/100;
   const mansardAboveTwo=(document.getElementById('houseStyleSelect')?.value||'').startsWith('twoMansard');
   const floorLabel=mansardAboveTwo?'2 этажа + мансарда':{one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
@@ -346,7 +346,7 @@
   document.getElementById('plotWidthValue').textContent=width+' м';
   document.getElementById('plotLengthValue').textContent=depth+' м';
   const scenePlot=document.getElementById('scenePlotDimensions');
-  if(scenePlot)scenePlot.textContent='Участок '+width+' × '+depth+' м';
+  if(scenePlot)scenePlot.textContent='Участок · Ш: '+width+' м · Д: '+depth+' м';
   document.getElementById('plotDimensions').textContent='Участок '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+area.toFixed(0)+' м²';
   const coverage=house.width*house.length/area*100;
   const percent=coverage.toFixed(1).replace('.',',');

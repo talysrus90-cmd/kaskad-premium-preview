@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-gallery-prune-typography';
+const VERSION='kaskad-pwa-20261124-compare-metric-labels';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -17,11 +17,11 @@ const core=[
  './interactive-home.css?v=10',
  './mobile-usability-20261123.css?v=1',
  './kaskad-type-tuning.css?v=1',
- './3d-house-embed.html?v=22',
+ './3d-house-embed.html?v=23',
  './house-3d.bundle.js?v=19',
  './3d-house.css?v=4',
- './builder-v25-layout.css?v=8',
- './builder-v25-experience.js?v=10',
+ './builder-v25-layout.css?v=9',
+ './builder-v25-experience.js?v=11',
  './mobile-dock-20261110.css?v=2',
  './mobile-dock-20261110.js?v=4',
  './builder-launch-v29.js?v=1',
