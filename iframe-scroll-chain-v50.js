@@ -1,7 +1,11 @@
-/* KASKAD v53: stable top-level touch coordinates and one-way handoff from the WebGL iframe to the site.
+/* KASKAD v54: stable top-level touch coordinates and one-way handoff from the WebGL iframe to the site.
    One scroll operation per animation frame, no concurrent scene dragging. */
 (() => {
   'use strict';
+  // Emergency comfort mode: ?safe=1 disables synthetic parent scrolling
+  // while keeping the rest of the site and its model configuration available.
+  const search = window.parent === window ? location.search : window.parent.location.search;
+  if (new URLSearchParams(search).get('safe') === '1') return;
   const frame = document.querySelector('#interactive-home iframe');
   if (window.parent === window) {
     if (!frame) return;
