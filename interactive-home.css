@@ -53,3 +53,20 @@
   max-height:calc(100dvh - 160px)!important;
  }
 }
+
+
+/* Instant real-house preview while the embedded WebGL document starts.
+   No loading spinner, no faux interaction on the static placeholder. */
+.kaskad-3d-feature .k3d-editor-preview{
+ position:absolute;z-index:2;top:0;left:0;width:100%;
+ height:min(412px,60vw);min-height:260px;
+ object-fit:cover;object-position:center;pointer-events:none;
+ opacity:1;transition:opacity .16s ease;
+}
+.kaskad-3d-feature .k3d-viewer iframe{opacity:0}
+.kaskad-3d-feature.kaskad-frame-ready .k3d-viewer iframe{opacity:1}
+.kaskad-3d-feature.kaskad-frame-ready .k3d-editor-preview{opacity:0;visibility:hidden}
+@media(max-width:730px){
+ .kaskad-3d-feature .k3d-editor-preview{height:clamp(248px,43dvh,322px)!important;min-height:0}
+}
+@media(prefers-reduced-motion:reduce){.kaskad-3d-feature .k3d-editor-preview{transition:none}}

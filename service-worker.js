@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v42-site-stability';
+const VERSION='kaskad-pwa-20261124-v43-immediate-first-frame';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -14,18 +14,18 @@ const core=[
  './gallery-fullscreen-20261109.css?v=3',
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
- './interactive-home.css?v=10',
+ './interactive-home.css?v=11',
  './mobile-usability-20261123.css?v=1',
  './kaskad-type-tuning.css?v=1',
- './3d-house-embed.html?v=26',
- './house-3d.bundle.js?v=22',
+ './3d-house-embed.html?v=27',
+ './house-3d.bundle.js?v=23',
  './3d-house.css?v=4',
  './builder-v25-layout.css?v=12',
  './builder-v25-experience.js?v=13',
  './mobile-dock-20261110.css?v=2',
  './mobile-dock-20261110.js?v=4',
- './builder-launch-v29.js?v=2',
- './builder-gallery.js?v=15',
+ './builder-launch-v29.js?v=3',
+ './builder-gallery.js?v=16',
  './roof-relief-v25.js',
  './russian-home-v26.js',
  './house-variants-v27.js',
@@ -79,6 +79,7 @@ const core=[
  './assets/3d/cards/preset_terrace_v27.webp',
  './builder-gallery.css?v=3',
  './builder-lead-bridge.js?v=8',
+ './assets/3d/preview-start-v43.webp',
  './assets/3d/roof_tile_neutral.webp',
  './roof-market-v16.js',
  './roof-forms-v20.js',
@@ -158,7 +159,11 @@ const core=[
 // Install a light, reliable offline shell. The 3D builder, HDR textures, and its
 // previews are fetched and cached on first use, not downloaded by every visitor.
 // Previously install preloaded 102 resources (~5.7 MB), even on mobile data.
-const offlineCore=core.filter(p=>!/^(?:\.\/assets\/3d\/|\.\/3d-house-embed\.html|\.\/house-3d\.bundle\.js|\.\/3d-house\.css|\.\/builder-gallery\.(?:js|css)|\.\/architecture-styles-v19\.js|\.\/builder-lead-bridge\.js|\.\/roof-market-v16\.js|\.\/roof-forms-v20\.js|\.\/fence-market-v16\.js|\.\/foliage-v16\.js|\.\/russian-home-v26\.js|\.\/house-variants-v27\.js|\.\/front-yard-v27\.js|\.\/facade-presets-v28\.js|\.\/entrance-v28\.js|\.\/exterior-addons-v30\.js)/.test(p));
+const offlineCore=[
+ './','./index.html','./manifest.webmanifest',
+ './assets/offline-photo.svg','./assets/ideas/card/hero-960.webp',
+ './fonts.css?v=pwa1','./premium.css?v=houses-20261108'
+];
 const URL_OF=p=>new URL(p,ROOT);
 const isInScope=url=>url.origin===new URL(ROOT).origin&&url.pathname.startsWith(new URL(ROOT).pathname);
 const isApi=p=>p.includes('/api/')||p.includes('/auth/')||p.includes('/admin/');
@@ -188,21 +193,43 @@ const withTimeout=async(request,ms=3200)=>{
  const timer=setTimeout(()=>controller.abort(),ms);
  try{return await fetch(request,{signal:controller.signal})}finally{clearTimeout(timer)}
 };
-const getNavigation=async(request)=>{
+const getNavigation=async(request,event)=>{
  const store=await caches.open(RUNTIME);
+ const path=new URL(request.url).pathname;
+ const builder=path.endsWith('/3d-house-embed.html');
+ // A matching cached editor can be displayed without waiting for a slow
+ // connection. Never serve the main index document as an iframe editor.
+ const cached=await store.match(request);
+ if(builder&&cached){
+   event.waitUntil((async()=>{
+     try{
+       const response=await withTimeout(request,12000);
+       if(response.ok)await put(store,request,response);
+     }catch{}
+   })());
+   return cached;
+ }
  try{
-   const result=await withTimeout(request,3500);
-   if(result.ok) {
-     await put(store,request,result);
-     await limitCache(store,24);
+   const result=await withTimeout(request,builder?12000:4500);
+   if(result.ok){
+     // Writing to Cache Storage must not delay navigation or first paint.
+     event.waitUntil((async()=>{
+       await put(store,request,result);
+       await limitCache(store,24);
+     })());
      return result;
    }
    throw new Error('Network status '+result.status);
  }catch{
-   const cached=await store.match(request,{ignoreSearch:true})
-      ||await caches.match(URL_OF('./index.html').href,{ignoreSearch:true})
-      ||await caches.match(URL_OF('./').href,{ignoreSearch:true});
-   return cached||Response.error();
+   const old=await store.match(request,{ignoreSearch:!builder});
+   if(old)return old;
+   // Only the home page (or an SPA home navigation) may reuse index.html.
+   const rootPath=new URL(ROOT).pathname;
+   const home=path===rootPath||path===rootPath+'index.html';
+   if(home)return await caches.match(URL_OF('./index.html').href,{ignoreSearch:true})
+     ||await caches.match(URL_OF('./').href,{ignoreSearch:true})
+     ||Response.error();
+   return Response.error();
  }
 };
 const getCachedImage=async(request,url,event)=>{
@@ -244,7 +271,7 @@ self.addEventListener('fetch',event=>{
  if(request.method!=='GET')return;
  const url=new URL(request.url);
  if(!isInScope(url)||isApi(url.pathname))return;
- if(request.mode==='navigate'){event.respondWith(getNavigation(request));return}
+ if(request.mode==='navigate'){event.respondWith(getNavigation(request,event));return}
  if(request.destination==='image' || /\.(?:jpg|jpeg|png|webp|avif|svg)$/i.test(url.pathname)){
    event.respondWith(getCachedImage(request,url,event));return;
  }

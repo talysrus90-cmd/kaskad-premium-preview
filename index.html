@@ -333,7 +333,7 @@ h1,h2,h3{color:var(--ink)}
 <link rel="stylesheet" href="gallery-four-20261109.css?v=2">
 <link rel="stylesheet" href="faq-legal-20261109.css?v=2">
 <link rel="stylesheet" href="mobile-dock-20261110.css?v=2">
-<link rel="stylesheet" href="interactive-home.css?v=10">
+<link rel="stylesheet" href="interactive-home.css?v=11">
 <link rel="stylesheet" href="mobile-usability-20261123.css?v=1">
 <link rel="stylesheet" href="kaskad-type-tuning.css?v=1">
 <script src="preview-runtime.js"></script>
@@ -388,7 +388,8 @@ h1,h2,h3{color:var(--ink)}
       </div>
     </div>
     <div class="k3d-viewer">
-      <iframe src="3d-house-embed.html?v=26" loading="lazy" title="Интерактивный 3D-дом и участок КАСКАД" allow="fullscreen" aria-label="Поворот дома пальцем и управление освещением"></iframe>
+      <img class="k3d-editor-preview" src="assets/3d/preview-start-v43.webp" width="900" height="430" alt="3D-дом и участок в конструкторе КАСКАД" loading="eager" fetchpriority="low" decoding="async">
+      <iframe src="3d-house-embed.html?v=27" loading="eager" fetchpriority="low" title="Интерактивный 3D-дом и участок КАСКАД" allow="fullscreen" aria-label="Поворот дома пальцем и управление освещением"></iframe>
     </div>
     <p class="k3d-caption">Интерактивная архитектурная концепция, не фотография реального объекта и не строительный проект. Варианты оформления — для вдохновения; окончательный подбор материалов выполняется по смете.</p>
   </div>
@@ -640,23 +641,29 @@ h1,h2,h3{color:var(--ink)}
     photo.backdrop='assets/ideas/fast/bg-'+name+'.webp';
   }
   const photoCache=new Map();
-  const maxPrefetched=7;
+  const maxPrefetched=8;
   function warmPhoto(photo){
-    if(!photo||photoCache.has(photo.src))return;
-    const image=new Image();image.decoding='async';image.src=photo.src;
+    if(!photo)return null;
+    const known=photoCache.get(photo.src);
+    if(known)return known;
+    const image=new Image();
+    image.decoding='async';image.fetchPriority='low';
+    image.src=photo.src;
     photoCache.set(photo.src,image);
     if(photoCache.size>maxPrefetched){
       const key=photoCache.keys().next().value;
       if(key!==one('#bigImage').getAttribute('src'))photoCache.delete(key);
     }
+    return image;
   }
   function warmNeighbours(album,index){
-    for(const distance of [0,1,2,-1,-2]){
+    // Only the visible image and two neighbours: avoid five competing downloads.
+    for(const distance of [0,1,-1])
       warmPhoto(album[(index+distance+album.length)%album.length]);
-    }
   }
   let activeAlbum=0,activePhoto=0;
   const lastSeenGalleryPhoto=new Array(albums.length).fill(0);
+  let galleryImageTicket=0;
   function showPhoto(index){const album=albums[activeAlbum];activePhoto=(index+album.length)%album.length;lastSeenGalleryPhoto[activeAlbum]=activePhoto;const photo=album[activePhoto];
     // Tiny low-resolution backdrop prevents full-size blurred duplicate paints.
     imgModal.style.setProperty('--gallery-photo-backdrop','url('+JSON.stringify(photo.backdrop)+')');
@@ -666,9 +673,28 @@ h1,h2,h3{color:var(--ink)}
         location.pathname+location.search+'#gallery-photo-'+(activeAlbum+1)+'-'+(activePhoto+1));
     }
     one('#photoZoomStage').classList.add('photo-changing');
-    const main=one('#bigImage');
-    main.onerror=()=>{main.onerror=null;main.src=photo.original};
-    main.src=photo.src;main.alt=photo.title;one('#imageTitle').textContent=photo.title;one('#imageDesc').textContent='';one('#imageCount').textContent=(activePhoto+1)+' / '+album.length;all('#imageThumbs button').forEach((b,i)=>{b.setAttribute('aria-current',String(i===activePhoto));b.style.borderColor=i===activePhoto?'#ca8059':'transparent'});}
+    const main=one('#bigImage'),ticket=++galleryImageTicket;
+    const warmed=warmPhoto(photo);
+    main.onerror=()=>{if(ticket!==galleryImageTicket)return;main.onerror=null;main.src=photo.original};
+    // Tiny local preview shows immediately while the full responsive WebP is
+    // downloading. A cached decoded image swaps without a loading interruption.
+    const isDecoded=Boolean(warmed?.complete&&warmed.naturalWidth>0);
+    main.src=isDecoded?photo.src:photo.backdrop;
+    main.alt=photo.title;
+    if(!isDecoded&&warmed){
+      Promise.resolve(warmed.decode?.()||new Promise((resolve,reject)=>{
+        warmed.addEventListener('load',resolve,{once:true});
+        warmed.addEventListener('error',reject,{once:true});
+      })).then(()=>{
+        if(ticket!==galleryImageTicket)return;
+        main.src=photo.src;
+        one('#photoZoomStage').classList.remove('photo-changing');
+      }).catch(()=>{
+        if(ticket!==galleryImageTicket)return;
+        main.onerror=null;main.src=photo.original;
+      });
+    }else one('#photoZoomStage').classList.remove('photo-changing');
+    one('#imageTitle').textContent=photo.title;one('#imageDesc').textContent='';one('#imageCount').textContent=(activePhoto+1)+' / '+album.length;all('#imageThumbs button').forEach((b,i)=>{b.setAttribute('aria-current',String(i===activePhoto));b.style.borderColor=i===activePhoto?'#ca8059':'transparent'});}
   function buildThumbs(){const host=one('#imageThumbs');host.replaceChildren();albums[activeAlbum].forEach((photo,index)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Фото '+(index+1)+': '+photo.title);b.style.cssText='flex:0 0 72px;border:2px solid transparent;border-radius:6px;padding:0;background:none;cursor:pointer';const image=document.createElement('img');image.src=photo.original.replace('.jpg','-thumb.jpg');image.alt='';image.loading='lazy';image.style.cssText='width:68px;height:52px;object-fit:cover;border-radius:4px';b.append(image);b.addEventListener('click',()=>showPhoto(index));host.append(b)})}
   all('.project').forEach((card,index)=>{const preview=albums[index][0];card.querySelector('img').decoding='async';card.querySelector('img').loading='lazy';card.querySelector('img').alt=preview.title;const count=document.createElement('span');count.textContent=albums[index].length+' фото · смотреть подборку';count.style.cssText='display:block;margin-top:7px;font-size:11px;color:#68766c';card.querySelector('.project-info').append(count);card.addEventListener('pointerenter',()=>warmNeighbours(albums[index],lastSeenGalleryPhoto[index]),{passive:true});
     card.addEventListener('touchstart',()=>warmNeighbours(albums[index],lastSeenGalleryPhoto[index]),{passive:true,once:true});
@@ -681,6 +707,20 @@ h1,h2,h3{color:var(--ink)}
       showPhoto(lastSeenGalleryPhoto[index]);
       openModal(imgModal)
     })});
+  // Warm first real photo just before the user reaches each gallery card.
+  // This is progressive, not bulk loading 135 full-size photos on page startup.
+  if('IntersectionObserver' in window){
+    const cards=all('.project');
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting)return;
+        const index=cards.indexOf(entry.target);
+        if(index>=0)warmNeighbours(albums[index],lastSeenGalleryPhoto[index]);
+        observer.unobserve(entry.target);
+      });
+    },{rootMargin:'280px 0px'});
+    cards.forEach(card=>observer.observe(card));
+  }
   one('#prevImage').addEventListener('click',()=>showPhoto(activePhoto-1));one('#nextImage').addEventListener('click',()=>showPhoto(activePhoto+1));
   imgModal.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();showPhoto(activePhoto-1)}if(e.key==='ArrowRight'){e.preventDefault();showPhoto(activePhoto+1)}if(e.key==='Tab'){const items=all('button',imgModal).filter(x=>x.getClientRects().length);const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
   one('#chooseIdea').addEventListener('click',()=>{const photo=albums[activeAlbum][activePhoto];const card=all('.project')[activeAlbum];closeModal(imgModal,true);one('#leadService').value=card.dataset.category==='house'?'Строительство дома, коттеджа или виллы':'Интерьеры и отделка';const value='Мне нравится идея: '+photo.title+'. Фото '+(activeAlbum+1)+'/'+(activePhoto+1)+': '+new URL(photo.src,location.href).href;one('#leadComment').value=(one('#leadComment').value+'\n'+value).trim();one('#leadOutput').classList.add('hidden');openModal(request)});
@@ -733,7 +773,7 @@ h1,h2,h3{color:var(--ink)}
 <script src="gallery-zoom.js?v=20261123-finger-anchor-v24" defer></script>
 <script src="pwa.js?v=1" defer></script>
 <script src="mobile-dock-20261110.js?v=4"></script>
-<script src="builder-launch-v29.js?v=2" defer></script>
+<script src="builder-launch-v29.js?v=3" defer></script>
 <script src="builder-lead-bridge.js?v=8" defer></script>
 <script src="call-routing.js?v=samsung-dial-20261110-v2"></script>
 <script src="email-compose.js?v=20261110-inpage-v3"></script>

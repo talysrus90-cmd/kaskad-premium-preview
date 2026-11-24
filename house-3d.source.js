@@ -168,8 +168,16 @@ try {
   renderer.toneMappingExposure=1.35;
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.domElement.addEventListener('webglcontextlost',event=>{
+    event.preventDefault();
+    renderer.domElement.style.visibility='hidden';
+    fallback.style.display='block';loading.hidden=true;
+    status.textContent='Фото дома · восстановите 3D перезагрузкой страницы';
+  },false);
   renderer.domElement.setAttribute('aria-label','Трёхмерная модель частного дома. Вращайте пальцем или мышью');
   container.appendChild(renderer.domElement);
+  // Render the first actual scene before replacing the instantaneous preview.
+  renderer.domElement.style.visibility='hidden';
 
   const camera=new THREE.PerspectiveCamera(48,1,.2,130);
   const mobileView=window.matchMedia('(max-width:730px)').matches;
@@ -947,10 +955,9 @@ const veranda=createVeranda(THREE,scene);
   // Licensed CC0 Poly Haven 1K photo textures; stored locally as small WebP files.
   // Real images improve masonry/tile details; procedural maps remain offline fallback.
   const photoLoader=new THREE.TextureLoader();
-  // Suppress the procedural-to-photo mid-interaction jump: reveal the 3D only
-  // after all facade photo maps have resolved (or use the procedural fallback).
-  const criticalFacadeFiles=new Set(['red_brick','stone_tile_wall','rustic_brick_diff','italian_brick_diff']);
-  let facadePending=criticalFacadeFiles.size,facadeReady=false;
+  // First usable frame must not depend on network textures. Three.js supports
+  // showing geometry first and replacing its maps asynchronously.
+  let facadeReady=false;
   const revealFacade=()=>{
     if(facadeReady)return;
     facadeReady=true;
@@ -959,11 +966,10 @@ const veranda=createVeranda(THREE,scene);
     fallback.style.display='none';
     loading.hidden=true;
     status.textContent='3D готов · Вращение 360°';
-  };
-  const finishCritical=(file)=>{
-    if(!criticalFacadeFiles.has(file))return;
-    criticalFacadeFiles.delete(file);facadePending--;
-    if(facadePending<=0)revealFacade();
+    // Remove the outer page's poster as soon as the first real 3D frame exists.
+    if(window.parent!==window){
+      window.parent.postMessage({type:'kaskad-builder-first-frame',version:1},location.origin);
+    }
   };
   const loadPhotoTexture=(file,repeatX,repeatY,accept)=>{
     photoLoader.load(new URL('assets/3d/'+file+'.webp',document.baseURI).href,tex=>{
@@ -972,9 +978,9 @@ const veranda=createVeranda(THREE,scene);
       tex.repeat.set(repeatX,repeatY);
       tex.anisotropy=Math.min(desktopGPU?8:4,renderer.capabilities.getMaxAnisotropy());
       accept(tex);
-      if(criticalFacadeFiles.has(file))applyFacade(true);
-      finishCritical(file);
-    },undefined,()=>{finishCritical(file);});
+      // Replace the fallback shader material without blocking scene readiness.
+      applyFacade(true);
+    },undefined,()=>{/* Procedural textures remain a usable fallback. */});
   };
   // 2K CC0 texture upgrade only when the visitor explicitly selects HD/Ultra.
   // Normal mobile traffic keeps the small 1K local copies and quick load time.
@@ -1018,8 +1024,8 @@ const veranda=createVeranda(THREE,scene);
     meadow.map=tex;meadow.roughness=.99;meadow.needsUpdate=true;
   });
   // Green lawn remains untouched; flowers use geometry, not brown textures.
-  renderer.domElement.style.visibility='hidden';
-  window.setTimeout(revealFacade,4500);
+  // No forced 4.5s loading timer. The first successfully rendered frame
+  // reveals the canvas; all remaining textures complete in the background.
   loadPhotoTexture('red_brick',3.25,2.15,tex=>{
     facadeTextures.brick=tex;
     postBrick.map=tex;postBrick.color.set('#ffffff');postBrick.needsUpdate=true;
@@ -1066,9 +1072,13 @@ const veranda=createVeranda(THREE,scene);
     roofSystem.setMetalNormal(tex);
   },undefined,()=>{});
   // HDR environment supplies actual sky/surrounding light reflections to metal/glass.
-  new RGBELoader().load(new URL('assets/3d/rooitou_park_1k.hdr',document.baseURI).href,
-    tex=>{tex.mapping=THREE.EquirectangularReflectionMapping;scene.environment=tex;
-      scene.environmentIntensity=.52;},undefined,()=>{/* Hemisphere light remains. */});
+  const loadEnvironment=()=>{
+    new RGBELoader().load(new URL('assets/3d/rooitou_park_1k.hdr',document.baseURI).href,
+      tex=>{tex.mapping=THREE.EquirectangularReflectionMapping;scene.environment=tex;
+        scene.environmentIntensity=.52;},undefined,()=>{/* Hemisphere light remains. */});
+  };
+  // HDR is an optional refinement. It must never compete with the first frame.
+  window.setTimeout(loadEnvironment,desktopGPU?550:1550);
 
   // Ambient and sunlight respond to user-selected time of day.
   const hemi=new THREE.HemisphereLight('#d8e9ff','#b2a28c',1.35);
@@ -1198,12 +1208,25 @@ const veranda=createVeranda(THREE,scene);
     }
     controls.update();
     renderer.render(scene,camera);
+    if(!facadeReady)revealFacade();
   };
-  requestAnimationFrame(draw);
+  // Compile and render once while the user reads the page above the builder.
+  // This avoids a cold shader-compilation pause upon the first touch.
+  requestAnimationFrame(()=>{
+    try{
+      controls.update();renderer.render(scene,camera);
+      revealFacade();
+    }catch{
+      fallback.style.display='block';
+      loading.hidden=true;
+      status.textContent='Фото дома · 3D недоступно';
+    }
+    requestAnimationFrame(draw);
+  });
 } catch(err) {
   fallback.style.display='block';
-  loading.textContent='3D недоступен на этом устройстве. Показываем фотографию дома.';
-  loading.style.whiteSpace='normal';
+  loading.hidden=true;
+  loading.textContent='';
   status.textContent='Фото вместо 3D';
   for(const el of [hourInput,windowsToggle,facadeSelect,roofSelect,fenceSelect,roofColorSelect,fenceColorSelect,houseStyleSelect,houseSizeSelect,roofShapeSelect,qualitySelect,autoButton,highDetailButton])if(el)el.disabled=true;
   // The static page, project photo and navigation remain available.

@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="fonts.css?v=pwa1">
 <link rel="stylesheet" href="3d-house.css?v=4">
 <link rel="stylesheet" href="builder-gallery.css?v=3">
+<link rel="preload" as="image" href="assets/3d/preview-start-v43.webp" fetchpriority="high">
+<link rel="modulepreload" href="house-3d.bundle.js?v=23">
 <style>
 html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .embed{padding:0;margin:0}.workspace{max-width:none;margin:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;gap:0;align-items:stretch}
@@ -130,8 +132,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="workspace">
 <div class="viewer-col">
 <div class="scene" id="sceneContainer" aria-label="Вращаемая трёхмерная модель частного дома и участка">
-<img id="modelFallback" src="assets/ideas/card/hero-960.webp" alt="Фотография загородного дома — резерв при отсутствии WebGL" loading="eager" decoding="async">
-<div id="loading3d" class="loading" role="status">Загружаем 3D-модель…</div>
+<img id="modelFallback" src="assets/3d/preview-start-v43.webp" alt="Предпросмотр 3D-дома с участком. Доступны настройки конструктора." loading="eager" fetchpriority="high" decoding="async" width="900" height="430">
+<div id="loading3d" class="loading" role="status" aria-live="polite" hidden></div>
 <div class="scene-metric-badge" aria-label="House dimensions"><output id="sceneHouseDimensions" aria-live="polite">Дом 10 × 10 м</output><small id="scenePlotDimensions" hidden>Участок 20 × 30 м</small></div>
 
 
@@ -234,8 +236,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=15" defer></script>
+<script src="builder-gallery.js?v=16" defer></script>
 <script src="builder-v25-experience.js?v=13" defer></script>
-<script type="module" src="house-3d.bundle.js?v=22"></script>
+<script type="module" src="house-3d.bundle.js?v=23"></script>
 </body>
 </html>

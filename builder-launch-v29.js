@@ -7,6 +7,17 @@
  const iframe=section?.querySelector('iframe');
  if(!section||!iframe)return;
  const origin=new URL(iframe.src,location.href).origin;
+ // The static preview is visible immediately; remove it once the real editor
+ // document has fully loaded. No loading overlay on the parent site.
+ const markFrameReady=()=>section.classList.add('kaskad-frame-ready');
+ const validFrame=()=>{
+   try{return Boolean(iframe.contentDocument?.getElementById('sceneContainer'))}
+   catch{return false}
+ };
+ // The iframe load event can fire even after a failed navigation.
+ // Keep the preview unless the real editor document is present.
+ iframe.addEventListener('load',()=>{if(validFrame())markFrameReady()});
+ if(iframe.contentDocument?.readyState==='complete'&&validFrame())markFrameReady();
  let openRequest=0;
  let builderHistoryActive=false;
  const sectionTop=()=>{
@@ -83,6 +94,9 @@
  window.addEventListener('message',event=>{
   if(event.origin!==origin||event.source!==iframe.contentWindow)return;
   if(event.data?.version!==1)return;
+  if(event.data.type==='kaskad-builder-first-frame'){
+    markFrameReady();return;
+  }
   if(event.data.type==='kaskad-builder-engaged'){
    markBuilderEntry();return;
   }
