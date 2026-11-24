@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import { PNG } from 'pngjs';
 
-const BASE='http://127.0.0.1:8765/3d-house-embed.html?v=48';
+const BASE='http://127.0.0.1:8765/3d-house-embed.html?v=49';
 const browser=await chromium.launch({
   headless:true,
   args:['--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']
@@ -67,9 +67,9 @@ async function runScenario(name,viewport,isMobile=false){
         .getAttribute('aria-pressed')==='true','Переключение: '+room);
     }
     // The previous smoke test passed with an entirely blank WebGL interior.
-    // Give the renderer several frames and inspect pixels *inside the canvas*,
-    // not just the room buttons. A uniform clear-color frame must fail QA.
-    await page.waitForTimeout(800);
+    // The scene must render in the SAME interaction frame, without waiting
+    // for the idle 6 FPS loop. Inspect the actual WebGL canvas pixels.
+    // A uniform clear-color frame must fail QA.
     const image=await page.locator('#sceneContainer canvas').screenshot({
       path:'test-results/'+name+'-interior-canvas.png'
     });
