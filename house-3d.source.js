@@ -203,6 +203,7 @@ try {
   };
   let focusTransition=null;
   window.addEventListener('kaskad:focus-view',event=>{
+    if(typeof isSitePreview!=='undefined'&&isSitePreview)return;
     const cfg=focusViews[event.detail?.tab];
     if(!cfg)return;
     focusTransition={
@@ -612,6 +613,65 @@ const veranda=createVeranda(THREE,scene);
   const fenceSystem=createFenceSystem(THREE,scene,{
     gardenStone,postBrick,tuscanBrick,tuscanFenceWall,copingStone,fenceIron,timber
   });
+  // Measured site preview: independent plot perimeter in metres. Existing
+  // decorative fixed-layout yard is hidden only while editing the site.
+  // House modules move together as one rigid body, keeping material sizes and
+  // columns, porch, veranda and blind area tied to the real chosen footprint.
+  const plotHousePivot=new THREE.Group();plotHousePivot.name='Участок · положение дома';scene.add(plotHousePivot);
+  for(const model of [houseRoot,russianHome.root,veranda.root,blindArea.root])plotHousePivot.add(model);
+  const plotOutline=new THREE.Group();plotOutline.name='Участок · границы в масштабе';scene.add(plotOutline);
+  const boundaryMat=M('#3b6849',.86),edgeMat=M('#c6b89b',.9);
+  const plotEdges=[];
+  for(let i=0;i<4;i++){
+    const edge=new THREE.Mesh(new THREE.BoxGeometry(1,.22,1),boundaryMat);
+    edge.position.y=.16;plotOutline.add(edge);plotEdges.push(edge);
+  }
+  const plotCornerPosts=[];
+  for(let i=0;i<4;i++){
+    const post=new THREE.Mesh(new THREE.BoxGeometry(.28,1.15,.28),boundaryMat);
+    post.position.y=.60;plotOutline.add(post);plotCornerPosts.push(post);
+  }
+  const measuredPlotGround=new THREE.Mesh(new THREE.PlaneGeometry(1,1),
+    new THREE.MeshStandardMaterial({color:'#adc79d',transparent:true,opacity:.22,roughness:1,depthWrite:false}));
+  measuredPlotGround.rotation.x=-Math.PI/2;measuredPlotGround.position.y=.018;plotOutline.add(measuredPlotGround);
+  plotOutline.visible=false;
+  let isSitePreview=false,plotDetails=null;
+  const refreshSitePreview=()=>{
+    if(!plotDetails)return;
+    const {width,depth,houseX,houseZ,houseWidth,houseLength,fits}=plotDetails;
+    const frontage=20.5,rear=frontage-depth,left=-width/2,right=width/2,mid=(frontage+rear)/2;
+    const edge=(e,w,l,x,z)=>{e.scale.set(w,1,l);e.position.x=x;e.position.z=z};
+    edge(plotEdges[0],width,.12,0,frontage);
+    edge(plotEdges[1],width,.12,0,rear);
+    edge(plotEdges[2],.12,depth,left,mid);
+    edge(plotEdges[3],.22,depth,right,mid);
+    [[left,frontage],[right,frontage],[left,rear],[right,rear]].forEach(([x,z],i)=>plotCornerPosts[i].position.set(x,.60,z));
+    measuredPlotGround.scale.set(width,depth,1);measuredPlotGround.position.set(0,.018,mid);
+    const deltaX=-width/2+houseX+houseWidth/2;
+    const deltaZ=frontage-houseZ-4.63;
+    plotHousePivot.position.set(isSitePreview?deltaX:0,0,isSitePreview?deltaZ:0);
+    plotOutline.visible=isSitePreview;
+    if(isSitePreview){
+      frontYard.root.visible=false;foliageGroup.visible=false;poolGroup.visible=false;
+      const selected=fenceSystem.setType(fenceSelect?.value||'iron');selected.visible=false;
+      const topHeight=Math.max(40,Math.max(width,depth)*2.6);
+      focusTransition={camera:new THREE.Vector3(width*.16,topHeight,mid+depth*.1),
+        target:new THREE.Vector3(0,1.2,mid)};
+      controls.maxDistance=Math.max(75,topHeight*1.3);
+    }
+    plotEdges.forEach(e=>e.material.color.set(fits?'#3b6849':'#a85243'));
+  };
+  window.addEventListener('kaskad:plot-changed',event=>{plotDetails=event.detail;refreshSitePreview()});
+  window.addEventListener('kaskad:site-preview',event=>{
+    isSitePreview=event.detail?.active===true;
+    if(isSitePreview){refreshSitePreview()}
+    else{
+      plotHousePivot.position.set(0,0,0);plotOutline.visible=false;
+      frontYard.root.visible=true;
+      fenceSystem.setType(fenceSelect?.value||'iron');
+      updateLandscape();
+    }
+  });
   // The old random floating dots and rectangular beds are removed.
   // Front-yard flowers are stems/petals/bushes in raised bordered beds.
   const frameColors={bronze:'#6f6555',graphite:'#394348',white:'#f4eee2',wood:'#7b4b2d'};
@@ -622,6 +682,7 @@ const veranda=createVeranda(THREE,scene);
     doorMat.color.set(doorColors[doorColorSelect?.value]||doorColors.walnut);
   };
   const updateLandscape=()=>{
+    if(isSitePreview)return;
     const mode=landscapeSelect?.value||'lush';
     poolGroup.visible=poolToggle?.checked!==false;
     foliageGroup.visible=mode!=='open';

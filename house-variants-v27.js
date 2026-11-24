@@ -2,6 +2,11 @@
    для малоэтажного дома. Все объёмы являются авторскими концептами. */
 export const HOME_VARIANTS=[
  {id:'family',name:'Семейный · один этаж',group:'Одноэтажные',shape:'hip',area:150,facade:'gray'},
+ {id:'farmhouseOne',name:'Семейный с широким крыльцом',group:'Одноэтажные',shape:'gable',area:130,facade:'plaster'},
+ {id:'brickOne',name:'Кирпичный с парадным входом',group:'Одноэтажные',shape:'hip',area:140,facade:'brick'},
+ {id:'gardenOne',name:'Загородный с деревянными элементами',group:'Одноэтажные',shape:'gable',area:120,facade:'stone'},
+ {id:'mansardBrick',name:'Мансарда · кирпич и фронтон',group:'Мансардные',shape:'mansard',area:180,facade:'brick'},
+ {id:'mansardEstate',name:'Мансарда · загородная усадьба',group:'Мансардные',shape:'mansard',area:200,facade:'tuscan'},
  {id:'mansardHome',name:'Мансарда с фасадными люкарнами',group:'Мансардные',shape:'mansard',area:180,facade:'plaster'},
  {id:'gableAttic',name:'Мансарда с окнами во фронтоне',group:'Мансардные',shape:'gable',area:180,facade:'brick'},
  {id:'cottage',name:'Кирпичный коттедж',group:'Одноэтажные',shape:'gable',area:150,facade:'brick'},
@@ -27,7 +32,10 @@ export const HOME_VARIANTS=[
  {id:'twoBalcony',name:'Двухэтажный с балконом',group:'Двухэтажные',shape:'gable',area:240,facade:'gray'},
  {id:'twoTerrace',name:'Двухэтажный с верандой',group:'Двухэтажные',shape:'hip',area:230,facade:'stone'},
  {id:'twoEstate',name:'Двухэтажная усадьба',group:'Двухэтажные',shape:'hip',area:280,facade:'tuscan'},
- {id:'twoFamily',name:'Компактный двухэтажный семейный',group:'Двухэтажные',shape:'gable',area:180,facade:'brick'}
+ {id:'twoFamily',name:'Компактный двухэтажный семейный',group:'Двухэтажные',shape:'gable',area:180,facade:'brick'},
+ {id:'twoMansard',name:'Двухэтажный с жилой мансардой',group:'Двухэтажные',shape:'mansard',area:300,facade:'gray'},
+ {id:'twoMansardBrick',name:'Два этажа, кирпич и мансарда',group:'Двухэтажные',shape:'mansard',area:320,facade:'brick'},
+ {id:'twoMansardColumns',name:'Двухэтажный с колоннами и мансардой',group:'Двухэтажные',shape:'mansard',area:350,facade:'stone'}
 ];
 export function createHouseVariations(THREE,base,{stone,trim,windowFrame,glass,wood,dark}){
  const groups=new Map();
@@ -58,6 +66,32 @@ export function createHouseVariations(THREE,base,{stone,trim,windowFrame,glass,w
   if(groups.has(id))return groups.get(id);
   const g=new THREE.Group();g.name='Авторская архитектура · '+id;base.add(g);groups.set(id,g);
   switch(id){
+   case 'farmhouseOne':
+    slab(g,0,5.57,8.9,1.96,3.16,wood);
+    for(const x of [-3.95,3.95])pillar(g,x,6.45,2.53,wood,.22);
+    for(const x of [-5.55,5.55])cube(g,.18,2.72,.19,x,2.03,4.75,wood);
+    break;
+   case 'brickOne':
+    slab(g,0,5.48,7.35,1.74,3.38,stone);
+    for(const x of [-3.20,3.20])pillar(g,x,6.23,2.73,trim,.24);
+    cube(g,7.45,.24,.36,0,3.64,4.8,stone);
+    break;
+   case 'gardenOne':
+    slab(g,0,5.52,9.9,1.83,3.19,wood);
+    for(const x of [-4.65,-2.1,2.1,4.65])pillar(g,x,6.36,2.54,wood,.18);
+    rowSlats(g,-5.9,-5.0,4.8,.62,3.4,wood,.21);
+    rowSlats(g,5.0,5.9,4.8,.62,3.4,wood,.21);
+    break;
+   case 'mansardBrick':
+    for(const x of [-5.7,5.7])cube(g,.30,3.15,.36,x,2.02,4.78,stone);
+    slab(g,0,5.40,5.75,1.72,3.05,dark);
+    for(const x of [-2.5,2.5])pillar(g,x,6.05,2.44,trim,.20);
+    break;
+   case 'mansardEstate':
+    slab(g,0,5.55,9.2,1.93,3.32,stone);
+    for(const x of [-4.18,-2.05,2.05,4.18])pillar(g,x,6.45,2.66,trim,.18);
+    cube(g,9.5,.20,.42,0,3.57,4.82,stone);
+    break;
    case 'cottage':
     cube(g,.66,3.1,.65,4.5,4.37,-2.5,stone);cube(g,.94,.16,.94,4.5,6.0,-2.5,dark);
     for(const x of [-5.9,5.9])cube(g,.24,3.0,.4,x,2.02,4.8,trim);

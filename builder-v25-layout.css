@@ -379,3 +379,32 @@
  .builder-choice-summary{margin:0!important}
  .builder-v25-actions{margin:2px 6px 7px!important}
 }
+
+/* v30 metric controls and scale-accurate 2D plot footprint */
+.builder-slider-set{display:flex;flex-direction:column;gap:6px;margin:3px 0 9px}
+.builder-range-label{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font:750 12px/1.4 Manrope,system-ui,sans-serif;color:#334f3e;margin:8px 0 1px}
+.builder-range-label output{white-space:nowrap;font-weight:850;color:#2f6248;background:#e8f0e8;
+  padding:5px 8px;border-radius:7px}
+.builder-slider-set input[type=range],#plotAreaSlider,#plotRatioSlider{display:block;width:100%;
+  margin:3px 0 10px;height:25px;accent-color:#315e43;cursor:pointer;touch-action:pan-y}
+.builder-size-result{margin:7px 0 5px!important}
+.builder-size-caution{margin:4px 0 7px!important}
+.builder-plot-dimensions{margin:5px 0!important;font-weight:800!important;color:#314e3b!important}
+.builder-plot-plan{position:relative;box-sizing:border-box;width:100%;max-width:300px;
+  aspect-ratio:1;min-height:0;background:repeating-linear-gradient(0deg,#e4eddf 0,#e4eddf 19px,#d5e4d1 20px);
+  border:3px solid #536f55;border-radius:3px;touch-action:none;user-select:none;overflow:hidden;
+  margin:6px auto 12px}
+.builder-plot-house{position:absolute;box-sizing:border-box;display:flex;align-items:center;
+ justify-content:center;min-width:0;min-height:0;border:2px solid #fff;background:#527d66;
+ color:#fff;font:850 11px/1.2 Manrope,sans-serif;text-align:center;box-shadow:0 2px 7px #0003;
+ overflow:hidden}
+.builder-plot-front{position:absolute;top:0;left:50%;transform:translateX(-50%);
+ padding:3px 7px;color:#21412f;background:#fffcf6dd;font:800 10px/1.15 Manrope,sans-serif;
+ white-space:nowrap;pointer-events:none}
+.builder-plot-note{font:750 11px/1.5 Manrope,system-ui,sans-serif!important;color:#2e5740!important;
+ margin:7px 0!important}
+.builder-plot-disclaimer{font:500 10px/1.4 Manrope,system-ui,sans-serif!important;color:#687969!important;
+ margin:7px 0 13px!important}
+@media(max-width:730px){.builder-geometry-strip{padding:3px 3px!important}
+ .builder-range-label{font-size:11px}.builder-plot-plan{max-width:260px}}

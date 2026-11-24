@@ -2,7 +2,7 @@
    Декоративная 3D-геометрия, не рабочая конструктивная документация. */
 export function createTwoStoreyStyles(THREE,parent,{stone,brick,trim,wood,dark,glass}){
  const root=new THREE.Group();root.name='КАСКАД · двухэтажные архитектурные решения';parent.add(root);
- const groups=new Map(),ids=['twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily'];
+ const groups=new Map(),ids=['twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns'];
  const m=(g,w,h,d,x,y,z,mat)=>{
    const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
    q.position.set(x,y,z);q.castShadow=true;q.receiveShadow=true;g.add(q);return q;
@@ -81,6 +81,23 @@ export function createTwoStoreyStyles(THREE,parent,{stone,brick,trim,wood,dark,g
    }
    m(g,12.90,.24,.55,0,6.87,4.82,stone);
    m(g,12.70,.22,.47,0,3.69,4.82,trim);
+  }
+  if(id==='twoMansard'){
+   for(const x of [-5.85,5.85]){m(g,.26,5.88,.30,x,3.51,4.80,trim);base(g,x,4.85,.44)}
+   for(const y of [3.71,6.73])m(g,12.5,.15,.35,0,y,4.80,stone);
+  }
+  if(id==='twoMansardBrick'){
+   for(const x of [-5.9,5.9]){m(g,.51,5.95,.42,x,3.54,4.79,brick);base(g,x,4.88,.65)}
+   m(g,12.7,.18,.38,0,3.70,4.83,stone);
+   m(g,12.6,.17,.38,0,6.72,4.83,trim);
+  }
+  if(id==='twoMansardColumns'){
+   m(g,9.1,.23,1.75,0,.41,5.36,stone);
+   m(g,9.35,.22,1.8,0,6.42,5.36,stone);
+   for(const x of [-3.95,-2.15,2.15,3.95]){
+    m(g,.24,5.60,.24,x,3.48,6.1,trim);
+    m(g,.48,.13,.46,x,.62,6.1,stone);
+   }
   }
   if(id==='twoFamily'){
    for(const x of [-5.94,5.94]){

@@ -69,6 +69,18 @@
    </label>
   </section>
   <section class="builder-v25-panel builder-v25-garden" id="builderGarden" hidden aria-label="Благоустройство участка">
+   <h3>Ваш земельный участок</h3>
+   <label class="builder-range-label" for="plotAreaSlider">Площадь участка <output id="plotAreaValue">6 соток</output></label>
+   <input id="plotAreaSlider" type="range" min="3" max="30" step="0.5" value="6" aria-label="Площадь участка в сотках">
+   <label class="builder-range-label" for="plotRatioSlider">Форма участка <output id="plotRatioValue">Средний</output></label>
+   <input id="plotRatioSlider" type="range" min="0.6" max="2.0" step="0.1" value="1" aria-label="Отношение ширины участка к его глубине">
+   <p id="plotDimensions" class="builder-plot-dimensions" aria-live="polite"></p>
+   <div class="builder-plot-plan" id="builderPlotPlan" aria-label="Масштабный план земельного участка; перетащите дом для размещения">
+     <div class="builder-plot-house" id="builderPlotHouse" role="img" aria-label="Пятно застройки">Дом</div>
+     <span class="builder-plot-front">Улица / фасад</span>
+   </div>
+   <p id="plotFitNote" class="builder-plot-note" role="status"></p>
+   <p class="builder-plot-disclaimer">Эскизная прямоугольная схема без учёта границ по кадастру, обязательных отступов и подъездов. Положение дома на плане не переносит дорожки и забор 3D-демонстрации.</p>
    <h3>Благоустройство</h3>
    <label class="builder-v25-control">Озеленение участка
     <select id="landscapeSelect">
@@ -163,6 +175,8 @@
  const lengthInput=document.getElementById('houseLengthInput');
  const floorsSelect=document.getElementById('houseFloorsSelect');
  const sizeText=document.getElementById('builderSizeResult');
+ const widthSlider=document.getElementById('houseWidthSlider');
+ const lengthSlider=document.getElementById('houseLengthSlider');
  const sizeButtons=[...document.querySelectorAll('[data-home-size]')];
  const floorButtons=[...document.querySelectorAll('[data-home-floors]')];
  let step=0;
@@ -174,8 +188,11 @@
  });
  function syncDimensions(){
   const {width,length,floors}=sizeValues();
+  if(widthSlider){widthSlider.value=String(width);document.getElementById('houseWidthValue').textContent=width+' м'}
+  if(lengthSlider){lengthSlider.value=String(length);document.getElementById('houseLengthValue').textContent=length+' м'}
   const footprint=Math.round(width*length*100)/100;
-  const floorLabel={one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
+  const mansardAboveTwo=(document.getElementById('houseStyleSelect')?.value||'').startsWith('twoMansard');
+  const floorLabel=mansardAboveTwo?'2 этажа + мансарда':{one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
   const info=width+' × '+length+' м · пятно '+footprint+' м² · '+floorLabel;
   sizeText.textContent=info+(floors==='two'?' · суммарно до '+footprint*2+' м² (до вычета стен и лестниц)':'');
   sizeButtons.forEach(b=>b.setAttribute('aria-pressed',
@@ -194,6 +211,7 @@
   }
   window.dispatchEvent(new CustomEvent('kaskad:dimensions-changed',
    {detail:{width,length,floors,footprint}}));
+  if(typeof renderPlot==='function')renderPlot();
  }
  for(const btn of sizeButtons)btn.addEventListener('click',()=>{
   const [w,l]=btn.dataset.homeSize.split('x').map(Number);
@@ -204,6 +222,10 @@
   floorsSelect.value=btn.dataset.homeFloors;
   floorsSelect.dispatchEvent(new Event('change',{bubbles:true}));
  });
+ for(const [slider,el] of [[widthSlider,widthInput],[lengthSlider,lengthInput]]){
+  slider?.addEventListener('input',()=>{el.value=slider.value;syncDimensions();summary()});
+  slider?.addEventListener('change',()=>{el.dispatchEvent(new Event('change',{bubbles:true}))});
+ }
  for(const el of [widthInput,lengthInput]){
   el.addEventListener('input',()=>{
    const n=Number(el.value);
@@ -217,10 +239,10 @@
  floorsSelect.addEventListener('change',()=>{
   const floor=floorsSelect.value,style=document.getElementById('houseStyleSelect'),
    roof=document.getElementById('roofShapeSelect');
-  const compatible=floor==='two'?['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily']:
-    floor==='mansard'?['mansardHome','gableAttic']:null;
+  const compatible=floor==='two'?['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns']:
+    floor==='mansard'?['mansardHome','gableAttic','mansardBrick','mansardEstate']:null;
   const nextStyle=floor==='two'?'classic':floor==='mansard'?'mansardHome':'family';
-  if(compatible?!compatible.includes(style.value):['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','mansardHome','gableAttic'].includes(style.value)){
+  if(compatible?!compatible.includes(style.value):['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns','mansardHome','gableAttic','mansardBrick','mansardEstate'].includes(style.value)){
    style.value=nextStyle;style.dispatchEvent(new Event('change',{bubbles:true}));
   }
   if(floor==='mansard'&&roof.value!=='mansard'){
@@ -232,8 +254,8 @@
  });
  document.getElementById('houseStyleSelect')?.addEventListener('change',()=>{
   const style=document.getElementById('houseStyleSelect').value;
-  const inferred=['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily'].includes(style)?'two':
-   ['mansardHome','gableAttic'].includes(style)?'mansard':'one';
+  const inferred=['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns'].includes(style)?'two':
+   ['mansardHome','gableAttic','mansardBrick','mansardEstate'].includes(style)?'mansard':'one';
   if(floorsSelect.value!==inferred){floorsSelect.value=inferred;syncDimensions();summary()}
  });
  function renderQuickStages(){
@@ -252,6 +274,60 @@
  renderQuickStages();
  function name(id){const el=fields[id];return el?.selectedOptions?.[0]?.textContent?.trim()||
    (el?.checked?'Да':'Нет')||'—';}
+ const plotArea=document.getElementById('plotAreaSlider');
+ const plotRatio=document.getElementById('plotRatioSlider');
+ const plotPlan=document.getElementById('builderPlotPlan');
+ const plotHouse=document.getElementById('builderPlotHouse');
+ let plotX=.5,plotZ=.58;
+ function plotGeometry(){
+  const area=Math.max(3,Math.min(30,Number(plotArea.value)||6))*100;
+  const ratio=Math.max(.6,Math.min(2,Number(plotRatio.value)||1));
+  return {width:Math.sqrt(area*ratio),depth:Math.sqrt(area/ratio),area};
+ }
+ function renderPlot(){
+  const {width,depth,area}=plotGeometry();
+  const house=sizeValues();
+  const roomX=Math.max(0,width-house.width);
+  const roomZ=Math.max(0,depth-house.length);
+  const fits=width>=house.width&&depth>=house.length;
+  const px=Math.max(0,Math.min(roomX,plotX*roomX));
+  const pz=Math.max(0,Math.min(roomZ,plotZ*roomZ));
+  const box=plotPlan.getBoundingClientRect();
+  const maxPx=box.width||300,maxPz=box.height||210;
+  plotPlan.style.width=(Math.min(100,100*width/depth)).toFixed(2)+'%';
+  plotPlan.style.aspectRatio=String(width/depth);
+  plotHouse.style.width=(house.width/width*100)+'%';
+  plotHouse.style.height=(house.length/depth*100)+'%';
+  plotHouse.style.left=(px/width*100)+'%';
+  plotHouse.style.top=(pz/depth*100)+'%';
+  plotHouse.style.background=fits?'#527d66':'#aa5c4f';
+  plotHouse.textContent=house.width+'×'+house.length+' м';
+  const sotka=(area/100).toLocaleString('ru-RU');
+  document.getElementById('plotAreaValue').textContent=sotka+' сот.';
+  document.getElementById('plotRatioValue').textContent=(width/depth).toFixed(1).replace('.',',')+':1';
+  document.getElementById('plotDimensions').textContent='Участок '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+area.toFixed(0)+' м²';
+  const coverage=house.width*house.length/area*100;
+  const percent=coverage.toFixed(1).replace('.',',');
+  document.getElementById('plotFitNote').textContent=(fits?'Дом помещается по геометрии':'Дом не помещается в пределах выбранного прямоугольника')+
+    ' · занято '+percent+'% участка · свободно '+Math.max(0,area-house.width*house.length).toFixed(0)+' м²'+
+    (fits?' · положение дома можно менять на плане':' · увеличьте участок или уменьшите дом');
+  window.dispatchEvent(new CustomEvent('kaskad:plot-changed',
+   {detail:{width,depth,area,houseX:px,houseZ:pz,houseWidth:house.width,houseLength:house.length,fits}}));
+ }
+ for(const slider of [plotArea,plotRatio])slider.addEventListener('input',()=>{renderPlot();summary()});
+ const movePlot=e=>{
+  if(e.cancelable)e.preventDefault();
+  const rect=plotPlan.getBoundingClientRect();
+  const {width,depth}=plotGeometry(),house=sizeValues();
+  const x=(e.clientX-rect.left)/rect.width*width-house.width/2;
+  const z=(e.clientY-rect.top)/rect.height*depth-house.length/2;
+  plotX=(width>house.width)?Math.max(0,Math.min(1,x/(width-house.width))):0;
+  plotZ=(depth>house.length)?Math.max(0,Math.min(1,z/(depth-house.length))):0;
+  renderPlot();
+ };
+ plotPlan.addEventListener('pointerdown',e=>{plotPlan.setPointerCapture(e.pointerId);movePlot(e)});
+ plotPlan.addEventListener('pointermove',e=>{if(plotPlan.hasPointerCapture(e.pointerId))movePlot(e)});
+ window.addEventListener('resize',renderPlot);
  function summary(){
   const result=document.getElementById('builderFinalSummary');
   if(!result)return;
@@ -260,7 +336,8 @@
    ['Архитектура',name('houseStyleSelect')],
    ['Размеры',dims.width+' × '+dims.length+' м'],
    ['Пятно застройки',(dims.width*dims.length)+' м²'],
-   ['Этажность',({one:'1 этаж',mansard:'1 + мансарда',two:'2 этажа'})[dims.floors]],
+   ['Участок',(Number(plotArea.value)||6)+' сот.'],
+   ['Этажность',(fields.houseStyleSelect.value.startsWith('twoMansard')?'2 этажа + мансарда':({one:'1 этаж',mansard:'1 + мансарда',two:'2 этажа'})[dims.floors])],
    ['Форма крыши',name('roofShapeSelect')],
    ['Покрытие',name('roofSelect')],
    ['Цвет крыши',name('roofColorSelect')],
@@ -307,6 +384,8 @@
   document.getElementById('builderFinal').hidden=id!=='summary';
   advanced.hidden=id!=='summary';
   if(note)note.hidden=id!=='summary';
+  window.dispatchEvent(new CustomEvent('kaskad:site-preview',{detail:{active:id==='site'}}));
+  if(id==='site')renderPlot();
   const prev=document.getElementById('builderPrev'),next=document.getElementById('builderNext');
   prev.disabled=step===0;
   next.textContent=step===stages.length-1?'Обсудить проект ↗':'Далее →';
@@ -345,6 +424,7 @@
  const defaults={
   houseStyleSelect:'family',houseSizeSelect:'100',roofShapeSelect:'hip',
   houseWidthInput:'10',houseLengthInput:'10',houseFloorsSelect:'one',
+  plotAreaSlider:'6',plotRatioSlider:'1',
   facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
   doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
@@ -370,7 +450,13 @@
    else el.value=value;
    el.dispatchEvent(new Event('change',{bubbles:true}));
   }
-  syncDimensions();summary();
+  plotX=Number.isFinite(Number(state.plotX))?Math.max(0,Math.min(1,Number(state.plotX))):.5;
+  plotZ=Number.isFinite(Number(state.plotZ))?Math.max(0,Math.min(1,Number(state.plotZ))):.58;
+  for(const [el,key] of [[plotArea,'plotAreaSlider'],[plotRatio,'plotRatioSlider']]){
+   const value=Number(state[key]);
+   if(Number.isFinite(value)&&value>=Number(el.min)&&value<=Number(el.max))el.value=String(value);
+  }
+  syncDimensions();renderPlot();summary();
  }
  quickStep?.addEventListener('change',()=>show(Number(quickStep.value)));
  // Trusted opener from parent: the mobile bottom button must reveal actual
@@ -406,7 +492,8 @@
    fenceColor:fields.fenceColorSelect.value,
    houseStyle:fields.houseStyleSelect.value,houseSize:fields.houseSizeSelect.value,
    houseWidth:fields.houseWidthInput.value,houseLength:fields.houseLengthInput.value,
-   houseFloors:fields.houseFloorsSelect.value,
+   houseFloors:fields.houseFloorsSelect.value,plotSotkas:plotArea.value,
+   plotAspect:plotRatio.value,plotPositionX:plotX.toFixed(3),plotPositionZ:plotZ.toFixed(3),
    roofShape:fields.roofShapeSelect.value,
    frameColor:fields.frameColorSelect.value,doorColor:fields.doorColorSelect.value,
    glassTint:fields.glassTintSelect.value,landscape:fields.landscapeSelect.value,
@@ -430,6 +517,8 @@
   try{
    const data={};
    for(const id of fieldIds){const el=fields[id];data[id]=el.type==='checkbox'?el.checked:el.value;}
+   data.plotAreaSlider=plotArea.value;data.plotRatioSlider=plotRatio.value;
+   data.plotX=plotX;data.plotZ=plotZ;
    localStorage.setItem(storageKey,JSON.stringify(data));
    document.getElementById('builderSaveMessage').textContent='Сохранено на этом устройстве.';
   }catch{document.getElementById('builderSaveMessage').textContent='Не удалось сохранить в этом браузере.'}
@@ -445,6 +534,6 @@
   const previous=JSON.parse(localStorage.getItem(storageKey)||'null');
   if(previous)apply(previous);
  }catch{}
- syncDimensions();
+ syncDimensions();renderPlot();
  show(0);
 })();
