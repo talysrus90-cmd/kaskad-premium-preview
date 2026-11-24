@@ -90,6 +90,20 @@ export function createRoofForms(THREE,houseRoot,{roofSystem,roofRidge,gableFacad
   }
   face(mansard,c);
   eaves(mansard,6.92);
+  // Flush glazed attic rooflights: old two-storey variant must not have
+  // a featureless roof when the customer selects the mansard option.
+  const glazing=new THREE.MeshStandardMaterial({color:'#476676',roughness:.32,metalness:.15});
+  const outline=new THREE.MeshStandardMaterial({color:'#454f51',roughness:.52,metalness:.24});
+  const incline=Math.atan2(8.31-7.06,7.28-5.55);
+  for(const side of [-1,1])for(const zz of [-2.15,2.05]){
+    const xx=side*6.36,yy=7.06+(7.28-Math.abs(xx))*(8.31-7.06)/(7.28-5.55);
+    const unit=new THREE.Group();unit.position.set(xx,yy+.11,zz);
+    unit.rotation.z=side===1?-incline:incline;mansard.add(unit);
+    box(unit,1.02,.06,1.31,0,0,0,outline);
+    box(unit,.88,.045,1.14,0,.055,0,glazing);
+    for(const k of [-.48,.48])box(unit,.065,.08,1.35,k,.065,0,fascia);
+    for(const k of [-.62,.62])box(unit,1.04,.08,.07,0,.065,k,fascia);
+  }
   let selected='gable';
   function setShape(key){
     selected=forms.includes(key)?key:'gable';

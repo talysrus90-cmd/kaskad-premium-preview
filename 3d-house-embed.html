@@ -129,7 +129,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <main class="embed">
 <div class="workspace">
 <div class="viewer-col">
-<div class="scene" id="sceneContainer" aria-label="Вращаемая трёхмерная модель двухэтажной виллы и благоустроенного участка">
+<div class="scene" id="sceneContainer" aria-label="Вращаемая трёхмерная модель частного дома и участка">
 <img id="modelFallback" src="assets/ideas/card/hero-960.webp" alt="Фотография загородного дома — резерв при отсутствии WebGL" loading="eager" decoding="async">
 <div id="loading3d" class="loading" role="status">Загружаем 3D-модель…</div>
 <div class="scene-caption"><span class="scene-dot"></span> 3D · АРХИТЕКТУРНЫЙ КОНСТРУКТОР</div>
@@ -143,7 +143,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="builder-v25-scroll" id="builderV25Scroll">
 <header class="builder-v25-intro"><span class="eyebrow">КАСКАД · КОНСТРУКТОР</span><h2>Ваш будущий дом</h2><p>Выберите архитектуру и отделку. Изображение обновляется при выборе.</p></header>
 <nav id="builderStepNav" class="builder-v25-step-tabs" aria-label="Этапы настройки дома"></nav>
-<div class="builder-geometry-strip" aria-label="Размеры и форма дома"><label for="roofShapeSelect">Форма крыши<select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip">Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select></label><label for="houseSizeSelect">Площадь дома<select id="houseSizeSelect"><option value="150">≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220" selected>≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select></label></div>
+<div class="builder-geometry-strip" aria-label="Размеры и форма дома"><label for="roofShapeSelect">Форма крыши<select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip" selected>Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select></label><label for="houseSizeSelect">Площадь дома<select id="houseSizeSelect"><option value="150" selected>≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220">≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select></label></div>
 <div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
   <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
 </div>
@@ -162,12 +162,12 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <details class="builder-select-fallback">
   <summary>Все материалы списком</summary>
 <div class="builder-options" aria-label="Дополнительный выбор материалов">
-    <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный кирпич</option><option value="tuscan">Тосканская кладка</option><option value="stone">Светлый камень</option><option value="plaster">Светлая штукатурка</option><option value="gray">Серо-бежевый кирпич</option></select></label>
+    <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный кирпич</option><option value="tuscan">Тосканская кладка</option><option value="stone">Светлый камень</option><option value="plaster">Светлая штукатурка</option><option value="gray" selected>Серо-бежевый кирпич</option></select></label>
     <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая черепица</option><option value="graphite">Графитовая черепица</option><option value="ceramic">Керамическая</option><option value="metalGraphite" selected>Классическая металлочерепица</option><option value="metalBurgundy">Металлочерепица — классика, бордо</option><option value="metal3d">Металлочерепица 3D</option><option value="metalModular">Симметричная металлочерепица</option><option value="metalTramontana">Рельефная металлочерепица</option><option value="standingSeam">Фальцевая кровля</option><option value="flexible">Гибкая черепица</option><option value="composite">Композитная черепица</option><option value="profiled">Кровельный профлист</option></select></label>
     <label for="fenceSelect">Забор<select id="fenceSelect"><option value="iron">Кованый металл</option><option value="tuscan">Кирпичная ограда</option><option value="wood">Деревянные ламели</option><option value="stone">Каменные секции</option><option value="brickIron">Кирпичные столбы + ковка</option><option value="louvers">Забор-жалюзи</option><option value="picket">Евроштакетник</option><option value="chess">Штакетник шахматка</option><option value="ranch">Ранчо</option><option value="profiled">Сплошной профлист</option><option value="panel3d">Сварные 3D-панели</option></select></label>
     <label for="roofColorSelect">Цвет кровли<select id="roofColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
-    <label for="houseStyleSelect">Архитектурный стиль<select id="houseStyleSelect"><option value="classic">Загородная классика</option><option value="italian">Итальянский двор</option><option value="modern">Современный дом</option><option value="estate">Парадная усадьба</option><option value="kavkaz">Кавказский стиль</option><option value="coastal">Светлый минимализм</option><option value="practical">Практичный дом</option><option value="craft">Садовый дом</option></select></label>
+    <label for="houseStyleSelect">Архитектурный стиль<select id="houseStyleSelect"><option value="family" selected>Одноэтажный семейный</option><option value="mansardHome">Дом с жилой мансардой</option><option value="cottage">Кирпичный коттедж</option><option value="country">Одноэтажный светлый</option><option value="classic">Двухэтажный коттедж</option></select></label>
 
 
   </div>
@@ -179,8 +179,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=7" defer></script>
-<script src="builder-v25-experience.js?v=1" defer></script>
-<script type="module" src="house-3d.bundle.js?v=11"></script>
+<script src="builder-gallery.js?v=8" defer></script>
+<script src="builder-v25-experience.js?v=2" defer></script>
+<script type="module" src="house-3d.bundle.js?v=12"></script>
 </body>
 </html>

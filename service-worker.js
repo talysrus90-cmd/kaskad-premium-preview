@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-builder-v25';
+const VERSION='kaskad-pwa-20261124-russian-home-v26';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -16,26 +16,24 @@ const core=[
  './faq-legal-20261109.css?v=2',
  './interactive-home.css?v=8',
  './mobile-usability-20261123.css?v=1',
- './3d-house-embed.html?v=11',
- './house-3d.bundle.js?v=11',
+ './3d-house-embed.html?v=12',
+ './house-3d.bundle.js?v=12',
  './3d-house.css?v=4',
  './builder-v25-layout.css?v=1',
- './builder-v25-experience.js?v=1',
+ './builder-v25-experience.js?v=2',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=7',
+ './builder-gallery.js?v=8',
  './roof-relief-v25.js',
+ './russian-home-v26.js',
  './architecture-styles-v19.js',
- './assets/3d/cards/preset_classic_v20.webp',
- './assets/3d/cards/preset_italian_v20.webp',
- './assets/3d/cards/preset_modern_v20.webp',
- './assets/3d/cards/preset_estate_v20.webp',
- './assets/3d/cards/preset_kavkaz_v20.webp',
- './assets/3d/cards/preset_coastal_v24.webp',
- './assets/3d/cards/preset_practical_v20.webp',
- './assets/3d/cards/preset_craft_v20.webp',
+ './assets/3d/cards/preset_family_v26.webp',
+ './assets/3d/cards/preset_mansard_v26.webp',
+ './assets/3d/cards/preset_cottage_v26.webp',
+ './assets/3d/cards/preset_country_v26.webp',
+ './assets/3d/cards/preset_twostorey_v26.webp',
  './builder-gallery.css?v=3',
- './builder-lead-bridge.js?v=4',
+ './builder-lead-bridge.js?v=5',
  './assets/3d/roof_tile_neutral.webp',
  './roof-market-v16.js',
  './roof-forms-v20.js',
@@ -115,7 +113,7 @@ const core=[
 // Install a light, reliable offline shell. The 3D builder, HDR textures, and its
 // previews are fetched and cached on first use, not downloaded by every visitor.
 // Previously install preloaded 102 resources (~5.7 MB), even on mobile data.
-const offlineCore=core.filter(p=>!/^(?:\.\/assets\/3d\/|\.\/3d-house-embed\.html|\.\/house-3d\.bundle\.js|\.\/3d-house\.css|\.\/builder-gallery\.(?:js|css)|\.\/architecture-styles-v19\.js|\.\/builder-lead-bridge\.js|\.\/roof-market-v16\.js|\.\/roof-forms-v20\.js|\.\/fence-market-v16\.js|\.\/foliage-v16\.js)/.test(p));
+const offlineCore=core.filter(p=>!/^(?:\.\/assets\/3d\/|\.\/3d-house-embed\.html|\.\/house-3d\.bundle\.js|\.\/3d-house\.css|\.\/builder-gallery\.(?:js|css)|\.\/architecture-styles-v19\.js|\.\/builder-lead-bridge\.js|\.\/roof-market-v16\.js|\.\/roof-forms-v20\.js|\.\/fence-market-v16\.js|\.\/foliage-v16\.js|\.\/russian-home-v26\.js)/.test(p));
 const URL_OF=p=>new URL(p,ROOT);
 const isInScope=url=>url.origin===new URL(ROOT).origin&&url.pathname.startsWith(new URL(ROOT).pathname);
 const isApi=p=>p.includes('/api/')||p.includes('/auth/')||p.includes('/admin/');

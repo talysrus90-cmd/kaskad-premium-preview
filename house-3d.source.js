@@ -7,6 +7,7 @@ import {createRoofSystem} from './roof-market-v16.js';
 import {createRoofForms} from './roof-forms-v20.js';
 import {addNaturalFoliage} from './foliage-v16.js';
 import {createArchitectureStyles} from './architecture-styles-v19.js';
+import {createRussianHouse} from './russian-home-v26.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -144,11 +145,12 @@ try {
   renderer.toneMappingExposure=1.35;
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  renderer.domElement.setAttribute('aria-label','Трёхмерная модель двухэтажного кирпичного дома. Вращайте пальцем или мышью');
+  renderer.domElement.setAttribute('aria-label','Трёхмерная модель частного дома. Вращайте пальцем или мышью');
   container.appendChild(renderer.domElement);
 
   const camera=new THREE.PerspectiveCamera(48,1,.2,130);
-  const initialPos=new THREE.Vector3(19,12.8,26);
+  const mobileView=window.matchMedia('(max-width:730px)').matches;
+  const initialPos=mobileView?new THREE.Vector3(14,8.3,19.5):new THREE.Vector3(18.5,10.2,25);
   camera.position.copy(initialPos);
   const controls=new OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;
@@ -160,7 +162,7 @@ try {
   controls.maxPolarAngle=Math.PI*.49;
   controls.autoRotate=false;
   controls.autoRotateSpeed=2.15;
-  controls.target.set(0,3.05,5);
+  controls.target.set(0,2.75,3);
   controls.update();
   // Contextual viewpoint: show the house (not just the fence) when selecting
   // architecture, but reveal the whole plot when editing the fence.
@@ -168,7 +170,7 @@ try {
     facade:{camera:[17.5,12.8,24],target:[0,3.8,2.0]},
     roof:{camera:[17.7,16.8,22],target:[0,4.5,1.7]},
     fence:{camera:[23,16.5,33],target:[0,3.05,5]},
-    presets:{camera:[13.1,11.6,20.0],target:[0,3.65,1.5]}
+    presets:mobileView?{camera:[13.9,7.8,19.0],target:[0,2.75,1.8]}:{camera:[16.1,8.8,23.3],target:[0,2.75,1.8]}
   };
   let focusTransition=null;
   window.addEventListener('kaskad:focus-view',event=>{
@@ -241,13 +243,14 @@ try {
   box(13.4,.28,9.6,limestone,0,6.86,0);
   box(13.0,.16,9.35,quartz,0,7.1,0);
   const porchStart=scene.children.length;
-  box(12.2,.31,2.6,limestone,0,4.68,5.25);
-  box(12.4,.17,2.8,quartz,0,4.88,5.25);
-  for(const x of [-5.1,-2.9,2.9,5.1]){
-    cyl(.24,.27,3.92,quartz,x,2.61,6.34,22);
-    cyl(.34,.34,.18,limestone,x,.69,6.34,24);
-    cyl(.36,.3,.2,limestone,x,4.53,6.34,24);
-    box(.74,.19,.75,quartz,x,4.46,6.34);
+  // Low, supported entrance canopy: below the upper windows (starts ~4.7 m),
+  // not the previous 4.7–4.9 m full-width slab intersecting their sills.
+  box(3.85,.20,1.85,limestone,0,3.06,5.42);
+  box(3.94,.07,1.96,quartz,0,3.18,5.42);
+  for(const x of [-1.72,1.72]){
+    cyl(.14,.15,2.35,quartz,x,1.83,6.20,14);
+    cyl(.23,.23,.13,limestone,x,.65,6.20,16);
+    cyl(.22,.22,.12,limestone,x,3.03,6.20,16);
   }
   const porchElements=scene.children.slice(porchStart);
   // Brick gable and slate pitched roof: one mesh for both slopes, very few triangles.
@@ -367,21 +370,17 @@ try {
     windowFrame(6.49,level,z,Math.PI/2,1.45,1.64);
     windowFrame(-6.49,level,z,-Math.PI/2,1.45,1.64);
   }
-  const balconyStart=scene.children.length;
-  // Classic balcony railing, modest metal highlights.
-  box(7.25,.28,1.2,quartz,0,3.82,5.15);
-  for(let i=-9;i<=9;i++){
-    const x=i*.38;
-    cyl(.024,.024,.85,rail,x,4.39,5.75,7);
-  }
-  box(7.45,.065,.07,bronze,0,4.83,5.75);
-  const balconyElements=scene.children.slice(balconyStart);
+  // Removed orphaned railing and second-floor balcony: their old geometry
+  // crossed the window openings and had no credible load-bearing slab.
+  const balconyElements=[];
   const architectureSystem=createArchitectureStyles(THREE,scene,{
     limestone,quartz,bronze,doorMat,roofMat,porchElements,balconyElements
   });
   const applyHouseStyle=()=>{
     const style=houseStyleSelect?.value||'classic';
-    architectureSystem.setStyle(style);
+    houseRoot.visible=!oneStoreyStyles.has(style);
+    russianHome.setStyle(style);
+    if(houseRoot.visible)architectureSystem.setStyle(style);
     for(const window of windowGroups){
       const onFront=Math.abs(window.z-4.58)<.2;
       const onBack=Math.abs(window.z+4.58)<.2;
@@ -405,6 +404,10 @@ try {
   const roofForms=createRoofForms(THREE,houseRoot,{
     roofSystem,roofRidge,gableFacades
   });
+  const russianHome=createRussianHouse(THREE,scene,{
+    brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat
+  });
+  const oneStoreyStyles=new Set(['family','mansardHome','cottage','country']);
   const styleAspects={classic:1.42,italian:1.50,modern:1.85,estate:1.56,
     kavkaz:1.40,coastal:1.70,practical:1.36,craft:1.30};
   const originalFacadeUvs=Float32Array.from(facadeBodyGeo.getAttribute('uv').array);
@@ -429,8 +432,13 @@ try {
     gableUV.needsUpdate=true;
     houseRoot.userData.illustrativeArea=size;
     houseRoot.userData.footprint={width,depth,floors:2};
+    russianHome.setSize(size,aspect,houseStyleSelect?.value==='mansardHome');
   };
-  const applyRoofShape=()=>roofForms.setShape(roofShapeSelect?.value||'gable');
+  const applyRoofShape=()=>{
+    const shape=roofShapeSelect?.value||'hip';
+    roofForms.setShape(shape);
+    russianHome.setRoof(shape,roofSystem.getType());
+  };
   const applyWholeStyle=()=>{applyHouseStyle();applyHouseSize();applyRoofShape();};
   houseStyleSelect?.addEventListener('change',applyWholeStyle);
   houseSizeSelect?.addEventListener('change',applyHouseSize);
@@ -543,6 +551,7 @@ try {
     const roofColor=palette[roofColorSelect?.value]||palette.graphite;
     roofSystem.setType(roofStyle);roofSystem.setColor(roofColor);
     roofForms.setMaterial();
+    russianHome.setRoof(roofShapeSelect?.value||'hip',roofStyle);
     roofMat.color.set(roofColor);
   };
   const applyFence=()=>{

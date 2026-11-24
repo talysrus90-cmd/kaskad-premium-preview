@@ -18,7 +18,7 @@
  };
  const fields=['facade','roof','fence','roofColor','fenceColor'];
  const optional={
-  houseStyle:{classic:'Загородная классика',italian:'Итальянский двор',modern:'Современный дом',estate:'Усадьба',kavkaz:'Кавказский стиль',coastal:'Светлый минимализм',practical:'Практичный дом',craft:'Садовый особняк'},
+  houseStyle:{family:'Одноэтажный семейный',mansardHome:'Дом с жилой мансардой',cottage:'Кирпичный одноэтажный коттедж',country:'Одноэтажный светлый',classic:'Двухэтажный коттедж'},
   houseSize:{150:'150 м²',180:'180 м²',220:'220 м²',260:'260 м²',300:'300 м²',350:'350 м²'},
   roofShape:{gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'},
   frameColor:{bronze:'Бронза',graphite:'Графит',white:'Белый',wood:'Тёплый орех'},

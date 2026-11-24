@@ -1,6 +1,6 @@
 /* КАСКАД · обобщённые геометрические профили кровли; не копия фирменных изделий. */
 export function createRoofSystem(THREE,scene,{tileRoof,roofSurface}){
-  const metalMat=new THREE.MeshStandardMaterial({color:'#666d70',roughness:.57,metalness:.26,side:THREE.DoubleSide});
+  const metalMat=new THREE.MeshStandardMaterial({color:'#666d70',roughness:.76,metalness:.17,envMapIntensity:.38,side:THREE.DoubleSide});
   const compositeMat=new THREE.MeshStandardMaterial({color:'#72736d',roughness:.83,metalness:.07,side:THREE.DoubleSide});
   const flexibleMat=new THREE.MeshStandardMaterial({color:'#737577',roughness:.94,metalness:0,side:THREE.DoubleSide});
   const seamMat=new THREE.MeshStandardMaterial({color:'#70797b',roughness:.4,metalness:.62,side:THREE.DoubleSide});
@@ -77,7 +77,7 @@ export function createRoofSystem(THREE,scene,{tileRoof,roofSurface}){
     setColor(hex){for(const material of colorable)material.color.set(hex)},
     setPhotoMap(map){for(const material of [metalMat,seamMat]){material.map=map;material.needsUpdate=true}},
     setMetalNormal(map){for(const material of [metalMat,seamMat]){material.normalMap=map;material.normalScale.set(.075,.075);material.needsUpdate=true}},
-    setMetalRoughness(map){for(const material of [metalMat,seamMat]){material.roughnessMap=map;material.needsUpdate=true}},
+    setMetalRoughness(map){seamMat.roughnessMap=map;seamMat.needsUpdate=true;metalMat.roughnessMap=null;metalMat.needsUpdate=true},
     setTileMap(map){roofSurface.map=map;roofSurface.needsUpdate=true},
     getType(){return current}
   };

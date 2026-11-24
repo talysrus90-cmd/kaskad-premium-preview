@@ -61,7 +61,7 @@
      <option value="open">Открытый газон</option>
     </select>
    </label>
-   <label class="builder-v25-checkbox"><input id="poolToggle" type="checkbox" checked> Бассейн на участке</label>
+   <label class="builder-v25-checkbox"><input id="poolToggle" type="checkbox"> Бассейн на участке</label>
    <p>Забор и цвет металлических элементов выбираются выше.</p>
   </section>
   <section class="builder-v25-panel" id="builderFinal" hidden aria-label="Итог выбранной комплектации">
@@ -138,12 +138,12 @@
   nav.append(b);stepButtons.push(b);
  });
  const defaults={
-  houseStyleSelect:'classic',houseSizeSelect:'220',roofShapeSelect:'gable',
-  facadeSelect:'brick',roofSelect:'metalGraphite',roofColorSelect:'graphite',
+  houseStyleSelect:'family',houseSizeSelect:'150',roofShapeSelect:'hip',
+  facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
-  doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:true
+  doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false
  };
- const storageKey='kaskad-v25-visual-selection';
+ const storageKey='kaskad-v26-visual-selection';
  function apply(state){
   if(!state||typeof state!=='object')return;
   for(const [id,value] of Object.entries(defaults)){
