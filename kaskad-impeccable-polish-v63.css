@@ -1,0 +1,94 @@
+/* КАСКАД v63 — restrained main-site UX polish (Impeccable-style audit).
+   Scope: only parent website, mobile navigation, accessible focus, readable forms.
+   DO NOT change 3D canvas, iframe, gesture chaining, gallery rendering or images.
+*/
+@media (max-width:1050px){
+  /* Equal visual hierarchy and 48px taps for menu links AND action buttons. */
+  #mobileMenu{
+    max-height:min(78dvh,640px);
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scrollbar-width:thin;
+  }
+  #mobileMenu>a,
+  #mobileMenu>button{
+    display:flex!important;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:48px;
+    width:100%;
+    padding:11px 4px!important;
+    margin:0!important;
+    border:0!important;
+    border-bottom:1px solid #e3e6de!important;
+    border-radius:0!important;
+    background:transparent!important;
+    color:#2d4236!important;
+    font:700 15px/1.45 Manrope,Arial,sans-serif!important;
+    letter-spacing:0!important;
+    text-align:left!important;
+    touch-action:manipulation;
+    cursor:pointer;
+  }
+  #mobileMenu [data-open-request]{
+    color:#925137!important;
+    font-weight:800!important;
+  }
+  #mobileMenu>a:focus-visible,
+  #mobileMenu>button:focus-visible{
+    outline:3px solid #a55e3e;
+    outline-offset:-3px;
+  }
+}
+@media(max-width:650px){
+  /* Readability and touch targets, without changing the house editor itself. */
+  #designer .designer-gallery-switch button{
+    min-height:44px;
+    line-height:1.3;
+    white-space:normal;
+  }
+  #inspiration .filterbar .filter{
+    min-height:44px;
+  }
+  #faq .faqs summary{
+    min-height:44px;
+    line-height:1.5;
+  }
+  #faq .faqs details p{
+    font-size:14px;
+    line-height:1.75;
+  }
+  #readConsentFaq.lead-consent-link{
+    min-height:44px;
+    font-size:13px;
+  }
+  #requestModal .lead-form>p:first-of-type,
+  #requestModal .lead-form .field-title,
+  #requestModal .consent{
+    font-size:13px;
+    line-height:1.55;
+  }
+  #requestModal .lead-form .input{
+    font-size:16px;
+  }
+  #requestModal #closeRequest{
+    min-width:44px;
+    min-height:44px;
+  }
+  .footer-upper>div:not(:first-child)>a,
+  .footer-upper>div:not(:first-child)>button{
+    min-height:44px;
+  }
+}
+/* The range itself has an invisible native outline to keep its drag overlay.
+   Reveal unmistakable focus on the visible comparison panel for keyboard use. */
+#premiumCompareWindow:focus-within{
+  outline:3px solid #a65d40;
+  outline-offset:4px;
+}
+@media(hover:hover) and (pointer:fine){
+  #mobileMenu>a:hover,
+  #mobileMenu>button:hover{
+    background:#f2f5ee!important;
+  }
+}
