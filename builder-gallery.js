@@ -38,12 +38,16 @@
  // An architecture card must change more than the facade or roof colour.
  // The three courtyard/wing plans below are separate modelled floorplates.
  const cardPriority=[
-   // User preference: lead with genuinely different two-storey designs.
-   'southernVillaTwo','krasnodarTwo','caucasusGalleryTwo','modernOffsetTwo',
-   'twoColumns','twoBrick','twoModern','twoBalcony','twoMansardColumns',
-   // Different one-storey, regional, and inhabited-attic houses follow.
-   'estateOne','kavkaz','chalet','farmhouseOne','family',
-   'mansardBrick','gableAttic','bungalow'
+   // Featured: user's chosen red brick two-storey model.
+   'twoBrick','twoClassic','twoColumns','twoModern','twoBalcony','twoTerrace',
+   'krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo',
+   // Distinct one-storey floorplans, roofs, porches and additions.
+   'brickOne','farmhouseOne','gardenOne','courtyardL','atriumU','crossGableT',
+   'modernOne','chalet','bungalow','estateOne','kavkaz',
+   // One full floor plus an attic.
+   'mansardBrick','mansardEstate','mansardHome','gableAttic',
+   // Two full floors plus an attic.
+   'twoMansardBrick','twoMansardColumns','twoMansard'
  ];
  const visibleArchitecture=new Set(cardPriority);
  const data={
@@ -154,13 +158,13 @@
  filter.className='builder-category-filter';
  for(const category of ['Все дома','Одноэтажные','Одноэтажные с мансардой','Двухэтажные','Двухэтажные с мансардой']){
    const option=document.createElement('option');option.value=category==='Все дома'?'all':category;
-   option.textContent=category;filter.append(option);
+   option.textContent=category==='Все дома'?'Все дома ('+data.presets.length+')':category+' ('+data.presets.filter(item=>item.category===category).length+')';filter.append(option);
  }
  nav.after(filter);filter.addEventListener('change',()=>render());
  // Sync the complete style library with the accessible select fallback.
  const chosen=fields.houseStyle.value;
  fields.houseStyle.replaceChildren(...data.presets.map(v=>new Option(v.title,v.value)));
- fields.houseStyle.value=data.presets.some(x=>x.value===chosen)?chosen:'family';
+ fields.houseStyle.value=data.presets.some(x=>x.value===chosen)?chosen:'twoBrick';
  const colorArea=document.createElement('div');colorArea.className='builder-colors';root.append(colorArea);
  const summary=document.createElement('p');summary.className='builder-choice-summary';summary.id='builderChoiceSummary';
  summary.setAttribute('aria-live','polite');root.append(summary);
