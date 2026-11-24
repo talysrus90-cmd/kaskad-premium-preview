@@ -265,6 +265,7 @@
  const sizeButtons=[...document.querySelectorAll('[data-home-size]')];
  const floorButtons=[...document.querySelectorAll('[data-home-floors]')];
  let step=0;
+ let stageScrollToken=0;
  const sizeClamp=(v,min,max)=>Math.max(min,Math.min(max,Math.round(Number(v)*2)/2));
  const sizeValues=()=>({
    width:sizeClamp(widthInput.value||10,5,14),
@@ -463,6 +464,9 @@
   }));
  }
  function show(i,keepScroll=false){
+  // Invalidate a previous frame's scheduled scroll when the user rapidly
+  // switches tabs: otherwise the previous stage can steal the scroll.
+  const thisScroll=++stageScrollToken;
   step=Math.max(0,Math.min(stages.length-1,i));
   const id=stages[step].id;
   if(quickStep)quickStep.value=String(step);
@@ -494,21 +498,24 @@
   document.getElementById('builderProgress').style.width=((step+1)*100/stages.length)+'%';
   const intro=document.querySelector('.builder-v25-intro p');
   if(intro)intro.textContent=stages[step].brief+'. Изменения сразу видны на модели.';
-  if(!keepScroll){scroll.scrollTo({top:0,behavior:'instant'});controls.scrollTo({top:0,behavior:'instant'});}
+  if(!keepScroll && !window.matchMedia('(max-width:730px)').matches){
+   scroll.scrollTo({top:0,behavior:'instant'});
+   controls.scrollTo({top:0,behavior:'instant'});
+  }
   // On phones the 3D viewer is sticky and the page footer has a dock.
   // Reveal the actual choices when a step is tapped instead of leaving
   // the selected materials below the visible part of the iframe.
   if(window.matchMedia('(max-width:730px)').matches){
-   const target=({presets:root.querySelector('.builder-category-filter'),geometry:geom,roof:roofShapes,facade:root.querySelector('.builder-material-card'),
-     fence:root.querySelector('.builder-material-card'),
+   const target=({presets:root.querySelector('.builder-category-filter'),geometry:geom,roof:roofShapes,facade:root.querySelector('.builder-material-list'),
+     fence:root.querySelector('.builder-material-list'),
      openings:document.getElementById('builderOpenings'),
      site:document.getElementById('builderGarden'),
      summary:document.getElementById('builderFinal')})[id];
-   requestAnimationFrame(()=>{
-    if(!target||target.hidden)return;
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(thisScroll!==stageScrollToken||!target||!target.isConnected||!target.getClientRects().length)return;
     const top=target.getBoundingClientRect().top-controls.getBoundingClientRect().top+controls.scrollTop-7;
     controls.scrollTo({top:Math.max(0,top),behavior:'instant'});
-   });
+   }));
   }
   summary();
   window.dispatchEvent(new CustomEvent('kaskad:focus-view',{
