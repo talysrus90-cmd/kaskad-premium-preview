@@ -479,7 +479,12 @@
   plotZ=(depth>house.length)?Math.max(0,Math.min(1,z/(depth-house.length))):0;
   renderPlot();
  };
- plotPlan.addEventListener('pointerdown',e=>{plotPlan.setPointerCapture(e.pointerId);movePlot(e)});
+ plotPlan.addEventListener('pointerdown',e=>{
+   // On touch, dragging the actual house is intentional; gestures on the
+   // empty plot remain ordinary vertical page scrolls.
+   if(e.pointerType==='touch'&&!e.target.closest('.builder-plot-house'))return;
+   plotPlan.setPointerCapture(e.pointerId);movePlot(e)
+  });
  plotPlan.addEventListener('pointermove',e=>{if(plotPlan.hasPointerCapture(e.pointerId))movePlot(e)});
  window.addEventListener('resize',renderPlot);
  function summary(){
