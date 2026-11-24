@@ -134,7 +134,42 @@
  const facadeHelp=document.createElement('section');
  facadeHelp.className='builder-material-explainer';facadeHelp.hidden=true;
  facadeHelp.innerHTML='<h3>Материал и цвет фасада</h3><p>Выберите фактуру на карточке ниже. Дом изменится сразу.</p><label class="builder-v25-control">Отделка цоколя<select id="plinthSelect"><option value="graphite">Практичный графит (по умолчанию)</option><option value="stone">Природный камень</option><option value="brick">Облицовочный кирпич</option><option value="tile">Тёмная фасадная плитка</option><option value="dagestan">Дагестанский камень</option><option value="decorative">Тёмный декоративный камень</option><option value="taupe">Серо-коричневый камень</option><option value="none">Без декоративной облицовки</option></select></label>';
- root.before(facadeHelp);
+ root.after(facadeHelp);
+ // Plinth stays independent of the facade, but uses compact visual choices
+ // rather than an unexplained dropdown with long labels.
+ const plinthSelect=document.getElementById('plinthSelect');
+ const plinthChoices=document.createElement('details');
+ plinthChoices.className='builder-plinth-choices';
+ const plinthHead=document.createElement('summary');
+ plinthHead.textContent='Цоколь · практичный графит';
+ plinthChoices.append(plinthHead);
+ const plinthGrid=document.createElement('div');plinthGrid.className='builder-plinth-grid';plinthChoices.append(plinthGrid);
+ const plinthImages={graphite:'brickGraphite',stone:'stone',brick:'brick',tile:'gray',dagestan:'stone',
+  decorative:'klinker',taupe:'gray',none:'plasterWhite'};
+ for(const option of plinthSelect.options){
+  const button=document.createElement('button');button.type='button';
+  button.className='builder-plinth-button';button.dataset.plinth=option.value;
+  const image=document.createElement('img');
+  image.src='assets/3d/cards/material_'+plinthImages[option.value]+'_v37.webp';
+  image.alt='';image.loading='lazy';image.width=32;image.height=32;
+  const caption=document.createElement('span');caption.textContent=option.textContent.replace(' (по умолчанию)','');
+  button.append(image,caption);
+  button.addEventListener('click',()=>{
+   plinthSelect.value=option.value;plinthSelect.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  plinthGrid.append(button);
+ }
+ const updatePlinthButtons=()=>{
+  const current=[...plinthSelect.options].find(o=>o.value===plinthSelect.value);
+  plinthHead.textContent='Цоколь · '+(current?.textContent||'Выбрать').replace(' (по умолчанию)','');
+  plinthGrid.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.plinth===plinthSelect.value)));
+ };
+ plinthSelect.addEventListener('change',updatePlinthButtons);updatePlinthButtons();
+ // The canonical select remains in the DOM for persistence and 3D updates.
+ facadeHelp.querySelector('label').hidden=true;
+ facadeHelp.querySelector('h3').hidden=true;
+ facadeHelp.querySelector('p').hidden=true;
+ facadeHelp.append(plinthChoices);
  const roofShapes=document.createElement('section');
  roofShapes.className='builder-v28-roof-forms';roofShapes.hidden=true;
  roofShapes.innerHTML='<h3>Форма кровли</h3><p>Сначала выберите конфигурацию крыши — затем профиль черепицы и цвет.</p>';
@@ -192,6 +227,8 @@
   const {width,length,floors}=sizeValues();
   if(widthSlider){widthSlider.value=String(width);document.getElementById('houseWidthValue').textContent=width+' м'}
   if(lengthSlider){lengthSlider.value=String(length);document.getElementById('houseLengthValue').textContent=length+' м'}
+  const sceneHouse=document.getElementById('sceneHouseDimensions');
+  if(sceneHouse)sceneHouse.textContent=width+' × '+length+' м';
   const footprint=Math.round(width*length*100)/100;
   const mansardAboveTwo=(document.getElementById('houseStyleSelect')?.value||'').startsWith('twoMansard');
   const floorLabel=mansardAboveTwo?'2 этажа + мансарда':{one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
@@ -308,6 +345,8 @@
   document.getElementById('plotAreaValue').textContent=sotka+' соток';
   document.getElementById('plotWidthValue').textContent=width+' м';
   document.getElementById('plotLengthValue').textContent=depth+' м';
+  const scenePlot=document.getElementById('scenePlotDimensions');
+  if(scenePlot)scenePlot.textContent='Участок '+width+' × '+depth+' м';
   document.getElementById('plotDimensions').textContent='Участок '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+area.toFixed(0)+' м²';
   const coverage=house.width*house.length/area*100;
   const percent=coverage.toFixed(1).replace('.',',');
@@ -385,6 +424,8 @@
   stepButtons.forEach((b,n)=>{b.setAttribute('aria-current',n===step?'step':'false');
    b.setAttribute('aria-selected',String(n===step));});
   geom.hidden=id!=='geometry';
+  const scenePlotBadge=document.getElementById('scenePlotDimensions');
+  if(scenePlotBadge)scenePlotBadge.hidden=id!=='site';
   const catalog=({presets:'presets',roof:'roof',facade:'facade',fence:'fence'})[id];
   root.hidden=!catalog;
   facadeHelp.hidden=id!=='facade';
@@ -410,7 +451,7 @@
   // Reveal the actual choices when a step is tapped instead of leaving
   // the selected materials below the visible part of the iframe.
   if(window.matchMedia('(max-width:730px)').matches){
-   const target=({presets:root.querySelector('.builder-category-filter'),geometry:geom,roof:roofShapes,facade:facadeHelp,
+   const target=({presets:root.querySelector('.builder-category-filter'),geometry:geom,roof:roofShapes,facade:root.querySelector('.builder-material-card'),
      fence:root.querySelector('.builder-material-card'),
      openings:document.getElementById('builderOpenings'),
      site:document.getElementById('builderGarden'),
@@ -482,7 +523,7 @@
   requestAnimationFrame(()=>{
    const target=nextStage===0?
      root.querySelector('.builder-category-filter')||root.querySelector('.builder-material-card'):
-     ({geometry:geom,roof:roofShapes,facade:facadeHelp,
+     ({geometry:geom,roof:roofShapes,facade:root.querySelector('.builder-material-card'),
        fence:root.querySelector('.builder-material-card'),
        openings:document.getElementById('builderOpenings'),
        site:document.getElementById('builderGarden'),

@@ -200,6 +200,7 @@
    }
  }
  function render(keepScroll=false){
+   root.dataset.activeMaterial=activeTab;
    const scroll=keepScroll?cardList.scrollLeft:0;
    for(const tab of nav.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===activeTab));
    cardList.replaceChildren();
@@ -209,13 +210,17 @@
    for(const item of items){
      const button=document.createElement('button');button.type='button';button.className='builder-material-card';
      button.dataset.option=item.value;
+     if(activeTab==='facade')button.classList.add('builder-facade-choice');
      button.setAttribute('aria-pressed',String(selected(item)));
      button.setAttribute('aria-label',item.title+'. '+item.sub+'. Выбрать');
-     const img=document.createElement('img');img.src=src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
+     const img=document.createElement('img');img.src=activeTab==='facade'?src+'material_'+item.value+'_v37.webp':src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
      const title=document.createElement('strong');title.textContent=item.title;
      const caption=document.createElement('span');
      caption.textContent=activeTab==='presets'?item.category+' · размеры изменяются отдельно':item.sub;
-     button.append(img,title,caption);
+     if(activeTab==='facade'){
+       img.loading='eager';img.fetchPriority='low';img.width=64;img.height=64;
+       button.append(img,title);
+     }else button.append(img,title,caption);
      button.addEventListener('click',()=>choose(item));
      cardList.append(button);
    }

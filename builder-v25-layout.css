@@ -426,3 +426,81 @@
 .kaskad-site-scene-hint[hidden]{display:none!important}
 
 #plotWidthSlider,#plotLengthSlider{display:block;width:100%;height:25px;margin:2px 0 9px;accent-color:#315e43;cursor:pointer;touch-action:pan-y}
+
+
+/* Compact facade MATERIAL buttons (not repeated house photographs). */
+#builderGallery[data-active-material="facade"] .builder-gallery-tabs{display:none!important}
+#builderGallery[data-active-material="facade"] .builder-material-list{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-auto-flow:row!important;grid-auto-columns:auto!important;
+ gap:6px!important;overflow:visible!important;scroll-snap-type:none!important;
+ padding:4px 0 7px!important}
+#builderGallery[data-active-material="facade"] .builder-material-card.builder-facade-choice{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ gap:8px!important;padding:5px 7px!important;min-height:62px!important;
+ scroll-snap-align:none!important;box-shadow:none!important;
+ background:#fffdf8!important;border-radius:10px!important}
+#builderGallery[data-active-material="facade"] .builder-facade-choice img{
+ flex:0 0 54px!important;width:54px!important;height:54px!important;
+ border:1px solid #d8d3c9;border-radius:7px;object-fit:cover!important}
+#builderGallery[data-active-material="facade"] .builder-facade-choice strong{
+ font:800 11px/1.24 Manrope,system-ui,sans-serif!important;padding:0 14px 0 0!important;
+ overflow-wrap:anywhere;color:#334e3c!important}
+#builderGallery[data-active-material="facade"] .builder-facade-choice[aria-pressed=true]{
+ border-color:#3d6b4e!important;background:#ecf2ea!important}
+#builderGallery[data-active-material="facade"] .builder-facade-choice[aria-pressed=true]:after{
+ right:5px!important;top:5px!important;width:17px!important;height:17px!important;font-size:11px!important}
+#builderGallery[data-active-material="facade"] .builder-choice-summary{display:none!important}
+.scene .scene-caption{display:none!important}
+.scene-metric-badge{position:absolute;z-index:7;top:9px;right:9px;pointer-events:none;
+ display:flex;flex-direction:column;gap:1px;align-items:flex-end;
+ padding:8px 10px;border-radius:10px;border:1px solid #e3e8d9a8;
+ background:#fafbf0eb;box-shadow:0 3px 14px #19362926;
+ color:#254832;font:750 11px/1.3 Manrope,system-ui,sans-serif}
+.scene-metric-badge output{color:#234e39;font:900 18px/1.18 Manrope,system-ui,sans-serif;
+ white-space:nowrap;font-variant-numeric:tabular-nums}
+.scene-metric-badge small{font-size:10px;font-weight:750;white-space:nowrap}
+.scene-metric-badge [hidden]{display:none!important}
+.builder-slider-set{gap:0!important;margin:0 0 3px!important}
+.builder-slider-set .builder-range-label{gap:6px!important;margin:2px 0 0!important;
+ font-size:12px!important;line-height:1.28!important}
+.builder-slider-set .builder-range-label output{min-width:60px;text-align:center;
+ font-size:16px!important;padding:5px 8px!important}
+.builder-slider-set input[type="range"]{height:23px!important;margin:0 0 3px!important;
+ accent-color:#315e43}
+.builder-geometry-strip{gap:3px!important}
+.builder-geometry-strip>h3{margin:0 0 3px!important}
+.builder-size-result{font-size:13px!important;padding:6px 9px!important;margin:3px 0!important}
+.builder-size-caution{margin:2px 0 4px!important;font-size:10px!important}
+@media(max-width:390px){
+ #builderGallery[data-active-material="facade"] .builder-facade-choice img{
+  flex-basis:45px!important;width:45px!important;height:45px!important}
+ #builderGallery[data-active-material="facade"] .builder-facade-choice strong{font-size:10px!important}
+ .scene-metric-badge{top:7px;right:7px;padding:6px 8px}
+ .scene-metric-badge output{font-size:16px}}
+
+
+/* Show slider label and its large value in ONE row, not separated by
+   inherited vertical label styling from the old control grid. */
+.builder-geometry-strip .builder-slider-set .builder-range-label{
+ flex-direction:row!important;justify-content:space-between!important;
+ align-items:center!important;text-align:left!important;
+ margin:2px 0 0!important;gap:5px!important}
+.builder-geometry-strip .builder-slider-set .builder-range-label output{
+ align-self:center!important;flex:0 0 auto!important;min-width:62px!important}
+.builder-geometry-strip .builder-slider-set input[type=range]{
+ margin:0 0 1px!important;padding:0!important}
+.builder-material-explainer .builder-v25-control[hidden],
+.builder-material-explainer h3[hidden],
+.builder-material-explainer p[hidden]{display:none!important}
+.builder-plinth-choices{margin:5px 0 2px;padding:5px 7px;border:1px solid #d7ded3;
+ border-radius:8px;background:#f5f7f1}
+.builder-plinth-choices>summary{cursor:pointer;min-height:34px;display:list-item;
+ font:800 11px/1.6 Manrope,system-ui,sans-serif;color:#365c46;padding:5px}
+.builder-plinth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:5px 0}
+.builder-plinth-button{display:flex;align-items:center;gap:6px;min-width:0;min-height:46px;
+ padding:4px;border:1px solid #d7ddcf;border-radius:7px;background:#fffdf8;
+ color:#3c543d;text-align:left;cursor:pointer}
+.builder-plinth-button img{width:34px;height:34px;flex:0 0 34px;object-fit:cover;border-radius:5px}
+.builder-plinth-button span{font:750 10px/1.23 Manrope,system-ui,sans-serif}
+.builder-plinth-button[aria-pressed=true]{border:2px solid #315f48;background:#e7efe7}
