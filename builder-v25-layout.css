@@ -878,7 +878,7 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
 
 /* v56 mobile: one vertical scroll container — the main KASKAD page.
    The iframe is content-sized from its parent; no second momentum scroller. */
-@media(max-width:730px){
+@media(max-width:730px), (max-width:1080px) and (hover:none) and (pointer:coarse){
  html,body{
   height:auto!important;min-height:0!important;
   overflow-x:hidden!important;overflow-y:visible!important;
@@ -925,4 +925,23 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
  .scene-top-view-button:focus-visible{outline:3px solid #b97a57;outline-offset:2px}
  body.kaskad-interior-active .scene-top-view-button{display:none!important}
 }
-@media(min-width:731px){.scene-top-view-button{display:none!important}}
+@media(min-width:731px) and (hover:hover) and (pointer:fine){
+ .scene-top-view-button{display:none!important}
+}
+/* Phones held horizontally are wider than 730px but still need native scroll. */
+@media(min-width:731px) and (max-width:1080px) and (hover:none) and (pointer:coarse){
+ .viewer-col>.scene{
+  height:clamp(248px,43svh,322px)!important;
+  max-height:none!important;flex:0 0 auto!important
+ }
+ .scene-step-switch{
+  display:flex!important;flex-direction:column!important;
+  padding:5px 6px!important;gap:4px!important;background:#f6f7f2
+ }
+ .scene-component-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px}
+ .scene-component-tabs button{min-height:40px}
+ .builder-v25-step-tabs{display:none!important}
+ .builder-family-chips{display:flex!important}
+ aside.controls{padding:0 6px 10px!important}
+ #builderV25Scroll{padding:0 0 8px!important}
+}
