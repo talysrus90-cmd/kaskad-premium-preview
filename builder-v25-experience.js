@@ -18,7 +18,7 @@
  const fieldIds=['houseStyleSelect','houseSizeSelect','roofShapeSelect','facadeSelect',
   'roofSelect','roofColorSelect','fenceSelect','fenceColorSelect','frameColorSelect',
   'doorColorSelect','glassTintSelect','landscapeSelect','poolToggle',
-  'yardStyleSelect','parkingToggle','gazeboToggle'];
+  'yardStyleSelect','parkingToggle','gazeboToggle','entranceStyleSelect'];
  const fields={};
  const geom=document.querySelector('.builder-geometry-strip');
  const advanced=document.getElementById('builderAdvanced');
@@ -26,8 +26,17 @@
  const group=document.createElement('div');
  group.id='builderV25Panels';
  group.innerHTML=`
-  <section class="builder-v25-panel builder-v25-openings" id="builderOpenings" hidden aria-label="Окна и двери">
-   <h3>Окна и двери</h3>
+  <section class="builder-v25-panel builder-v25-openings" id="builderOpenings" hidden aria-label="Окна, двери и парадный вход">
+   <h3>Окна, двери и парадный вход</h3>
+   <label class="builder-v25-control">Оформление главного входа
+    <select id="entranceStyleSelect">
+     <option value="simple">Лаконичный навес · две опоры</option>
+     <option value="columns">Классический портик · колонны</option>
+     <option value="timber">Деревянный навес · балки</option>
+     <option value="modern">Современный портал · металл</option>
+    </select>
+   </label>
+   <div class="builder-entrance-choices" id="builderEntranceChoices" aria-label="Варианты оформления входа"></div>
    <p>Изменения сразу отображаются на 3D-модели. Это варианты отделки, а не спецификация производителя.</p>
    <label class="builder-v25-control">Цвет оконных рам
     <select id="frameColorSelect">
@@ -84,8 +93,48 @@
    <p class="builder-v25-toast" id="builderSaveMessage" aria-live="polite"></p>
   </section>`;
  root.after(group);
+ // Controls belong in the panel, never cover the 3D image.
+ const facadeHelp=document.createElement('section');
+ facadeHelp.className='builder-material-explainer';facadeHelp.hidden=true;
+ facadeHelp.innerHTML='<h3>Материал и цвет фасада</h3><p>Выберите фактуру на карточке ниже. Дом изменится сразу. Листайте карточки влево или вправо.</p>';
+ root.before(facadeHelp);
+ const roofShapes=document.createElement('section');
+ roofShapes.className='builder-v28-roof-forms';roofShapes.hidden=true;
+ roofShapes.innerHTML='<h3>Форма кровли</h3><p>Сначала выберите конфигурацию крыши — затем профиль черепицы и цвет.</p>';
+ const roofShapeButtons=document.createElement('div');roofShapeButtons.className='builder-v28-options';
+ roofShapeButtons.setAttribute('role','group');roofShapeButtons.setAttribute('aria-label','Форма крыши');
+ for(const [id,title,sub] of [['gable','Двухскатная','Два ската'],['hip','Четырёхскатная','Вальмовая'],['mansard','Мансардная','С окнами'],['flat','Плоская','Современная']]){
+  const b=document.createElement('button');b.type='button';
+  b.dataset.roofShape=id;b.innerHTML='<strong></strong><small></small>';
+  b.firstChild.textContent=title;b.lastChild.textContent=sub;
+  b.addEventListener('click',()=>{
+   const select=document.getElementById('roofShapeSelect');
+   select.value=id;select.dispatchEvent(new Event('change',{bubbles:true}));
+   syncRoofForms();
+  });
+  roofShapeButtons.append(b);
+ }
+ roofShapes.append(roofShapeButtons);root.before(roofShapes);
+ function syncRoofForms(){
+  const current=document.getElementById('roofShapeSelect')?.value;
+  for(const b of roofShapeButtons.children)b.setAttribute('aria-pressed',String(b.dataset.roofShape===current));
+ }
+ document.getElementById('roofShapeSelect')?.addEventListener('change',syncRoofForms);
+ syncRoofForms();
+ const entryButtons=document.getElementById('builderEntranceChoices');
+ const entrySelect=document.getElementById('entranceStyleSelect');
+ const entryLabels=[['simple','Навес','Две опоры'],['columns','Колонны','Классический портик'],['timber','Дерево','Балки и стойки'],['modern','Современный','Металл и камень']];
+ for(const [key,title,sub] of entryLabels){
+  const b=document.createElement('button');b.type='button';b.dataset.entryStyle=key;
+  b.innerHTML='<strong></strong><small></small>';b.firstChild.textContent=title;b.lastChild.textContent=sub;
+  b.addEventListener('click',()=>{entrySelect.value=key;entrySelect.dispatchEvent(new Event('change',{bubbles:true}))});
+  entryButtons.append(b);
+ }
+ const syncEntrance=()=>{for(const b of entryButtons.children)b.setAttribute('aria-pressed',String(b.dataset.entryStyle===entrySelect.value))};
+ entrySelect.addEventListener('change',syncEntrance);syncEntrance();
  for(const id of fieldIds)fields[id]=document.getElementById(id);
  const stepButtons=[];
+ const quickStep=document.getElementById('builderQuickStep');
  let step=0;
  function name(id){const el=fields[id];return el?.selectedOptions?.[0]?.textContent?.trim()||
    (el?.checked?'Да':'Нет')||'—';}
@@ -102,6 +151,7 @@
    ['Оконные рамы',name('frameColorSelect')],
    ['Стекло',name('glassTintSelect')],
    ['Дверь',name('doorColorSelect')],
+   ['Входная группа',name('entranceStyleSelect')],
    ['Ограждение',name('fenceSelect')],
    ['Цвет забора',name('fenceColorSelect')],
    ['Озеленение',name('landscapeSelect')],
@@ -120,11 +170,14 @@
  function show(i,keepScroll=false){
   step=Math.max(0,Math.min(stages.length-1,i));
   const id=stages[step].id;
+  if(quickStep)quickStep.value=String(step);
   stepButtons.forEach((b,n)=>{b.setAttribute('aria-current',n===step?'step':'false');
    b.setAttribute('aria-selected',String(n===step));});
   geom.hidden=id!=='geometry';
   const catalog=({presets:'presets',roof:'roof',facade:'facade',site:'fence'})[id];
   root.hidden=!catalog;
+  facadeHelp.hidden=id!=='facade';
+  roofShapes.hidden=id!=='roof';
   if(catalog)root.querySelector('.builder-gallery-tabs button[data-builder-tab="'+catalog+'"]')?.click();
   document.getElementById('builderOpenings').hidden=id!=='openings';
   document.getElementById('builderGarden').hidden=id!=='site';
@@ -140,6 +193,21 @@
   const intro=document.querySelector('.builder-v25-intro p');
   if(intro)intro.textContent=stages[step].brief+'. Изменения сразу видны на модели.';
   if(!keepScroll)scroll.scrollTo({top:0,behavior:'instant'});
+  // On phones the 3D viewer is sticky and the page footer has a dock.
+  // Reveal the actual choices when a step is tapped instead of leaving
+  // the selected materials below the visible part of the iframe.
+  if(step>0&&window.matchMedia('(max-width:730px)').matches){
+   const target=({geometry:geom,roof:roofShapes,facade:facadeHelp,
+     openings:document.getElementById('builderOpenings'),
+     site:document.getElementById('builderGarden'),
+     summary:document.getElementById('builderFinal')})[id];
+   requestAnimationFrame(()=>{
+    if(!target||target.hidden)return;
+    const sticky=document.querySelector('.viewer-col');
+    const top=target.getBoundingClientRect().top+window.scrollY-(sticky?.getBoundingClientRect().height||0)-7;
+    if(top>window.scrollY+14)window.scrollTo({top:Math.max(0,top),behavior:'instant'});
+   });
+  }
   summary();
   window.dispatchEvent(new CustomEvent('kaskad:focus-view',{
     detail:{tab:({geometry:'presets',openings:'facade',site:'fence',summary:'presets'})[id]||id}}));
@@ -156,9 +224,10 @@
   facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
   doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
+  entranceStyleSelect:'simple',
   yardStyleSelect:'family',parkingToggle:true,gazeboToggle:false
  };
- const storageKey='kaskad-v27-visual-selection';
+ const storageKey='kaskad-v28-visual-selection';
  function apply(state){
   if(!state||typeof state!=='object')return;
   for(const [id,value] of Object.entries(defaults)){
@@ -171,6 +240,7 @@
   }
   summary();
  }
+ quickStep?.addEventListener('change',()=>show(Number(quickStep.value)));
  document.getElementById('builderPrev').addEventListener('click',()=>show(step-1));
  document.getElementById('builderNext').addEventListener('click',()=>{
   if(step<stages.length-1){show(step+1);return}
@@ -181,6 +251,7 @@
    roofShape:fields.roofShapeSelect.value,
    frameColor:fields.frameColorSelect.value,doorColor:fields.doorColorSelect.value,
    glassTint:fields.glassTintSelect.value,landscape:fields.landscapeSelect.value,
+   entrance:fields.entranceStyleSelect.value,
    pool:fields.poolToggle.checked,
    yardStyle:fields.yardStyleSelect.value,parking:fields.parkingToggle.checked,
    gazebo:fields.gazeboToggle.checked};

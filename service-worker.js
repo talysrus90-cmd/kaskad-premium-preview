@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-front-yard-v27';
+const VERSION='kaskad-pwa-20261124-exterior-ux-v28';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -16,19 +16,34 @@ const core=[
  './faq-legal-20261109.css?v=2',
  './interactive-home.css?v=8',
  './mobile-usability-20261123.css?v=1',
- './3d-house-embed.html?v=13',
- './house-3d.bundle.js?v=13',
+ './3d-house-embed.html?v=14',
+ './house-3d.bundle.js?v=14',
  './3d-house.css?v=4',
- './builder-v25-layout.css?v=2',
- './builder-v25-experience.js?v=3',
+ './builder-v25-layout.css?v=3',
+ './builder-v25-experience.js?v=4',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=9',
+ './builder-gallery.js?v=10',
  './roof-relief-v25.js',
  './russian-home-v26.js',
  './house-variants-v27.js',
  './front-yard-v27.js',
+ './facade-presets-v28.js',
+ './entrance-v28.js',
  './architecture-styles-v19.js',
+ './assets/3d/cards/facade_brickBeige_v28.webp',
+ './assets/3d/cards/facade_brickGraphite_v28.webp',
+ './assets/3d/cards/facade_brickWhite_v28.webp',
+ './assets/3d/cards/facade_brick_v28.webp',
+ './assets/3d/cards/facade_gray_v28.webp',
+ './assets/3d/cards/facade_klinker_v28.webp',
+ './assets/3d/cards/facade_planken_v28.webp',
+ './assets/3d/cards/facade_plasterSand_v28.webp',
+ './assets/3d/cards/facade_plasterWhite_v28.webp',
+ './assets/3d/cards/facade_plaster_v28.webp',
+ './assets/3d/cards/facade_stone_v28.webp',
+ './assets/3d/cards/facade_tuscan_v28.webp',
+ './assets/3d/cards/facade_venetian_v28.webp',
  './assets/3d/cards/preset_barnhouse_v27.webp',
  './assets/3d/cards/preset_bungalow_v27.webp',
  './assets/3d/cards/preset_chalet_v27.webp',
@@ -49,7 +64,7 @@ const core=[
  './assets/3d/cards/preset_practical_v27.webp',
  './assets/3d/cards/preset_terrace_v27.webp',
  './builder-gallery.css?v=3',
- './builder-lead-bridge.js?v=6',
+ './builder-lead-bridge.js?v=7',
  './assets/3d/roof_tile_neutral.webp',
  './roof-market-v16.js',
  './roof-forms-v20.js',
@@ -129,7 +144,7 @@ const core=[
 // Install a light, reliable offline shell. The 3D builder, HDR textures, and its
 // previews are fetched and cached on first use, not downloaded by every visitor.
 // Previously install preloaded 102 resources (~5.7 MB), even on mobile data.
-const offlineCore=core.filter(p=>!/^(?:\.\/assets\/3d\/|\.\/3d-house-embed\.html|\.\/house-3d\.bundle\.js|\.\/3d-house\.css|\.\/builder-gallery\.(?:js|css)|\.\/architecture-styles-v19\.js|\.\/builder-lead-bridge\.js|\.\/roof-market-v16\.js|\.\/roof-forms-v20\.js|\.\/fence-market-v16\.js|\.\/foliage-v16\.js|\.\/russian-home-v26\.js|\.\/house-variants-v27\.js|\.\/front-yard-v27\.js)/.test(p));
+const offlineCore=core.filter(p=>!/^(?:\.\/assets\/3d\/|\.\/3d-house-embed\.html|\.\/house-3d\.bundle\.js|\.\/3d-house\.css|\.\/builder-gallery\.(?:js|css)|\.\/architecture-styles-v19\.js|\.\/builder-lead-bridge\.js|\.\/roof-market-v16\.js|\.\/roof-forms-v20\.js|\.\/fence-market-v16\.js|\.\/foliage-v16\.js|\.\/russian-home-v26\.js|\.\/house-variants-v27\.js|\.\/front-yard-v27\.js|\.\/facade-presets-v28\.js|\.\/entrance-v28\.js)/.test(p));
 const URL_OF=p=>new URL(p,ROOT);
 const isInScope=url=>url.origin===new URL(ROOT).origin&&url.pathname.startsWith(new URL(ROOT).pathname);
 const isApi=p=>p.includes('/api/')||p.includes('/auth/')||p.includes('/admin/');

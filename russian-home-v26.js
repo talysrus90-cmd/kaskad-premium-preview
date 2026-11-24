@@ -5,6 +5,7 @@
  */
 import {METAL_PROFILES,makeStampedSurface} from './roof-relief-v25.js';
 import {HOME_VARIANTS,createHouseVariations} from './house-variants-v27.js';
+import {createEntranceVariants} from './entrance-v28.js';
 
 export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat}){
  const root=new THREE.Group();root.name='КАСКАД · малоэтажный семейный дом';scene.add(root);
@@ -50,6 +51,9 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  box(main,1.74,.13,.25,0,2.87,4.72,frameTrim);
  for(const xx of [-.9,.9])box(main,.14,2.5,.18,xx,1.65,4.73,frameTrim);
  box(main,.1,.13,.16,.58,1.77,4.76,darkMetal);
+ // The original canopy is grouped for backwards compatibility; v28 uses
+ // one selectable complete supported entrance at a time.
+ const legacyEntryStart=main.children.length;
  // Projecting but structurally legible entrance porch: 3.02m top, not 4.9m.
  const canopy=box(main,3.8,.20,1.82,0,3.03,5.31,frameTrim);
  box(main,3.93,.06,1.94,0,3.17,5.31,darkMetal);
@@ -61,6 +65,11 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  box(main,3.94,.13,1.93,0,.46,5.35,limestone);
  box(main,4.05,.12,.77,0,.31,6.45,frameTrim);
  box(main,4.15,.10,.78,0,.19,7.17,limestone);
+ const legacyEntry=new THREE.Group();legacyEntry.name='Старый вход для совместимости';
+ for(const part of main.children.slice(legacyEntryStart))legacyEntry.add(part);
+ legacyEntry.visible=false;main.add(legacyEntry);
+ const entryVariants=createEntranceVariants(THREE,main,{stone:limestone,trim:frameTrim,wood:timber,metal:darkMetal});
+ entryVariants.setStyle('simple');
  // Lower-floor fenestration, no windows hidden under projecting beams.
  function window(x,y,z,rotation=0,w=1.48,h=1.52,owner=main){
   const group=new THREE.Group();group.position.set(x,y,z);group.rotation.y=rotation;owner.add(group);
@@ -197,6 +206,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   }
   roofType=kind;
  }
+ function setEntrance(style){legacyEntry.visible=false;entryVariants.setStyle(style)}
  function setStyle(style){
   currentStyle=style;
   root.visible=style!=='classic'&&HOME_VARIANTS.some(item=>item.id===style);
@@ -210,5 +220,5 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   root.scale.set(w/12.8,1,depth/9);
   root.userData.footprint={width:w,depth,floors};
  }
- return {root,setStyle,setSize,setRoof,getShape:()=>activeShape,getRoof:()=>roofType};
+ return {root,setStyle,setSize,setRoof,setEntrance,getShape:()=>activeShape,getRoof:()=>roofType};
 }

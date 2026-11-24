@@ -3,7 +3,7 @@
  'use strict';
  const iframe=document.querySelector('#interactive-home iframe');
  const valid={
-  facade:{brick:'Красный кирпич',tuscan:'Тосканский кирпич',stone:'Светлый камень',plaster:'Светлая штукатурка',gray:'Серо-бежевый кирпич'},
+  facade:{brick:'Красный облицовочный кирпич',brickBeige:'Бежевый кирпич',brickWhite:'Белый кирпич',klinker:'Клинкер шоколад',brickGraphite:'Графитовый кирпич',gray:'Серо-бежевый кирпич',tuscan:'Кирпич ручной формовки',plasterWhite:'Белая фасадная штукатурка',plasterSand:'Песочная штукатурка',venetian:'Фактура под венецианскую штукатурку',stone:'Светлый камень',planken:'Деревянный планкен',plaster:'Тёплая штукатурка'},
   roof:{slate:'Тёмная черепица',terracotta:'Терракотовая черепица',graphite:'Графитовая черепица',ceramic:'Керамическая черепица',
     metalGraphite:'Металлочерепица — классика',metalBurgundy:'Металлочерепица — классика',
     metal3d:'Металлочерепица 3D',metalModular:'Симметричная металлочерепица',metalTramontana:'Рельефная металлочерепица',
@@ -25,7 +25,8 @@
   doorColor:{walnut:'Тёмный орех',graphite:'Графит',oak:'Светлый дуб',white:'Белый'},
   glassTint:{clear:'Прозрачное',smoke:'Тонированное',blue:'Холодное голубое'},
   landscape:{lush:'Сад с деревьями',modern:'Современное озеленение',open:'Открытый газон'},
-  yardStyle:{family:'Семейный двор',classic:'Симметричные цветники',modern:'Современный двор',garden:'Загородный сад'}
+  yardStyle:{family:'Семейный двор',classic:'Симметричные цветники',modern:'Современный двор',garden:'Загородный сад'},
+  entrance:{simple:'Лаконичный навес',columns:'Классический портик с колоннами',timber:'Деревянный навес',modern:'Современный вход'}
  };
  function intake(raw){
    if(!raw||typeof raw!=='object')return;
@@ -41,7 +42,7 @@
    const prior=comment.value.split('\n').filter(line=>!line.startsWith('3D-концепция КАСКАД:'));
    const extra=Object.entries(optional).filter(([key,values])=>
      typeof cfg[key]==='string'&&Object.hasOwn(values,cfg[key]))
-     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок',yardStyle:'Благоустройство'}[key]+' — '+values[cfg[key]]));
+     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок',yardStyle:'Благоустройство',entrance:'Парадный вход'}[key]+' — '+values[cfg[key]]));
    if(typeof cfg.pool==='boolean')extra.push('Бассейн — '+(cfg.pool?'есть':'нет'));
    if(typeof cfg.parking==='boolean')extra.push('Парковка — '+(cfg.parking?'есть':'нет'));
    if(typeof cfg.gazebo==='boolean')extra.push('Пергола — '+(cfg.gazebo?'есть':'нет'));

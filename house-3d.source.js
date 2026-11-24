@@ -10,6 +10,8 @@ import {createArchitectureStyles} from './architecture-styles-v19.js';
 import {createRussianHouse} from './russian-home-v26.js';
 import {createFrontYard} from './front-yard-v27.js';
 import {HOME_VARIANTS} from './house-variants-v27.js';
+import {createFacadeMaterials} from './facade-presets-v28.js';
+import {createEntranceVariants} from './entrance-v28.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -30,6 +32,7 @@ const doorColorSelect=document.getElementById('doorColorSelect');
 const glassTintSelect=document.getElementById('glassTintSelect');
 const landscapeSelect=document.getElementById('landscapeSelect');
 const poolToggle=document.getElementById('poolToggle');
+const entranceStyleSelect=document.getElementById('entranceStyleSelect');
 const yardStyleSelect=document.getElementById('yardStyleSelect');
 const parkingToggle=document.getElementById('parkingToggle');
 const gazeboToggle=document.getElementById('gazeboToggle');
@@ -205,7 +208,7 @@ try {
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
   const facadeTextures={brick:brickImage(),stone:stoneImage(),plaster:plasterImage(),
-    tuscan:brickImage(),gray:stoneImage()};
+    tuscan:brickImage(),gray:stoneImage(),...createFacadeMaterials(THREE)};
   const roofTextures={slate:roofTile('slate'),terracotta:roofTile('terracotta'),graphite:roofTile('graphite')};
   // MeshBasicMaterial gives ALL walls the EXACT same sampled masonry color,
   // regardless of whether one wall faces the sunlight. The 3D trim, windows,
@@ -428,6 +431,18 @@ try {
     brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat
   });
   const oneStoreyStyles=new Set(HOME_VARIANTS.filter(item=>item.id!=='classic').map(item=>item.id));
+  const woodAccent=M('#806447',.81);
+  const twoStoryEntrance=createEntranceVariants(THREE,houseRoot,{
+    stone:limestone,trim:quartz,wood:woodAccent,metal:roofMat
+  });
+  const updateEntrance=()=>{
+    const chosen=entranceStyleSelect?.value||'simple';
+    porchElements.forEach(part=>{part.visible=false});
+    twoStoryEntrance.setStyle(chosen);
+    russianHome.setEntrance(chosen);
+  };
+  entranceStyleSelect?.addEventListener('change',updateEntrance);
+  updateEntrance();
   const styleAspects={classic:1.42,italian:1.50,modern:1.85,estate:1.56,
     kavkaz:1.40,coastal:1.70,practical:1.36,craft:1.30};
   const originalFacadeUvs=Float32Array.from(facadeBodyGeo.getAttribute('uv').array);

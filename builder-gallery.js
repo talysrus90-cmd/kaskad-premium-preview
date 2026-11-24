@@ -56,11 +56,19 @@
     {value:"classic",title:"Двухэтажный коттедж",sub:"2 этажа · 220 м²",image:"preset_classic_v27",category:"Двухэтажные",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"graphite",houseStyle:"classic",houseSize:"220",roofShape:"hip"}}
   ],
   facade:[
-    {value:'brick',title:'Красный кирпич',sub:'Классическая кладка',image:'facade_brick'},
-    {value:'tuscan',title:'Тосканская кладка',sub:'Тёплая красно-песочная',image:'facade_tuscan'},
-    {value:'stone',title:'Светлый камень',sub:'Светлая фактура',image:'facade_stone'},
-    {value:'plaster',title:'Штукатурка',sub:'Тёплая светлая',image:'facade_plaster'},
-    {value:'gray',title:'Серо-бежевый кирпич',sub:'Современная кладка',image:'facade_gray'}
+    {value:'brick',title:'Красный облицовочный кирпич',sub:'Классическая кладка',image:'facade_brick_v28'},
+    {value:'brickBeige',title:'Бежевый кирпич',sub:'Светлый тёплый оттенок',image:'facade_brickBeige_v28'},
+    {value:'brickWhite',title:'Белый кирпич',sub:'Светлая кладка',image:'facade_brickWhite_v28'},
+    {value:'klinker',title:'Клинкер · шоколад',sub:'Тёмный кирпич с рельефом',image:'facade_klinker_v28'},
+    {value:'brickGraphite',title:'Графитовый кирпич',sub:'Современный графит',image:'facade_brickGraphite_v28'},
+    {value:'gray',title:'Серо-бежевый кирпич',sub:'Спокойная светлая кладка',image:'facade_gray_v28'},
+    {value:'tuscan',title:'Кирпич ручной формовки',sub:'Живая фактура · тёплая кладка',image:'facade_tuscan_v28'},
+    {value:'plasterWhite',title:'Белая фасадная штукатурка',sub:'Мелкая фактура',image:'facade_plasterWhite_v28'},
+    {value:'plasterSand',title:'Песочная штукатурка',sub:'Декоративная текстура',image:'facade_plasterSand_v28'},
+    {value:'venetian',title:'Фактура под венецианскую',sub:'Декоративный эффект · нужна система для фасадов',image:'facade_venetian_v28'},
+    {value:'stone',title:'Натуральный камень · светлый',sub:'Каменная облицовка — концепт',image:'facade_stone_v28'},
+    {value:'planken',title:'Деревянный планкен',sub:'Вертикальные ламели',image:'facade_planken_v28'},
+    {value:'plaster',title:'Тёплая штукатурка',sub:'Нейтральная поверхность',image:'facade_plaster_v28'}
   ],
   roof:[
     {value:'slate',title:'Тёмная черепица',sub:'Классическая',image:'roof_slate',defaultColor:'graphite'},

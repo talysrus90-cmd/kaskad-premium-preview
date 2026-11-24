@@ -168,3 +168,107 @@
 @media(prefers-reduced-motion:reduce){
  .scene .scene-views button{transition:none}
 }
+/* v28: all camera controls are in a separate toolbar, never over the 3D canvas */
+.viewer-col{display:flex!important;flex-direction:column!important;min-width:0}
+.viewer-col>.scene{flex:1 1 0;min-height:0!important}
+.scene-toolbar{flex:0 0 auto;display:flex;align-items:center;gap:8px;min-height:51px;
+ background:#f8f8f3;border-bottom:1px solid #dbe2d9;border-top:1px solid #dbe2d9;
+ padding:6px 10px;position:relative;z-index:2}
+.scene-toolbar-caption{font:700 11px/1.2 Manrope,system-ui,sans-serif;color:#627468}
+.scene-toolbar .scene-views{display:flex;gap:5px;align-items:center;flex:1 1 auto;
+ position:static!important;max-width:none!important;flex-wrap:nowrap!important}
+.scene-toolbar .scene-views button{display:inline-flex;justify-content:center;align-items:center;
+ flex:1 1 0;min-width:0;min-height:37px;position:static!important;padding:7px 5px;
+ border:1px solid #cbd8cd;border-radius:8px;background:#fffdf9;color:#335340;
+ font:750 11px/1.2 Manrope,system-ui,sans-serif;cursor:pointer}
+.scene-toolbar .scene-views button[aria-pressed=true]{background:#315942;color:#fff;border-color:#315942}
+.scene-toolbar .scene-hd{flex:0 0 40px;min-width:40px;min-height:37px;margin:0;
+ border:1px solid #c8d9cf;border-radius:8px;background:#eff5ee;color:#315941;
+ font:850 11px/1 Manrope,system-ui,sans-serif;cursor:pointer}
+.scene-toolbar .scene-hd[aria-pressed=true]{background:#315942;color:white}
+.scene-toolbar button:focus-visible{outline:3px solid #bc7554;outline-offset:2px}
+.scene #autoRotate{display:none!important}
+.scene .scene-tip{display:none!important}
+.scene #highDetailButton{position:static!important}
+@media(min-width:731px){
+ .viewer-col>.scene{height:calc(100% - 51px)!important;max-height:none!important}
+}
+@media(max-width:730px){
+ .viewer-col>.scene{flex:0 0 auto;min-height:0!important}
+ .scene-toolbar{min-height:50px;padding:5px;gap:5px;position:relative}
+ .scene-toolbar-caption{display:none}
+ .scene-toolbar .scene-views{flex:1 1 auto;gap:4px}
+ .scene-toolbar .scene-views button{min-height:42px;font-size:11px}
+ .scene-toolbar .scene-hd{min-height:42px;flex-basis:42px}
+ /* Never conceal material choices behind horizontally-clipped thumbnails. */
+ .builder-material-list{grid-auto-columns:calc((100% - 8px)/2)!important;scroll-padding-inline:2px}
+ .builder-material-card img{height:89px!important}
+ .builder-material-card strong{font-size:11px!important}
+ .builder-material-card span{font-size:10px!important}
+}
+@media(max-width:385px){.scene-toolbar .scene-views button{font-size:10px;padding:6px 2px}}
+
+/* v28 staged material/entrance choices, visible below 3D */
+.builder-material-explainer,.builder-v28-roof-forms{
+ min-width:0;margin:4px 0 12px;padding:9px 11px;
+ border:1px solid #e2e4d9;background:#f7f7f1;border-radius:10px;
+}
+.builder-material-explainer[hidden],.builder-v28-roof-forms[hidden]{display:none!important}
+.builder-material-explainer h3,.builder-v28-roof-forms h3{
+ color:#2f5140;font:850 13px/1.4 Manrope,system-ui,sans-serif;margin:0 0 4px
+}
+.builder-material-explainer p,.builder-v28-roof-forms p{
+ display:block!important;margin:0 0 7px;color:#647265;
+ font:600 11px/1.45 Manrope,system-ui,sans-serif
+}
+.builder-v28-options,.builder-entrance-choices{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:7px 0 11px;
+}
+.builder-v28-options button,.builder-entrance-choices button{
+ min-width:0;min-height:57px;border:1px solid #d4ddd3;border-radius:9px;
+ background:#fffdf8;color:#2e4a39;padding:8px 10px;text-align:left;
+ display:flex;flex-direction:column;gap:4px;cursor:pointer;
+}
+.builder-v28-options button[aria-pressed=true],.builder-entrance-choices button[aria-pressed=true]{
+ border-color:#315a42;background:#e7f0e7;box-shadow:inset 0 0 0 1px #315a42;
+}
+.builder-v28-options button strong,.builder-entrance-choices button strong{
+ font:850 12px/1.3 Manrope,system-ui,sans-serif
+}
+.builder-v28-options button small,.builder-entrance-choices button small{
+ color:#607263;font:600 10px/1.35 Manrope,system-ui,sans-serif
+}
+.builder-v28-options button:focus-visible,.builder-entrance-choices button:focus-visible{
+ outline:3px solid #bd744f;outline-offset:2px
+}
+@media(max-width:730px){
+ .builder-material-explainer,.builder-v28-roof-forms{margin:4px 0 8px;padding:9px}
+ .builder-v28-options,.builder-entrance-choices{gap:6px}
+ .builder-v28-options button,.builder-entrance-choices button{min-height:62px}
+ .builder-material-list{scrollbar-width:thin}
+}
+
+/* v28 mobile: show all seven stages, never hide 'Фасад' off to the right */
+@media(max-width:730px){
+ .builder-v25-step-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    overflow:visible!important;gap:5px!important;margin:0 0 9px!important;padding:0!important}
+ .builder-v25-step-tabs button{flex:none!important;min-width:0!important;min-height:56px!important;
+    padding:6px 3px!important;display:flex!important;flex-direction:column!important;
+    align-items:center!important;justify-content:center!important;text-align:center!important;
+    gap:4px!important;font-size:10px!important;line-height:1.15!important}
+ .builder-v25-step-tabs button:last-child{grid-column:auto!important;flex-basis:auto!important}
+ .builder-v25-step-tabs button .number{width:20px!important;height:20px!important;
+    flex:0 0 20px!important;font-size:10px!important}
+}
+
+/* v28 mobile sticky step selector: no dead end after jumping to materials */
+.scene-step-switch{display:none}
+@media(max-width:730px){
+ .scene-step-switch{flex:0 0 auto;display:flex!important;align-items:center;gap:8px;
+   padding:5px 8px;min-height:46px;background:#eaf0e9;border-bottom:1px solid #d2ded3}
+ .scene-step-switch label{flex:0 0 auto;font:800 10px/1.2 Manrope,system-ui,sans-serif;color:#395a44}
+ .scene-step-switch select{flex:1 1 auto;width:100%;max-width:100%;min-height:37px;padding:6px 8px;
+   border:1px solid #bbcec0;border-radius:7px;background:#fffdf8;color:#294c37;
+   font:800 12px/1.4 Manrope,system-ui,sans-serif}
+ .scene-step-switch select:focus-visible{outline:3px solid #c17653;outline-offset:2px}
+}
