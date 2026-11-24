@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="3d-house.css?v=4">
 <link rel="stylesheet" href="builder-gallery.css?v=3">
 <link rel="preload" as="image" href="assets/3d/preview-start-v43.webp" fetchpriority="high">
-<link rel="modulepreload" href="house-3d.bundle.js?v=24">
+<link rel="modulepreload" href="house-3d.bundle.js?v=25">
 <style>
 html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .embed{padding:0;margin:0}.workspace{max-width:none;margin:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;gap:0;align-items:stretch}
@@ -125,7 +125,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
 @media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
 </style>
-<link rel="stylesheet" href="builder-v25-layout.css?v=12">
+<link rel="stylesheet" href="builder-v25-layout.css?v=13">
 </head>
 <body>
 <main class="embed">
@@ -150,6 +150,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <button type="button" data-room="bath">Санузел</button>
 </div><small>Отделка для примера. Планировка уточняется отдельно.</small>
 </div>
+<button class="scene-request-button" id="sceneRequestButton" type="button" aria-label="Оформить заявку на выбранную конфигурацию">Заявка</button>
 <button class="scene-overview-button" id="sceneOverviewButton" type="button" aria-label="Показать весь участок">Весь участок</button>
 <button class="secondary" id="autoRotate" type="button" aria-pressed="false" hidden aria-hidden="true" tabindex="-1">↻ Автообзор</button>
 </div>
@@ -236,8 +237,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=16" defer></script>
-<script src="builder-v25-experience.js?v=13" defer></script>
-<script type="module" src="house-3d.bundle.js?v=24"></script>
+<script src="builder-gallery.js?v=17" defer></script>
+<script src="builder-v25-experience.js?v=14" defer></script>
+<script type="module" src="house-3d.bundle.js?v=25"></script>
 </body>
 </html>

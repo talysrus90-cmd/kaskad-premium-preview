@@ -560,8 +560,7 @@
   });
  });
  document.getElementById('builderPrev').addEventListener('click',()=>show(step-1));
- document.getElementById('builderNext').addEventListener('click',()=>{
-  if(step<stages.length-1){show(step+1);return}
+ function openInquiry(){
   const config={facade:fields.facadeSelect.value,roof:fields.roofSelect.value,
    fence:fields.fenceSelect.value,roofColor:fields.roofColorSelect.value,
    fenceColor:fields.fenceColorSelect.value,
@@ -587,7 +586,12 @@
    a.textContent='Перейти к заявке';a.className='builder-v25-inline-btn';
    document.getElementById('builderFinal').append(a);
   }
+ }
+ document.getElementById('builderNext').addEventListener('click',()=>{
+  if(step<stages.length-1){show(step+1);return}
+  openInquiry();
  });
+ document.getElementById('sceneRequestButton')?.addEventListener('click',openInquiry);
  document.getElementById('builderSave').addEventListener('click',()=>{
   try{
    const data={};
@@ -607,7 +611,10 @@
  for(const id of fieldIds){fields[id]?.addEventListener('change',summary)}
  try{
   const previous=JSON.parse(localStorage.getItem(storageKey)||'null');
-  if(previous)apply(previous);
+  if(previous){
+    if(previous.facadeSelect==='planken')previous.facadeSelect='plaster';
+    apply(previous);
+  }
  }catch{}
  syncDimensions();renderPlot();
  show(0);

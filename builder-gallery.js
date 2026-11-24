@@ -35,10 +35,19 @@
  ];
  // Retain genuinely different massing / entry / roof families in the main
  // catalog. Colour-only doubles belong in the Facade tab, not in Styles.
- const duplicateProjects=new Set(['twoMansardBrick','twoClassic','twoFamily','twoEstate',
-   'practical','craft','country','italian','coastal']);
+ // An architecture card must change more than the facade or roof colour.
+ // The three courtyard/wing plans below are separate modelled floorplates.
+ const visibleArchitecture=new Set([
+   'family','farmhouseOne','chalet','estateOne','kavkaz','bungalow',
+   'courtyardL','atriumU','crossGableT',
+   'mansardBrick','gableAttic',
+   'twoBrick','twoColumns','twoModern','twoBalcony','twoMansardColumns'
+ ]);
  const data={
   presets:[
+    {value:"courtyardL",title:"Г-образный дом с внутренним двориком",sub:"1 этаж · два крыла · защищённая терраса",image:"preset_courtyardL_v45",category:"Одноэтажные",set:{houseStyle:"courtyardL",roofShape:"gable"}},
+    {value:"atriumU",title:"Дом с П-образным двором",sub:"1 этаж · три крыла · приватный двор",image:"preset_atriumU_v45",category:"Одноэтажные",set:{houseStyle:"atriumU",roofShape:"hip"}},
+    {value:"crossGableT",title:"Дом с поперечным крылом",sub:"1 этаж · Т-образный план · поперечная кровля",image:"preset_crossGableT_v45",category:"Одноэтажные",set:{houseStyle:"crossGableT",roofShape:"gable"}},
     {value:"farmhouseOne",title:"Семейный с широким крыльцом",sub:"1 этаж",image:"preset_farmhouseOne_v32",category:"Одноэтажные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"farmhouseOne",houseSize:"150",roofShape:"gable"}},
     {value:"brickOne",title:"Кирпичный с парадным входом",sub:"1 этаж",image:"preset_brickOne_v32",category:"Одноэтажные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"brickOne",houseSize:"150",roofShape:"hip"}},
     {value:"gardenOne",title:"Загородный с деревянными элементами",sub:"1 этаж",image:"preset_gardenOne_v32",category:"Одноэтажные",set:{facade:"stone",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"gardenOne",houseSize:"150",roofShape:"gable"}},
@@ -87,7 +96,6 @@
     {value:'plasterSand',title:'Песочная штукатурка',sub:'Декоративная текстура',image:'facade_plasterSand_v28'},
     {value:'venetian',title:'Фактура под венецианскую',sub:'Декоративный эффект · нужна система для фасадов',image:'facade_venetian_v28'},
     {value:'stone',title:'Натуральный камень · светлый',sub:'Каменная облицовка — концепт',image:'facade_stone_v28'},
-    {value:'planken',title:'Деревянный планкен',sub:'Вертикальные ламели',image:'facade_planken_v28'},
     {value:'plaster',title:'Тёплая штукатурка',sub:'Нейтральная поверхность',image:'facade_plaster_v28'}
   ],
   roof:[
@@ -118,6 +126,12 @@
     {value:'wood',title:'Деревянные ламели',sub:'Горизонтальная обшивка',image:'fence_wood'}
   ]
  };
+ // Display only genuinely distinct 3D architecture. Keep roof/facade colours
+ // in their own tabs, and never expose duplicate cards through the select.
+ data.presets=data.presets.filter(item=>visibleArchitecture.has(item.value));
+ const removedPlanken=fields.facade.querySelector('option[value="planken"]');
+ if(removedPlanken)removedPlanken.remove();
+ if(!fields.facade.value)fields.facade.value='plaster';
  let activeTab='facade';
  root.replaceChildren();
  const nav=document.createElement('div');nav.className='builder-gallery-tabs';
@@ -162,8 +176,9 @@
      // Architectural styles deliberately NEVER modify the separately selected
      // fence or its color. Otherwise Styles duplicates the Fence controls.
      for(const [key,value] of Object.entries(item.set)){
-       // User-supplied metric dimensions are independent from the style card.
-       if(key==='houseSize')continue;
+       // Architectural selection does not recolour a chosen facade or roof.
+       // Only footprint/story geometry and the compatible roof shape change.
+       if(key!=='houseStyle'&&key!=='roofShape')continue;
        const input=fields[key];
        if(input&&input.value!==value){input.value=value;touched.push(input)}
      }
@@ -209,7 +224,7 @@
    for(const tab of nav.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===activeTab));
    cardList.replaceChildren();
    filter.hidden=activeTab!=='presets';
-   const distinctiveProjects=data.presets.filter(item=>!duplicateProjects.has(item.value));
+   const distinctiveProjects=data.presets;
    const items=activeTab==='presets'?
      (filter.value==='all'?distinctiveProjects:distinctiveProjects.filter(item=>item.category===filter.value)):
      data[activeTab];
@@ -223,7 +238,7 @@
      const img=document.createElement('img');img.src=activeTab==='facade'?src+'material_'+item.value+'_v37.webp':activeTab==='fence'?src+'fence_sample_'+item.value+'_v42.webp':src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
      const title=document.createElement('strong');title.textContent=item.title;
      const caption=document.createElement('span');
-     caption.textContent=activeTab==='presets'?item.category+' · размеры изменяются отдельно':item.sub;
+     caption.textContent=activeTab==='presets'?(item.sub+' · размеры и материалы настраиваются отдельно'):item.sub;
      if(activeTab==='facade'){
        img.loading='eager';img.fetchPriority='low';img.width=64;img.height=64;
        button.append(img,title);

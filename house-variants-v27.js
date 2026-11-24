@@ -1,6 +1,9 @@
 /* КАСКАД v27 — конструктивно различающиеся архитектурные решения
    для малоэтажного дома. Все объёмы являются авторскими концептами. */
 export const HOME_VARIANTS=[
+ {id:'courtyardL',name:'Г-образный дом с садовым двориком',group:'Одноэтажные',shape:'gable',area:150,facade:'plaster'},
+ {id:'atriumU',name:'Дом с П-образным двором',group:'Одноэтажные',shape:'hip',area:180,facade:'stone'},
+ {id:'crossGableT',name:'Дом с поперечным крылом',group:'Одноэтажные',shape:'gable',area:150,facade:'brick'},
  {id:'family',name:'Семейный · один этаж',group:'Одноэтажные',shape:'hip',area:150,facade:'gray'},
  {id:'farmhouseOne',name:'Семейный с широким крыльцом',group:'Одноэтажные',shape:'gable',area:130,facade:'plaster'},
  {id:'brickOne',name:'Кирпичный с парадным входом',group:'Одноэтажные',shape:'hip',area:140,facade:'brick'},

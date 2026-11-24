@@ -732,3 +732,17 @@ body.kaskad-interior-active #builderStepTitle,
 body.kaskad-interior-active #builderProgress{display:none!important}
 body.kaskad-interior-active :has(> #builderPrev),
 body.kaskad-interior-active :has(> #builderProgress){display:none!important}
+
+/* compact lead access instead of a full-height fixed mobile dock */
+.scene .scene-request-button{
+ position:absolute;z-index:10;bottom:9px;left:50%;transform:translateX(-50%);
+ padding:6px 9px;min-height:32px;max-width:29%;
+ border:1px solid #f9f4e8;background:#ad6748;color:#fff;
+ box-shadow:0 2px 9px #33231938;border-radius:8px;
+ font:800 10px/1.2 Manrope,system-ui,sans-serif;
+ cursor:pointer;touch-action:manipulation;
+}
+.scene .scene-request-button:focus-visible{outline:3px solid #eed89c;outline-offset:2px}
+@media(max-width:390px){
+ .scene .scene-request-button{font-size:10px;padding:6px 8px;bottom:7px}
+}

@@ -7,6 +7,7 @@ import {METAL_PROFILES,makeStampedSurface} from './roof-relief-v25.js';
 import {HOME_VARIANTS,createHouseVariations} from './house-variants-v27.js';
 import {createEntranceVariants} from './entrance-v28.js';
 import {createExteriorAddons} from './exterior-addons-v30.js';
+import {createDistinctFootprints,DISTINCT_PLANS} from './architectural-footprints-v45.js';
 
 export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat}){
  const root=new THREE.Group();root.name='КАСКАД · малоэтажный семейный дом';scene.add(root);
@@ -43,6 +44,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  const main=new THREE.Group();main.name='Дом · первый этаж';root.add(main);
  const variants=createHouseVariations(THREE,root,{stone:limestone,trim:frameTrim,windowFrame:windowFrameMetal,glass:glassMat,wood:timber,dark:darkMetal});
  const addons=createExteriorAddons(THREE,root,{stone:limestone,brick,wood:timber,metal:darkMetal});
+ const architecturalFootprints=createDistinctFootprints(THREE,root,{brick,foundation:new THREE.MeshStandardMaterial({color:'#55524c',roughness:.93}),trim:frameTrim,windowFrame:windowFrameMetal,glass:glassMat,door:doorMat,roofSystem});
  // Real front door and external opening reveals; porch only in front of entrance,
  // never over the first/attic floor windows.
  const foundationFinish=new THREE.MeshStandardMaterial({color:'#55524c',roughness:.93});
@@ -223,6 +225,11 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  let activeShape=null,roofType=null,currentStyle='family';
  function setRoof(shape,kind){
   const safe=roofTypes.includes(shape)?shape:'hip';
+  if(DISTINCT_PLANS.has(currentStyle)){
+   for(const oldRoof of shapes.values())oldRoof.visible=false;
+   architecturalFootprints.setRoof(safe,roofSystem.getMaterial());
+   activeShape=safe;roofType=kind;return;
+  }
   for(const [key,g] of shapes)g.visible=key===safe;
   const newRoof=makeRoof(safe);newRoof.visible=true;
   if(attics.has('gable'))attics.get('gable').visible=currentStyle==='gableAttic';
@@ -251,7 +258,13 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  function setStyle(style){
   currentStyle=style;
   root.visible=HOME_VARIANTS.some(item=>item.id===style&&item.group!=='Двухэтажные');
-  variants.setStyle(style);
+  const independentlyDesigned=architecturalFootprints.setStyle(style);
+  main.visible=!independentlyDesigned;
+  addons.root.visible=!independentlyDesigned;
+  variants.setStyle(independentlyDesigned?'family':style);
+  if(independentlyDesigned){
+   for(const oldRoof of shapes.values())oldRoof.visible=false;
+  }
   if(attics.has('gable'))attics.get('gable').visible=style==='gableAttic';
  }
  function setDimensions(width,length){
@@ -298,6 +311,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   root.scale.set(w/12.8,1,depth/9);
   root.userData.footprint={width:w,depth,floors};
  }
+ const setPlinth=(kind)=>{addons.setPlinth(kind);architecturalFootprints.setPlinth(kind)};
  return {root,setStyle,setSize,setDimensions,setRoof,setEntrance,
-  setPlinth:addons.setPlinth,setTerrace:addons.setTerrace,getShape:()=>activeShape,getRoof:()=>roofType};
+  setPlinth,setTerrace:addons.setTerrace,getShape:()=>activeShape,getRoof:()=>roofType};
 }

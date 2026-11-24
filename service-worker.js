@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v44-three-bundle-instancing';
+const VERSION='kaskad-pwa-20261124-v45-architectural-footprints';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -17,15 +17,13 @@ const core=[
  './interactive-home.css?v=11',
  './mobile-usability-20261123.css?v=1',
  './kaskad-type-tuning.css?v=1',
- './3d-house-embed.html?v=28',
- './house-3d.bundle.js?v=24',
+ './3d-house-embed.html?v=29',
+ './house-3d.bundle.js?v=25',
  './3d-house.css?v=4',
- './builder-v25-layout.css?v=12',
- './builder-v25-experience.js?v=13',
- './mobile-dock-20261110.css?v=2',
- './mobile-dock-20261110.js?v=4',
+ './builder-v25-layout.css?v=13',
+ './builder-v25-experience.js?v=14',
  './builder-launch-v29.js?v=3',
- './builder-gallery.js?v=16',
+ './builder-gallery.js?v=17',
  './roof-relief-v25.js',
  './russian-home-v26.js',
  './house-variants-v27.js',
@@ -43,7 +41,6 @@ const core=[
  './assets/3d/cards/facade_brick_v28.webp',
  './assets/3d/cards/facade_gray_v28.webp',
  './assets/3d/cards/facade_klinker_v28.webp',
- './assets/3d/cards/facade_planken_v28.webp',
  './assets/3d/cards/facade_plasterSand_v28.webp',
  './assets/3d/cards/facade_plasterWhite_v28.webp',
  './assets/3d/cards/facade_plaster_v28.webp',
@@ -68,6 +65,9 @@ const core=[
  './assets/3d/cards/preset_craft_v27.webp',
  './assets/3d/cards/preset_estateOne_v27.webp',
  './assets/3d/cards/preset_family_v27.webp',
+ './assets/3d/cards/preset_courtyardL_v45.webp',
+ './assets/3d/cards/preset_atriumU_v45.webp',
+ './assets/3d/cards/preset_crossGableT_v45.webp',
  './assets/3d/cards/preset_gableAttic_v27.webp',
  './assets/3d/cards/preset_italian_v27.webp',
  './assets/3d/cards/preset_kavkaz_v27.webp',
@@ -78,7 +78,7 @@ const core=[
  './assets/3d/cards/preset_practical_v27.webp',
  './assets/3d/cards/preset_terrace_v27.webp',
  './builder-gallery.css?v=3',
- './builder-lead-bridge.js?v=8',
+ './builder-lead-bridge.js?v=9',
  './assets/3d/preview-start-v43.webp',
  './assets/3d/roof_tile_neutral.webp',
  './roof-market-v16.js',
