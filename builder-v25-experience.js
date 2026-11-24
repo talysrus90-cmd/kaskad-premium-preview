@@ -529,10 +529,10 @@
   nav.append(b);stepButtons.push(b);
  });
  const defaults={
-  houseStyleSelect:'family',houseSizeSelect:'100',roofShapeSelect:'hip',
-  houseWidthInput:'10',houseLengthInput:'10',houseFloorsSelect:'one',
+  houseStyleSelect:'twoBrick',houseSizeSelect:'200',roofShapeSelect:'gable',
+  houseWidthInput:'10',houseLengthInput:'10',houseFloorsSelect:'two',
   plotWidthSlider:'20',plotLengthSlider:'30',
-  facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
+  facadeSelect:'brick',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
   doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
   entranceStyleSelect:'simple',
@@ -541,7 +541,7 @@
    blindAreaType:'concrete',blindAreaColor:'graphite',
    blindAreaWidth:'0.9',blindAreaContour:'all'
  };
- const storageKey='kaskad-v30-exterior-selection';
+ const storageKey='kaskad-v51-exterior-selection';
  function apply(state){
   if(!state||typeof state!=='object')return;
    if(state.terraceToggle===true&&!state.verandaSelect)state={...state,verandaSelect:'open',terraceToggle:false};
