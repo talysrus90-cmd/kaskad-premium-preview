@@ -359,3 +359,23 @@
  .builder-v25-panel{scroll-margin-top:8px}
  .builder-v25-actions{flex:0 0 auto;position:relative;z-index:1}
 }
+
+/* v30 compact builder — user-requested: image immediately followed by the 8 steps.
+   Camera controls remain programmable, but are not displayed. */
+.scene-toolbar{display:none!important}
+.scene-step-title{display:none!important}
+.builder-v25-intro{display:none!important}
+@media(max-width:730px){
+ .viewer-col{margin:0!important;padding:0!important}
+ .scene-step-switch{
+   margin:0!important;padding:2px 4px 3px!important;gap:0!important;
+   border-top:0!important;border-bottom:0!important;
+ }
+ .scene-component-tabs{gap:3px!important}
+ .scene-component-tabs button{min-height:43px!important}
+ .controls{padding:0 6px 34px!important;margin:0!important;gap:0!important}
+ .builder-v25-scroll{padding:0 0 4px!important;margin:0!important}
+ .builder-gallery{margin:0!important}
+ .builder-choice-summary{margin:0!important}
+ .builder-v25-actions{margin:2px 6px 7px!important}
+}
