@@ -876,6 +876,7 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
 }
 @media(min-width:731px){.builder-family-chips{display:none!important}}
 
+.scene-top-view-button{display:none}
 /* v56 mobile: one vertical scroll container — the main KASKAD page.
    The iframe is content-sized from its parent; no second momentum scroller. */
 @media(max-width:730px), (max-width:1080px) and (hover:none) and (pointer:coarse){
