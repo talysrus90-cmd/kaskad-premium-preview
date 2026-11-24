@@ -878,6 +878,8 @@ const veranda=createVeranda(THREE,scene);
     controls.target.set(x,y,z);
     camera.position.set(x,y,z+.032);
     controls.update();focusTransition=null;
+    // Do not wait for the idle 6 FPS loop after switching rooms.
+    renderer.render(scene,camera);
   };
   const notifyInterior=(open)=>{
     if(window.parent!==window){
@@ -922,6 +924,8 @@ const veranda=createVeranda(THREE,scene);
       interiorButton.setAttribute('aria-pressed','false');
       if(isSitePreview)refreshSitePreview();
       else updateLandscape();
+      // Restore the exterior in the same interaction frame.
+      renderer.render(scene,camera);
     }
     if(!drivenByHistory)notifyInterior(isInteriorMode);
   };
