@@ -24,10 +24,12 @@ async function runScenario(name,viewport,isMobile=false){
   };
   try{
     await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:30000});
-    await page.locator('#builderStepNav button').first().waitFor({timeout:15000});
+    await page.locator('#builderStepNav button').first().waitFor({state:'attached',timeout:15000});
     await page.locator('#builderGallery .builder-material-card').first().waitFor({timeout:15000});
     // Select facade, repeat it, then select a different finish.
-    const facade=page.locator('#builderStepNav button').nth(2);
+    const facade=isMobile ? page.locator('#builderQuickTabs button[data-builder-step="2"]')
+      : page.locator('#builderStepNav button').nth(2);
+    await check(await facade.isVisible(),'Кнопка фасада видима в этом режиме');
     await facade.evaluate(el=>el.click());
     await page.waitForTimeout(100);
     await check(await page.locator('#builderGallery .builder-facade-choice').count()>=8,
@@ -51,7 +53,7 @@ async function runScenario(name,viewport,isMobile=false){
     await page.screenshot({path:'test-results/'+name+'-facade.png',fullPage:false});
     // WebGL engine needs to initialize before its button click listeners exist.
     await page.waitForFunction(()=>document.getElementById('modelFPS')?.textContent
-      ?.includes('3D готов'),{timeout:30000});
+      ?.includes('3D готов'),null,{timeout:30000});
     const button=page.locator('#sceneEnterInterior');
     await button.evaluate(el=>el.click());
     const picker=page.locator('#sceneRoomPicker');
