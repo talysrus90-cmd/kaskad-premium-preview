@@ -88,40 +88,63 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
  leafShape.bezierCurveTo(-.085,.13,-.055,.05,0,0);
  const leafGeometry=new THREE.ShapeGeometry(leafShape,4);
  const trunk=new THREE.MeshStandardMaterial({color:'#46713f',roughness:.95});
+ // Every former leaf and petal was a separate Mesh: hundreds of objects and
+ // GPU draw calls per bed. Reuse geometry/material via InstancedMesh so nearby
+ // foliage keeps its individualized positions without 3000 individual draws.
+ const flowerStemGeometry=new THREE.BoxGeometry(1,1,1);
+ const flowerDummy=new THREE.Object3D();
  function flowerBed(parent,x,z,w,len,seed,kind='flower'){
-  const bed=new THREE.Group();bed.name='Клумба с живыми цветами';parent.add(bed);
+  const bed=new THREE.Group();bed.name='Клумба · натуральные цветы';parent.add(bed);
   g(bed,w,.105,len,x,.11,z,mulch);
   for(const dx of [-1,1])g(bed,.14,.19,len+.17,x+dx*(w/2+.04),.17,z,concrete);
   for(const dz of [-1,1])g(bed,w+.16,.19,.14,x,.17,z+dz*(len/2+.04),concrete);
   const columns=Math.max(2,Math.floor(w/.62)),rows=Math.max(2,Math.floor(len/.83));
+  const instances=new Map();
+  const stamp=(geometry,material,px,py,pz,rx,ry,rz,sx,sy,sz)=>{
+    const key=geometry.uuid+'|'+material.uuid;
+    let entry=instances.get(key);
+    if(!entry){entry={geometry,material,transforms:[]};instances.set(key,entry)}
+    flowerDummy.position.set(px,py,pz);
+    flowerDummy.rotation.set(rx,ry,rz);
+    flowerDummy.scale.set(sx,sy,sz);
+    flowerDummy.updateMatrix();
+    entry.transforms.push(flowerDummy.matrix.clone());
+  };
   let n=seed;
   const rand=()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296};
   for(let a=0;a<columns;a++)for(let b=0;b<rows;b++){
    const px=x-w/2+(a+.5)*w/columns+(rand()-.5)*.11;
    const pz=z-len/2+(b+.5)*len/rows+(rand()-.5)*.17;
    const height=kind==='bush'?.24+rand()*.40:.25+rand()*.37;
-   g(bed,.023,height,.023,px,.24+height/2,pz,trunk);
+   stamp(flowerStemGeometry,trunk,px,.24+height/2,pz,0,0,0,.023,height,.023);
    for(let foliageLayer=0;foliageLayer<5;foliageLayer++){
-     const a=rand()*6.283;
-     const blade=new THREE.Mesh(leafGeometry,rand()>.4?leaf:leaf2);
-     blade.position.set(px+.07*Math.cos(a),.31+height*.40,pz+.07*Math.sin(a));
-     blade.rotation.set(.27+rand()*.55,a,.10+(rand()-.5)*.2);
-     blade.scale.set(.58+rand()*.30,.63+rand()*.37,1);
-     bed.add(blade);
+     const angle=rand()*6.283;
+     const material=rand()>.4?leaf:leaf2;
+     stamp(leafGeometry,material,
+      px+.07*Math.cos(angle),.31+height*.40,pz+.07*Math.sin(angle),
+      .27+rand()*.55,angle,.10+(rand()-.5)*.2,
+      .58+rand()*.30,.63+rand()*.37,1);
    }
    if(kind==='bush')continue;
    const petalMat=petals[(a*3+b+seed)%petals.length];
    const bloomY=.25+height;
-   const centre=new THREE.Mesh(petalsGeometry,petals[2]);
-   centre.scale.set(.065,.03,.065);centre.position.set(px,bloomY,pz);bed.add(centre);
+   stamp(petalsGeometry,petals[2],px,bloomY,pz,0,0,0,.065,.03,.065);
    for(let k=0;k<5;k++){
-    const angle=2*Math.PI*k/5;
-    const petal=new THREE.Mesh(petalsGeometry,petalMat);
-    const size=.65+rand()*.35;
-    petal.scale.set(size,size,size);
-    petal.position.set(px+.07*Math.cos(angle),bloomY,pz+.07*Math.sin(angle));
-    petal.rotation.set(-Math.PI/2,0,angle);bed.add(petal);
+    const angle=2*Math.PI*k/5,size=.65+rand()*.35;
+    stamp(petalsGeometry,petalMat,
+     px+.07*Math.cos(angle),bloomY,pz+.07*Math.sin(angle),
+     -Math.PI/2,0,angle,size,size,size);
    }
+  }
+  for(const {geometry,material,transforms} of instances.values()){
+    const mesh=new THREE.InstancedMesh(geometry,material,transforms.length);
+    transforms.forEach((matrix,index)=>mesh.setMatrixAt(index,matrix));
+    mesh.instanceMatrix.needsUpdate=true;
+    mesh.castShadow=false;mesh.receiveShadow=false;
+    // All instances share one bed. Do not cull a whole flower bed when a small
+    // edge goes out of view and prevent any transient uncomputed bounds.
+    mesh.computeBoundingSphere();
+    bed.add(mesh);
   }
  }
  for(const side of [-1,1]){

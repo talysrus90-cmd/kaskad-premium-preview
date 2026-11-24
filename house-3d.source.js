@@ -1,5 +1,8 @@
 /* КАСКАД – independent lightweight demo scene. Bundled Three.js, never loaded on the homepage. */
-import * as THREE from 'three';
+import {
+  ACESFilmicToneMapping, BoxGeometry, BufferAttribute, BufferGeometry, CanvasTexture, Color, CylinderGeometry, DirectionalLight, DoubleSide, EquirectangularReflectionMapping, Euler, Float32BufferAttribute, Fog, Group, HemisphereLight, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, Plane, PlaneGeometry, PointLight, Quaternion, Raycaster, RepeatWrapping, SRGBColorSpace, Scene, Shape, ShapeGeometry, SphereGeometry, TextureLoader, TorusGeometry, Vector2, Vector3, WebGLRenderer
+} from 'three';
+const THREE={ACESFilmicToneMapping, BoxGeometry, BufferAttribute, BufferGeometry, CanvasTexture, Color, CylinderGeometry, DirectionalLight, DoubleSide, EquirectangularReflectionMapping, Euler, Float32BufferAttribute, Fog, Group, HemisphereLight, InstancedMesh, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, Plane, PlaneGeometry, PointLight, Quaternion, Raycaster, RepeatWrapping, SRGBColorSpace, Scene, Shape, ShapeGeometry, SphereGeometry, TextureLoader, TorusGeometry, Vector2, Vector3, WebGLRenderer};
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {createFenceSystem} from './fence-market-v16.js';
@@ -837,7 +840,15 @@ const veranda=createVeranda(THREE,scene);
   // One-time capture of existing EXTERIOR scene objects, excluding the lights
   // created later. Do not delete or rebuild a configured house when entering.
   const exteriorSceneObjects=scene.children.filter(object=>object.isMesh||object.isGroup||object.isInstancedMesh);
-  const interiorTour=createInteriorTour(THREE,scene);
+  // Most visitors choose exterior materials, so do not build five 3D rooms
+  // or load their floor textures during the first visible exterior frame.
+  // Photo examples remain available immediately when entering the house.
+  let interiorTour=null;
+  const interiorRoomNames={
+    hall:'Прихожая',living:'Гостиная',kitchen:'Кухня',
+    bedroom:'Спальня',bath:'Санузел'
+  };
+  let currentInteriorRoom='living';
   const interiorButton=document.getElementById('sceneEnterInterior');
   const roomPicker=document.getElementById('sceneRoomPicker');
   document.getElementById('builderQuickTabs')?.after(roomPicker);
@@ -862,6 +873,12 @@ const veranda=createVeranda(THREE,scene);
   photoToggle.textContent='Посмотреть 3D-эскиз';
   roomPicker.append(photoToggle);
   const updatePhoto=()=>{
+    // No meshes or interior photo requests until a visitor enters.
+    if(isInteriorMode&&!showRealPhotos&&!interiorTour){
+      interiorTour=createInteriorTour(THREE,scene);
+      interiorTour.setRoom(currentInteriorRoom);
+    }
+    if(interiorTour)interiorTour.root.visible=isInteriorMode&&!showRealPhotos;
     interiorPhoto.hidden=!isInteriorMode||!showRealPhotos;
     photoCredit.hidden=interiorPhoto.hidden;
     photoToggle.textContent=showRealPhotos?'Посмотреть 3D-эскиз':'Вернуться к фото';
@@ -872,11 +889,12 @@ const veranda=createVeranda(THREE,scene);
       exteriorPolar=controls.maxPolarAngle;
   const roomButtons=[...document.querySelectorAll('#sceneRoomPicker [data-room]')];
   const showRoom=id=>{
-    const title=interiorTour.setRoom(id);
-    interiorPhoto.src=new URL('assets/ideas/'+realRooms[id],document.baseURI).href;
+    currentInteriorRoom=realRooms[id]?id:'living';
+    if(interiorTour)interiorTour.setRoom(currentInteriorRoom);
+    interiorPhoto.src=new URL('assets/ideas/'+realRooms[currentInteriorRoom],document.baseURI).href;
     updatePhoto();
-    roomButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.room===interiorTour.getRoom())));
-    roomPicker.querySelector('.scene-room-heading').textContent='Интерьер · '+title;
+    roomButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.room===currentInteriorRoom)));
+    roomPicker.querySelector('.scene-room-heading').textContent='Интерьер · '+interiorRoomNames[currentInteriorRoom];
     camera.position.set(1.05,1.92,2.62);
     controls.target.set(0,1.12,-.55);
     controls.update();focusTransition=null;
@@ -892,14 +910,16 @@ const veranda=createVeranda(THREE,scene);
       exteriorPolar=controls.maxPolarAngle;
       controls.minDistance=.95;controls.maxDistance=3.55;
       controls.maxPolarAngle=Math.PI*.72;controls.autoRotate=false;
-      interiorTour.root.visible=true;roomPicker.hidden=false;
+      if(interiorTour)interiorTour.root.visible=!showRealPhotos;
+      roomPicker.hidden=false;
       overviewButton.hidden=true;sceneDimensions.hidden=true;
       if(gestureTip)gestureTip.classList.add('is-used');
       interiorButton.textContent='← Снаружи';
       interiorButton.setAttribute('aria-pressed','true');
       showRoom('living');
     }else{
-      interiorTour.root.visible=false;interiorPhoto.hidden=true;photoCredit.hidden=true;
+      if(interiorTour)interiorTour.root.visible=false;
+      interiorPhoto.hidden=true;photoCredit.hidden=true;
       for(const [object,visible] of exteriorVisibility)object.visible=visible;
       controls.minDistance=exteriorNear;controls.maxDistance=exteriorFar;
       controls.maxPolarAngle=exteriorPolar;
@@ -1183,8 +1203,17 @@ const veranda=createVeranda(THREE,scene);
   const observer=new ResizeObserver(resize);
   observer.observe(container);
   resize();
-  // The renderer is shown by revealFacade() once the critical textures settle.
+  // Static camera views do not need to be redrawn 30 times every second.
+  // Wake at full frame rate on touch, sliders, material changes or animations.
+  // Low-cost idle redraws still pick up asynchronously loaded textures.
   let last=0;
+  let lastInteraction=performance.now();
+  const wakeRenderer=()=>{lastInteraction=performance.now()};
+  controls.addEventListener('start',wakeRenderer);
+  controls.addEventListener('change',wakeRenderer);
+  for(const type of ['input','change','click','pointerdown'])
+    document.addEventListener(type,wakeRenderer,{capture:true,passive:true});
+  document.addEventListener('visibilitychange',wakeRenderer,{passive:true});
   let viewerVisible=true;
   const visibilityObserver=new IntersectionObserver(entries=>{
     viewerVisible=entries.some(entry=>entry.isIntersecting);
@@ -1193,7 +1222,12 @@ const veranda=createVeranda(THREE,scene);
   const draw=(time)=>{
     requestAnimationFrame(draw);
     if(document.hidden||!viewerVisible)return;
-    if(time-last<31)return;
+    const activelyInteracting=Boolean(focusTransition||controls.autoRotate||
+      time-lastInteraction<1100);
+    // 30 FPS while moving; a 6-7 FPS refresh when the whole image is static.
+    // This substantially reduces GPU and battery use on mobile devices.
+    const frameInterval=activelyInteracting?31:165;
+    if(time-last<frameInterval)return;
     last=time;
     if(focusTransition){
       const speed=reduceMotion?1:.17;
