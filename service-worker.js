@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v30-site-3d-roof';
+const VERSION='kaskad-pwa-20261124-v30-gallery-fast';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -9,7 +9,7 @@ const ROOT=self.registration.scope;
 const core=[
  './','./index.html',
  './manifest.webmanifest','./pwa.js?v=1','./fonts.css?v=pwa1',
- './premium.css?v=houses-20261108','./gallery-viewer.css?v=20261108b','./ui-enhancements-20261108.css?v=1',
+ './premium.css?v=houses-20261108','./gallery-viewer.css?v=20261124-fast','./ui-enhancements-20261108.css?v=1',
  './site-clarity-20261109.css?v=1',
  './gallery-fullscreen-20261109.css?v=3',
  './gallery-four-20261109.css?v=2',
@@ -204,15 +204,16 @@ const getNavigation=async(request)=>{
    return cached||Response.error();
  }
 };
-const getCachedImage=async(request,url)=>{
+const getCachedImage=async(request,url,event)=>{
  const cache=await caches.open(IMAGES);
  const saved=await cache.match(request,{ignoreSearch:true})||await caches.match(request,{ignoreSearch:true});
  if(saved)return saved;
  try{
    const response=await withTimeout(request,14000);
    if(!response.ok)throw Error('Image unavailable');
-   await put(cache,request,response);
-   await limitCache(cache,68);
+   // Respond to the browser immediately; persist a clone without blocking
+   // rendering or the next swipe while IndexedDB/Cache Storage writes finish.
+   event.waitUntil((async()=>{await put(cache,request,response);await limitCache(cache,96)})());
    return response;
  }catch{
    const path=url.pathname;
@@ -244,7 +245,7 @@ self.addEventListener('fetch',event=>{
  if(!isInScope(url)||isApi(url.pathname))return;
  if(request.mode==='navigate'){event.respondWith(getNavigation(request));return}
  if(request.destination==='image' || /\.(?:jpg|jpeg|png|webp|avif|svg)$/i.test(url.pathname)){
-   event.respondWith(getCachedImage(request,url));return;
+   event.respondWith(getCachedImage(request,url,event));return;
  }
  event.respondWith(staleWhileRevalidate(request));
 });

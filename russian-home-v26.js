@@ -158,7 +158,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
    const dormers=new THREE.Group();dormers.name='Мансардные окна на парадном фасаде';g.add(dormers);
    attics.set('mansard',dormers);
    for(const xx of [-2.05,2.05]){
-    const front=5.34,rear=4.03;
+    const front=5.02,rear=4.08;
     box(dormers,1.36,1.47,.18,xx,4.82,front,frameTrim);
     box(dormers,.92,1.04,.055,xx,4.92,front+.115,darkMetal);
     box(dormers,.79,.87,.036,xx,4.92,front+.151,skylightGlass);
@@ -166,16 +166,16 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
     box(dormers,1.11,.085,.32,xx,4.23,front+.10,limestone);
     for(const side of [-1,1]){
      const x=xx+side*.64;
-     box(dormers,.13,1.41,1.28,x,4.88,(front+rear)/2,frameTrim);
+     box(dormers,.13,1.41,front-rear+.05,x,4.88,(front+rear)/2,frameTrim);
      // Front-facing dormer roof: two distinct sloping planes.
      face(dormers,[[xx,6.14,rear],[xx+side*.84,5.57,rear],
-       [xx+side*.84,5.57,front+.29],[xx,6.14,front+.29]],
+       [xx+side*.84,5.57,front+.16],[xx,6.14,front+.16]],
        roofSystem.getMaterial());
     }
     // Front triangular tympanum connects the walls to the pitched roof.
     face(dormers,[[xx-.66,5.55,front+.10],[xx+.66,5.55,front+.10],
       [xx,6.03,front+.10]],frameTrim);
-    beam(dormers,[xx,6.15,rear],[xx,6.15,front+.30],.12,darkMetal);
+    beam(dormers,[xx,6.15,rear],[xx,6.15,front+.17],.12,darkMetal);
    }
   }else{
    addRoof([[-edgeX,3.88,-edgeZ],[edgeX,3.88,-edgeZ],[edgeX,3.88,edgeZ],[-edgeX,3.88,edgeZ]]);
