@@ -55,6 +55,7 @@
   closeMobileMenu();
   section.classList.add('kaskad-builder-active');
   iframe.setAttribute('loading','eager');
+  iframe.setAttribute('fetchpriority','high'); // Explicit user action takes priority.
   // An explicit same-site history step makes Android Back return to the
   // KASKAD page, including when it had opened directly at #interactive-home.
   markBuilderEntry();
