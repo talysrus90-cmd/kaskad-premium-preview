@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v46-interior-360-tours';
+const VERSION='kaskad-pwa-20261124-v49-instant-interior';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -18,7 +18,7 @@ const core=[
  './mobile-usability-20261123.css?v=1',
  './kaskad-type-tuning.css?v=1',
  './3d-house-embed.html?v=30',
- './house-3d.bundle.js?v=26',
+ './house-3d.bundle.js?v=27',
  './3d-house.css?v=4',
  './builder-v25-layout.css?v=14',
  './builder-v25-experience.js?v=15',

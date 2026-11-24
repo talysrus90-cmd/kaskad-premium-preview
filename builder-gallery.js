@@ -168,7 +168,10 @@
    const button=document.createElement('button');
    button.type='button';button.textContent=t.label;button.dataset.builderTab=t.key;
    button.setAttribute('role','tab');button.addEventListener('click',()=>{
-     activeTab=t.key;render();
+     // Reopening the same step must not discard and reload every image.
+     if(activeTab!==t.key || !cardList.childElementCount){
+       activeTab=t.key;render();
+     }else syncSelection();
      window.dispatchEvent(new CustomEvent('kaskad:focus-view',{detail:{tab:activeTab}}));
    });
    nav.appendChild(button);
@@ -199,7 +202,7 @@
        fields.roofColor.value=item.defaultColor;fields.roofColor.dispatchEvent(new Event('change',{bubbles:true}));
      }
    }
-   render(true);
+   syncSelection();
  }
  function palette(){
    colorArea.replaceChildren();
@@ -213,7 +216,7 @@
    colorArea.append(row);
    for(const opt of colors){
      const b=document.createElement('button');b.type='button';b.className='builder-swatch';
-     b.title=opt.title;b.style.setProperty('--swatch',opt.color);
+     b.title=opt.title;b.dataset.color=opt.value;b.style.setProperty('--swatch',opt.color);
      b.setAttribute('aria-label',opt.title);b.setAttribute('aria-pressed',String(fields[key].value===opt.value));
      const dot=document.createElement('span');dot.className='builder-swatch-dot';
      const title=document.createElement('span');title.className='builder-swatch-name';title.textContent=opt.title;
@@ -222,7 +225,7 @@
        if(fields[key].value!==opt.value){
          fields[key].value=opt.value;fields[key].dispatchEvent(new Event('change',{bubbles:true}));
        }
-       render(true);
+       syncSelection();
      });
      row.append(b);
    }
@@ -263,6 +266,23 @@
    }
    if(keepScroll)cardList.scrollLeft=scroll;
    palette();
+   syncSelection();
+ }
+ // Update only selection indicators and the accessible summary when a
+ // material changes. Destroying/recreating thumbnails on every click
+ // caused loading flashes and unnecessary decodes on Android.
+ function syncSelection(){
+   for(const button of cardList.querySelectorAll('.builder-material-card')){
+     button.setAttribute('aria-pressed',String(
+       activeTab==='presets'?fields.houseStyle.value===button.dataset.option:
+       fields[activeTab]?.value===button.dataset.option));
+   }
+   const colorKey=activeTab==='roof'?'roofColor':activeTab==='fence'?'fenceColor':null;
+   if(colorKey){
+     for(const swatch of colorArea.querySelectorAll('.builder-swatch')){
+       swatch.setAttribute('aria-pressed',String(fields[colorKey].value===swatch.dataset.color));
+     }
+   }
    const width=Number(document.getElementById('houseWidthInput')?.value)||10;
    const length=Number(document.getElementById('houseLengthInput')?.value)||10;
    const floors=document.getElementById('houseFloorsSelect')?.value||'one';
@@ -270,9 +290,9 @@
      findName('roof',fields.roof.value)+' ('+colorName(fields.roofColor.value)+') · '+
      findName('fence',fields.fence.value)+' ('+colorName(fields.fenceColor.value)+')';
  }
- for(const input of Object.values(fields))input.addEventListener('change',()=>render(true));
+ for(const input of Object.values(fields))input.addEventListener('change',syncSelection);
  for(const id of ['houseWidthInput','houseLengthInput','houseFloorsSelect']){
-  document.getElementById(id)?.addEventListener('change',()=>render(true));
+  document.getElementById(id)?.addEventListener('change',syncSelection);
  }
  render();
  // Embedded mobile: keep every row reachable rather than clipping within iframe.

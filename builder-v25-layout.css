@@ -809,3 +809,16 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
  .scene .scene-gesture-tip{top:46px!important;left:7px!important}
  #builderEntranceChoices .builder-entry-option{min-height:103px!important}
 }
+
+/* v47: the room picker is nested under .scene-step-switch, which is
+   deliberately hidden on desktop while editing the exterior. Reveal
+   just this container for interior mode so all five room buttons are
+   reachable; the exterior quick tabs remain hidden in interior mode. */
+@media (min-width:731px){
+ body.kaskad-interior-active .scene-step-switch{
+  display:flex!important;flex-direction:column!important;
+  align-items:stretch!important;gap:0!important;
+  width:100%;box-sizing:border-box;padding:6px 8px!important;
+  background:#f7f7f0!important;
+ }
+}

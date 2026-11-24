@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>КАСКАД v48 — тест навигации / фасада</title>
+<style>
+  body{font:14px/1.5 system-ui;margin:0;background:#f6f7f3;color:#183c2b}
+  header{padding:8px 12px;background:#fff;border-bottom:1px solid #cbd8ca}
+  button{padding:8px 14px;background:#285c40;color:white;border:0;border-radius:6px}
+  #result{display:block;padding:5px 12px;min-height:24px;white-space:pre-wrap}
+  iframe{border:0;width:100%;height:72vh;display:block;background:#e2e7e1}
+  .pass{color:#136b3f}.fail{color:#aa2636}
+</style>
+<header><strong>КАСКАД v48 — проверка каталога и комнат</strong>
+<button id="run">Запустить проверку</button></header>
+<output id="result" role="status">Ожидание загрузки…</output>
+<iframe id="stage" src="../3d-house-embed.html?v=48" title="3D-конструктор КАСКАД"></iframe>
+<script>
+const frame=document.getElementById('stage');
+const result=document.getElementById('result');
+const btn=document.getElementById('run');
+let ready=false;
+frame.addEventListener('load',()=>{ready=true;result.textContent='Редактор загружен; нажмите «Запустить проверку».'});
+btn.addEventListener('click',async()=>{
+  if(!ready){result.textContent='Дождитесь загрузки редактора.';return}
+  const w=frame.contentWindow,d=frame.contentDocument,errors=[],ok=[];
+  const check=(cond,why)=>{(cond?ok:errors).push(why)};
+  const $=sel=>d.querySelector(sel);
+  const pause=()=>new Promise(resolve=>setTimeout(resolve,60));
+  try{
+    // Select the facade step twice: this must NOT recreate already loaded thumbnails.
+    const facadeStep=$('#builderQuickTabs button[data-builder-step="2"]')||
+      $('#builderStepNav button:nth-child(3)');
+    check(!!facadeStep,'Есть кнопка «Фасад»');
+    facadeStep?.click();
+    await pause();
+    const gallery=$('#builderGallery'),first=$('#builderGallery .builder-material-card');
+    check(!!first&&gallery&&!gallery.hidden,'Карточки фасадов отображаются');
+    const count=d.querySelectorAll('#builderGallery .builder-material-card').length;
+    facadeStep?.click();
+    await pause();
+    check(first===d.querySelector('#builderGallery .builder-material-card'),
+      'Повторное открытие не пересоздаёт карточки фасада');
+    check(count>=8,'В галерее не меньше восьми фасадных материалов');
+    const second=d.querySelector('#builderGallery .builder-material-card:nth-child(2)');
+    second?.click();await pause();
+    check(first===d.querySelector('#builderGallery .builder-material-card'),
+      'Выбор материала не пересоздаёт изображения');
+    check(second?.getAttribute('aria-pressed')==='true',
+      'После выбора материал отмечен активным');
+    check(Boolean($('#facadeSelect')?.value),'Скрытый список материалов синхронизирован');
+    const enter=$('#sceneEnterInterior');
+    check(!!enter,'Есть кнопка «Войти в дом»');
+    enter?.click();await pause();
+    const roomPanel=$('#sceneRoomPicker');
+    const roomButtons=[...d.querySelectorAll('#sceneRoomPicker [data-room]')];
+    check(roomButtons.length===5,'Доступны пять комнат');
+    check(Boolean(roomPanel)&&!roomPanel.hidden&&roomPanel.getClientRects().length>0,
+      'Переключатель комнат виден в текущем разрешении');
+    roomButtons.forEach(b=>b.click());
+    await pause();
+    check(roomButtons.at(-1)?.getAttribute('aria-pressed')==='true',
+      'Кнопки комнат меняют выбранную комнату');
+    enter?.click();await pause();
+    check(enter?.getAttribute('aria-pressed')==='false'&&roomPanel?.hidden,
+      'Возврат из интерьера сохраняет страницу редактора');
+    check(!gallery.hidden,'После выхода фасадные материалы не пропали');
+  }catch(e){errors.push('Ошибка сценария: '+String(e))}
+  result.className=errors.length?'fail':'pass';
+  result.textContent=(errors.length?'FAIL':'PASS')+
+    '\nУспешно: '+ok.length+'\nОшибок: '+errors.length+
+    (errors.length?'\n• '+errors.join('\n• '):'');
+});
+</script></html>
