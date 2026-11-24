@@ -125,7 +125,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
 @media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
 </style>
-<link rel="stylesheet" href="builder-v25-layout.css?v=50">
+<link rel="stylesheet" href="builder-v25-layout.css?v=51">
 </head>
 <body>
 <main class="embed">
@@ -195,13 +195,13 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
  <div class="builder-hidden-metric" hidden>
   <input type="number" id="houseWidthInput" min="5" max="14" step="0.5" value="10">
   <input type="number" id="houseLengthInput" min="8" max="18" step="0.5" value="10">
-  <select id="houseFloorsSelect" aria-label="Этажность"><option value="one" selected>1 этаж</option><option value="mansard">1 этаж + мансарда</option><option value="two">2 этажа</option></select>
+  <select id="houseFloorsSelect" aria-label="Этажность"><option value="one">1 этаж</option><option value="mansard">1 этаж + мансарда</option><option value="two" selected>2 этажа</option></select>
  </div>
  <output class="builder-size-result" id="builderSizeResult" aria-live="polite">10 × 10 м · пятно застройки 100 м² · 1 этаж</output>
  <p class="builder-size-caution">Эскизные размеры наружного контура; площадь мансарды, планировка и строительные конструкции уточняются в проекте.</p>
  <div class="builder-legacy-geometry" hidden>
   <label for="roofShapeSelect">Форма крыши
-   <select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip" selected>Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select>
+   <select id="roofShapeSelect"><option value="gable" selected>Двухскатная</option><option value="hip">Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select>
   </label>
   <label for="houseSizeSelect">Расчётная площадь
    <select id="houseSizeSelect"><option value="100" selected>≈ 100 м²</option><option value="150">≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220">≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select>
@@ -226,12 +226,12 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <details class="builder-select-fallback">
   <summary>Все материалы списком</summary>
 <div class="builder-options" aria-label="Дополнительный выбор материалов">
-    <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный облицовочный кирпич</option><option value="brickBeige">Бежевый кирпич</option><option value="brickWhite">Белый кирпич</option><option value="klinker">Клинкер — шоколад</option><option value="brickGraphite">Графитовый кирпич</option><option value="gray" selected>Серо-бежевый кирпич</option><option value="tuscan">Кирпич ручной формовки</option><option value="plasterWhite">Белая фасадная штукатурка</option><option value="plasterSand">Песочная штукатурка</option><option value="venetian">Фактура под венецианскую</option><option value="stone">Светлый камень</option><option value="planken">Деревянный планкен</option><option value="plaster">Тёплая штукатурка</option></select></label>
+    <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick" selected>Красный облицовочный кирпич</option><option value="brickBeige">Бежевый кирпич</option><option value="brickWhite">Белый кирпич</option><option value="klinker">Клинкер — шоколад</option><option value="brickGraphite">Графитовый кирпич</option><option value="gray">Серо-бежевый кирпич</option><option value="tuscan">Кирпич ручной формовки</option><option value="plasterWhite">Белая фасадная штукатурка</option><option value="plasterSand">Песочная штукатурка</option><option value="venetian">Фактура под венецианскую</option><option value="stone">Светлый камень</option><option value="planken">Деревянный планкен</option><option value="plaster">Тёплая штукатурка</option></select></label>
     <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая черепица</option><option value="graphite">Графитовая черепица</option><option value="ceramic">Керамическая</option><option value="metalGraphite" selected>Классическая металлочерепица</option><option value="metalBurgundy">Металлочерепица — классика, бордо</option><option value="metal3d">Металлочерепица 3D</option><option value="metalModular">Симметричная металлочерепица</option><option value="metalTramontana">Рельефная металлочерепица</option><option value="standingSeam">Фальцевая кровля</option><option value="flexible">Гибкая черепица</option><option value="composite">Композитная черепица</option><option value="profiled">Кровельный профлист</option></select></label>
     <label for="fenceSelect">Забор<select id="fenceSelect"><option value="iron">Кованый металл</option><option value="tuscan">Кирпичная ограда</option><option value="wood">Деревянные ламели</option><option value="stone">Каменные секции</option><option value="brickIron">Кирпичные столбы + ковка</option><option value="louvers">Забор-жалюзи</option><option value="picket">Евроштакетник</option><option value="chess">Штакетник шахматка</option><option value="ranch">Ранчо</option><option value="profiled">Сплошной профлист</option><option value="panel3d">Сварные 3D-панели</option></select></label>
     <label for="roofColorSelect">Цвет кровли<select id="roofColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
-    <label for="houseStyleSelect">Архитектурный стиль<select id="houseStyleSelect"><option value="family" selected>Одноэтажный семейный</option><option value="mansardHome">Дом с жилой мансардой</option><option value="cottage">Кирпичный коттедж</option><option value="country">Одноэтажный светлый</option><option value="classic">Двухэтажный коттедж</option></select></label>
+    <label for="houseStyleSelect">Архитектурный стиль<select id="houseStyleSelect"><option value="twoBrick" selected>Кирпичный дом · 2 этажа</option><option value="family">Одноэтажный семейный</option><option value="mansardHome">Дом с жилой мансардой</option><option value="cottage">Кирпичный коттедж</option><option value="country">Одноэтажный светлый</option><option value="classic">Двухэтажный коттедж</option></select></label>
 
 
   </div>
@@ -243,9 +243,9 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=19" defer></script>
-<script src="builder-v25-experience.js?v=16" defer></script>
+<script src="builder-gallery.js?v=51" defer></script>
+<script src="builder-v25-experience.js?v=51" defer></script>
 <script type="module" src="house-3d.bundle.js?v=50"></script>
-<script src="iframe-scroll-chain-v50.js?v=50" defer></script>
+<script src="iframe-scroll-chain-v50.js?v=51" defer></script>
 </body>
 </html>
