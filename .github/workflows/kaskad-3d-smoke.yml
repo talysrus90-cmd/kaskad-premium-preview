@@ -1,10 +1,11 @@
 name: KASKAD 3D browser regression
 on:
-  push:
-    branches: [fix/interior-navigation-picker-v47]
   pull_request:
     branches: [main]
   workflow_dispatch:
+concurrency:
+  group: kaskad-3d-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 jobs:
   chromium-smoke:
     runs-on: ubuntu-24.04
