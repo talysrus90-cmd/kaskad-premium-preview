@@ -1,5 +1,7 @@
 name: KASKAD 3D browser regression
 on:
+  push:
+    branches: [fix/interior-navigation-picker-v47]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -24,10 +26,10 @@ jobs:
           sleep 2
       - name: Desktop / mobile 3D UI smoke
         run: node tests/v48-browser-check.mjs
-      - name: Keep screenshots on failed checks
-        if: failure()
+      - name: Keep test screenshots for review
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kaskad-v48-failed-browser-screens
+          name: kaskad-v48-browser-screens
           path: test-results/
           if-no-files-found: ignore
