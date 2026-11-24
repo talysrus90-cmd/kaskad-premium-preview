@@ -1,187 +1,79 @@
-/* KASKAD v55: stable top-level touch coordinates and one-way handoff from the WebGL iframe to the site.
-   One scroll operation per animation frame, no concurrent scene dragging. */
+/* KASKAD v56. Mobile uses ONE native page scroller, like the rest of the site.
+   No touchmove interception, no accelerated scrollBy, no parent scroll relay.
+   Auto-size the same-origin iframe to its live content instead of creating
+   a nested, high-inertia scroll viewport inside the builder. */
 (() => {
   'use strict';
-  // Default to comfort mode for every visitor: no synthetic cross-frame scrolling.
-  // The experimental scroll bridge may be enabled only by an explicit debug flag.
-  // Keep ?safe=1 as a backwards-compatible comfort-mode URL.
-  const search = window.parent === window ? location.search : window.parent.location.search;
-  const params = new URLSearchParams(search);
-  if (params.get('safe') === '1' || params.get('experimentalScroll') !== '1') return;
-  const frame = document.querySelector('#interactive-home iframe');
+  if (!window.matchMedia('(max-width:730px)').matches) return;
+
   if (window.parent === window) {
-    if (!frame) return;
-    let queuedY = 0, frameId = 0;
-    const renderScroll = () => {
-      frameId = 0;
-      const y = Math.max(-340, Math.min(340, queuedY));
-      queuedY = 0;
-      if (Math.abs(y) > .1) {
-        // This MUST be instant, even though anchor links use smooth scroll.
-        window.scrollBy({top: y, behavior: 'instant'});
-      }
+    const iframe = document.querySelector('#interactive-home iframe');
+    if (!iframe) return;
+    let lastHeight = 0;
+    const setFrameHeight = value => {
+      if (!Number.isFinite(value) || value < 150 || value > 12000) return;
+      const height = Math.ceil(value) + 3;
+      if (Math.abs(lastHeight - height) < 3) return;
+      lastHeight = height;
+      iframe.style.setProperty('height', height + 'px', 'important');
+      iframe.style.setProperty('min-height', '0', 'important');
+      iframe.style.setProperty('max-height', 'none', 'important');
+    };
+    const sizeFromFrame = () => {
+      try {
+        const doc = iframe.contentDocument;
+        const embed = doc?.querySelector('main.embed');
+        if (embed) setFrameHeight(Math.max(embed.scrollHeight,embed.getBoundingClientRect().height));
+      } catch { /* Parent keeps the standard, usable fallback height. */ }
     };
     window.addEventListener('message', event => {
-      if (event.origin !== location.origin || event.source !== frame.contentWindow) return;
-      if (event.data?.type !== 'kaskad-scroll-chain' || event.data?.version !== 1) return;
-      const delta = Number(event.data.deltaY);
-      if (!Number.isFinite(delta) || Math.abs(delta) < .1) return;
-      queuedY = Math.max(-600, Math.min(600, queuedY + delta));
-      if (!frameId) frameId = requestAnimationFrame(renderScroll);
-    }, {passive: true});
+      if (event.origin !== location.origin || event.source !== iframe.contentWindow) return;
+      if (event.data?.type !== 'kaskad-3d-frame-height') return;
+      setFrameHeight(Number(event.data.height));
+    }, {passive:true});
+    iframe.addEventListener('load', () => {
+      requestAnimationFrame(sizeFromFrame);
+    });
+    requestAnimationFrame(sizeFromFrame);
     return;
   }
 
-  const panel = document.querySelector('.controls');
-  const scene = document.getElementById('sceneContainer');
-  const plan = document.getElementById('builderPlotPlan');
-  const house = document.getElementById('builderPlotHouse');
-  if (!panel || !scene) return;
+  const embed = document.querySelector('main.embed');
+  if (!embed) return;
+  let previousHeight = 0;
+  let pending = 0;
+  const measure = () => {
+    pending = 0;
+    const height = Math.ceil(Math.max(
+      embed.scrollHeight, embed.getBoundingClientRect().height
+    ));
+    if (!Number.isFinite(height) || height < 150) return;
+    if (Math.abs(previousHeight - height) < 3) return;
+    previousHeight = height;
+    window.parent.postMessage({
+      type: 'kaskad-3d-frame-height', version: 1, height
+    }, location.origin);
+  };
+  const schedule = () => {
+    if (!pending) pending = requestAnimationFrame(measure);
+  };
+  if ('ResizeObserver' in window) new ResizeObserver(schedule).observe(embed);
+  window.addEventListener('load', schedule, {passive:true});
+  window.addEventListener('resize', schedule, {passive:true});
+  document.fonts?.ready?.then(schedule).catch(() => {});
+  requestAnimationFrame(schedule);
 
-  let queuedY = 0, messageFrame = 0;
-  const sendFrame = () => {
-    messageFrame = 0;
-    const deltaY = queuedY; queuedY = 0;
-    if (Math.abs(deltaY) > .1) {
-      window.parent.postMessage({type:'kaskad-scroll-chain',version:1,deltaY},location.origin);
-    }
-  };
-  const relay = (delta, kind = 'touch') => {
-    if (!Number.isFinite(delta) || Math.abs(delta) < .1) return;
-    const speed = kind === 'wheel' ? 1.6 : 2.8;
-    queuedY = Math.max(-600, Math.min(600, queuedY + delta * speed));
-    if (!messageFrame) messageFrame = requestAnimationFrame(sendFrame);
-  };
-  const panelCanScroll = delta => {
-    if (panel.scrollHeight <= panel.clientHeight + 2) return false;
-    if (delta > 0) return panel.scrollTop + panel.clientHeight < panel.scrollHeight - 2;
-    return panel.scrollTop > 2;
-  };
-  const sceneAtLimit = delta => {
-    const orbit = window.kaskadOrbitControls;
-    if (!orbit || !orbit.enabled) return true;
-    const phi = orbit.getPolarAngle();
-    return delta > 0
-      ? phi >= orbit.maxPolarAngle - .035
-      : phi <= orbit.minPolarAngle + .035;
-  };
-  const sceneZoomAtLimit = delta => {
-    const orbit = window.kaskadOrbitControls;
-    if (!orbit || !orbit.enabled) return true;
-    const distance = orbit.getDistance();
-    return delta > 0
-      ? distance >= orbit.maxDistance - .06
-      : distance <= orbit.minDistance + .06;
-  };
-  const planAtLimit = delta => {
-    if (!plan || !house) return false;
-    const top = parseFloat(house.style.top);
-    const height = parseFloat(house.style.height);
-    if (!Number.isFinite(top) || !Number.isFinite(height)) return false;
-    return delta > 0 ? top <= .5 : top + height >= 99.5;
-  };
-  const zone = target => {
-    if (!(target instanceof Element)) return 'other';
-    if (target.closest('#sceneContainer')) {
-      return target.closest('canvas') ? 'scene' : 'other';
-    }
-    if (target.closest('.builder-plot-plan')) return 'plan';
-    if (target.closest('.controls')) return 'panel';
-    return 'other';
-  };
-
-  // Iframe-local touch coordinates shift whenever the parent page scrolls.
-  // Add the iframe position so the finger stays in the SAME coordinate system.
-  // Without this, a parent scroll can be interpreted as a reverse finger swipe,
-  // causing severe up/down oscillation on Chrome for Android.
-  const globalTouch = touch => {
-    const bounds = window.frameElement?.getBoundingClientRect();
-    if (!bounds) return null;
-    return {x: touch.clientX + bounds.left, y: touch.clientY + bounds.top};
-  };
-  let gesture = null;
-  const release = () => {
-    if (gesture?.pausedOrbit) {
-      const orbit = window.kaskadOrbitControls;
-      if (orbit) orbit.enableRotate = gesture.orbitRotateEnabled;
-    }
-    gesture = null;
-  };
-  document.addEventListener('touchstart', event => {
-    release();
-    if (event.touches.length !== 1) return;
-    const t = globalTouch(event.touches[0]);
-    if (!t) return;
-    gesture = {
-      zone: zone(event.target), startX: t.x,
-      startY: t.y, lastY: t.y, lockSign: 0,
-      vertical: false, chained: false, pausedOrbit: false
-    };
-  }, {capture:true,passive:true});
-
-  document.addEventListener('touchmove', event => {
-    if (!gesture) return;
-    if (event.touches.length !== 1) {release(); return;}
-    const t = globalTouch(event.touches[0]);
-    if (!t) {release(); return;}
-    const travelX = Math.abs(t.x - gesture.startX);
-    const travelY = Math.abs(t.y - gesture.startY);
-    if (!gesture.vertical) {
-      if (travelY < 8 || travelY <= travelX * 1.15) return;
-      gesture.vertical = true;
-    }
-    const delta = gesture.lastY - t.y;
-    gesture.lastY = t.y;
-    if (Math.abs(delta) < .4 || Math.abs(delta) > 130) return;
-
-    if (!gesture.chained) {
-      const atEnd = gesture.zone === 'scene' ? sceneAtLimit(delta)
-        : gesture.zone === 'plan' ? planAtLimit(delta)
-        : gesture.zone === 'panel' ? !panelCanScroll(delta)
-        : true;
-      if (!atEnd) return;
-      // Commit the rest of THIS touch gesture to the parent. Do not toggle
-      // back and forth between WebGL, plan dragging and site scrolling.
-      gesture.chained = true;
-      gesture.lockSign = Math.sign(delta);
-      if (gesture.zone === 'scene') {
-        const orbit = window.kaskadOrbitControls;
-        if (orbit) {
-          gesture.orbitRotateEnabled = orbit.enableRotate;
-          orbit.enableRotate = false;
-          gesture.pausedOrbit = true;
-        }
-      }
-    }
-    if (event.cancelable) event.preventDefault();
-    // Do not allow false reverse deltas to jerk the whole page backwards.
-    if (Math.sign(delta) !== gesture.lockSign) return;
-    relay(delta);
-  }, {capture:true,passive:false});
-
-  // OrbitControls and the 2D plot use pointermove. Once the parent scroll is
-  // handling a touch gesture, stop those handlers from moving the model too.
-  document.addEventListener('pointermove', event => {
-    if (gesture?.chained && event.pointerType === 'touch') event.stopPropagation();
-  }, {capture:true,passive:true});
-
-  for (const name of ['touchend','touchcancel']) {
-    document.addEventListener(name, event => {
-      if (event.touches.length === 0) release();
-    }, {passive:true});
+  // Up/down gestures scroll the site; sideways gestures still orbit the house.
+  // The view-top button keeps the roof accessible without trapping the page.
+  const toggle = document.getElementById('sceneTopViewButton');
+  const view = document.getElementById('sceneViewSelect');
+  if (toggle && view) {
+    toggle.addEventListener('click', () => {
+      const top = toggle.getAttribute('aria-pressed') !== 'true';
+      view.value = top ? 'top' : 'front';
+      view.dispatchEvent(new Event('change', {bubbles:true}));
+      toggle.setAttribute('aria-pressed', String(top));
+      toggle.textContent = top ? 'Главный фасад' : 'Вид сверху';
+    });
   }
-  window.addEventListener('blur', release);
-
-  document.addEventListener('wheel', event => {
-    const delta = event.deltaY;
-    if (Math.abs(delta) < .2) return;
-    const kind = zone(event.target);
-    const atEnd = kind === 'scene' ? sceneZoomAtLimit(delta)
-      : kind === 'plan' ? true
-      : kind === 'panel' ? !panelCanScroll(delta)
-      : true;
-    if (!atEnd) return;
-    if (event.cancelable) event.preventDefault();
-    relay(delta, 'wheel');
-  }, {capture:true,passive:false});
 })();
