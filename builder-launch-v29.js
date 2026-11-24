@@ -91,7 +91,10 @@
   if(interiorHistoryActive&&!event.state?.kaskadInteriorOpen){
     interiorHistoryActive=false;
     iframeMessage('kaskad-interior-exit');
-    requestAnimationFrame(()=>window.scrollTo({top:sectionTop(),behavior:'instant'}));
+    // Returning from a room must preserve the visitor's scroll position:
+    // the same iframe is already showing the exterior synchronously.
+    // Forcing sectionTop() here makes «Вернуться к дому» look like it
+    // unexpectedly navigated away from the 3D house on mobile.
     return;
   }
   if(event.state?.kaskadInteriorOpen){
