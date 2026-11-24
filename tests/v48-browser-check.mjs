@@ -96,9 +96,43 @@ async function runScenario(name,viewport,isMobile=false){
     await context.close();
   }
 }
+async function runEmbeddedReturnScenario(){
+  const context=await browser.newContext({viewport:{width:393,height:850},isMobile:true,deviceScaleFactor:1});
+  const page=await context.newPage();
+  try{
+    await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+    const embedded=page.frameLocator('#interactive-home iframe');
+    await embedded.locator('#sceneEnterInterior').waitFor({state:'attached',timeout:30000});
+    await page.locator('[data-kaskad-open-builder]').first().evaluate(el=>el.click());
+    await page.waitForTimeout(250);
+    const interior=embedded.locator('#sceneEnterInterior');
+    await interior.evaluate(el=>el.click());
+    await embedded.locator('body.kaskad-interior-active').waitFor({timeout:10000});
+    const before=await page.evaluate(()=>window.scrollY);
+    await interior.evaluate(el=>el.click());
+    await embedded.locator('body.kaskad-interior-active').waitFor({state:'hidden',timeout:10000});
+    await page.waitForTimeout(450);
+    const after=await page.evaluate(()=>window.scrollY);
+    if(Math.abs(after-before)>80)throw new Error('Return scrolled the outer page: '+before+' → '+after);
+    results.push('PASS embedded Android — Вернуться к дому не сбрасывает прокрутку');
+    // The browser/Android Back should also leave the tour instead of
+    // navigating from the 3D section to an unrelated section of the site.
+    await interior.evaluate(el=>el.click());
+    await embedded.locator('body.kaskad-interior-active').waitFor({timeout:10000});
+    const beforeBack=await page.evaluate(()=>window.scrollY);
+    await page.evaluate(()=>history.back());
+    await embedded.locator('body.kaskad-interior-active').waitFor({state:'hidden',timeout:10000});
+    await page.waitForTimeout(200);
+    const afterBack=await page.evaluate(()=>window.scrollY);
+    if(Math.abs(afterBack-beforeBack)>80)throw new Error('Android Back scrolled page: '+beforeBack+' → '+afterBack);
+    results.push('PASS embedded Android — системная Назад закрывает интерьер без переноса страницы');
+    await page.screenshot({path:'test-results/android-embedded-return.png',fullPage:false});
+  }finally{await context.close()}
+}
 try{
   await runScenario('desktop',{width:1365,height:840});
   await runScenario('android',{width:393,height:850},true);
+  await runEmbeddedReturnScenario();
   console.log(results.join('\n'));
   console.log('PASS: KASKAD desktop and Android facade/room regression');
 }catch(error){
