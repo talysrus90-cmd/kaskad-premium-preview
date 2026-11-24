@@ -876,73 +876,78 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
 }
 @media(min-width:731px){.builder-family-chips{display:none!important}}
 
+/* KASKAD v57: 3D and settings own their quick gestures. The parent site
+   scrolls at natural 1:1 finger speed only when a limit is reached.
+   The iframe is height-locked; do not size it on each drag. */
 .scene-top-view-button{display:none}
-/* v56 mobile: one vertical scroll container — the main KASKAD page.
-   The iframe is content-sized from its parent; no second momentum scroller. */
 @media(max-width:730px), (max-width:1080px) and (hover:none) and (pointer:coarse){
  html,body{
-  height:auto!important;min-height:0!important;
-  overflow-x:hidden!important;overflow-y:visible!important;
-  overscroll-behavior-y:auto!important
+  height:100%!important;min-height:0!important;
+  overflow:hidden!important;overscroll-behavior:contain!important
  }
  main.embed{
-  height:auto!important;min-height:0!important;max-height:none!important;
-  overflow:visible!important
+  height:100%!important;min-height:0!important;max-height:100%!important;
+  overflow:hidden!important
  }
  .workspace{
-  height:auto!important;min-height:0!important;max-height:none!important;
-  overflow:visible!important;display:flex!important;flex-direction:column!important
+  height:100%!important;min-height:0!important;max-height:100%!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important
  }
  .viewer-col{
   position:relative!important;top:auto!important;
   height:auto!important;min-height:0!important;max-height:none!important;
+  flex:0 0 auto!important;z-index:2!important
+ }
+ .viewer-col>.scene{
+  height:clamp(218px,36svh,285px)!important;
+  min-height:0!important;max-height:none!important;
   flex:0 0 auto!important
  }
+ .scene-toolbar{min-height:41px!important;flex:0 0 auto!important;padding:4px 7px!important}
+ .scene-step-switch{
+  display:flex!important;flex:0 0 auto!important;
+  flex-direction:column!important;align-items:stretch!important;
+  padding:5px 7px!important;gap:4px!important;min-height:0!important;
+  background:#f6f7f2!important
+ }
+ .scene-component-tabs{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important
+ }
+ .scene-component-tabs button{min-height:38px!important}
+ .builder-v25-step-tabs{display:none!important}
  aside.controls{
-  height:auto!important;min-height:0!important;max-height:none!important;
-  flex:0 0 auto!important;overflow:visible!important;
-  overscroll-behavior:auto!important
+  height:auto!important;min-height:95px!important;max-height:none!important;
+  flex:1 1 0!important;overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;scroll-behavior:auto!important;
+  -webkit-overflow-scrolling:auto!important;
+  padding:8px 9px 10px!important;
+  touch-action:pan-x!important
  }
  #builderV25Scroll{
   height:auto!important;min-height:0!important;max-height:none!important;
   flex:0 0 auto!important;overflow:visible!important;
-  overscroll-behavior:auto!important
+  padding:0 0 9px!important
  }
- /* Three.js also writes touchAction=none inline; this important rule wins.
-    Horizontal finger drags still orbit, vertical ones scroll the site. */
- #sceneContainer>canvas{touch-action:pan-y!important}
- /* A swipe on the empty plot should also scroll. Drag the house itself to move it. */
- .builder-plot-plan{touch-action:pan-y!important}
+ /* OrbitControls receives vertical motion directly. It only yields on limit. */
+ #sceneContainer>canvas{touch-action:none!important}
+ /* Controls scroll vertically by JS; horizontal materials/sliders remain native. */
+ aside.controls .builder-material-list,
+ aside.controls .builder-family-chips,
+ aside.controls input[type=range]{touch-action:pan-x!important}
+ .builder-plot-plan{touch-action:none!important}
  .builder-plot-house{touch-action:none!important}
+ .builder-family-chips{display:flex!important}
  .scene-top-view-button{
-  display:inline-flex;position:absolute;right:9px;bottom:9px;z-index:11;
-  align-items:center;justify-content:center;
-  min-height:34px;padding:7px 10px;border:1px solid #b5cbbb;
-  border-radius:8px;background:#f6faf2ed;color:#2d533e;
+  display:inline-flex!important;position:absolute;right:9px;bottom:9px;z-index:11;
+  align-items:center;justify-content:center;min-height:34px;padding:7px 10px;
+  border:1px solid #b5cbbb;border-radius:8px;
+  background:#f6faf2ed;color:#2d533e;
   font:800 11px/1.3 Manrope,system-ui,sans-serif;
-  box-shadow:0 2px 10px #1a322b2c;touch-action:manipulation;cursor:pointer
+  box-shadow:0 2px 10px #1a322b2c;
+  touch-action:manipulation;cursor:pointer
  }
  .scene-top-view-button[aria-pressed=true]{background:#315b44;color:#fff}
  .scene-top-view-button:focus-visible{outline:3px solid #b97a57;outline-offset:2px}
  body.kaskad-interior-active .scene-top-view-button{display:none!important}
-}
-@media(min-width:731px) and (hover:hover) and (pointer:fine){
- .scene-top-view-button{display:none!important}
-}
-/* Phones held horizontally are wider than 730px but still need native scroll. */
-@media(min-width:731px) and (max-width:1080px) and (hover:none) and (pointer:coarse){
- .viewer-col>.scene{
-  height:clamp(248px,43svh,322px)!important;
-  max-height:none!important;flex:0 0 auto!important
- }
- .scene-step-switch{
-  display:flex!important;flex-direction:column!important;
-  padding:5px 6px!important;gap:4px!important;background:#f6f7f2
- }
- .scene-component-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px}
- .scene-component-tabs button{min-height:40px}
- .builder-v25-step-tabs{display:none!important}
- .builder-family-chips{display:flex!important}
- aside.controls{padding:0 6px 10px!important}
- #builderV25Scroll{padding:0 0 8px!important}
 }
