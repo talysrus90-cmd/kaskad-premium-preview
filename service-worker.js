@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v46-interior-360-tours';
+const VERSION='kaskad-pwa-20261124-v47-interior-nav';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
