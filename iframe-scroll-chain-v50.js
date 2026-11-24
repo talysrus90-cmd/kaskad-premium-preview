@@ -1,4 +1,4 @@
-/* KASKAD v52: stable, one-way touch handoff from the WebGL iframe to the site.
+/* KASKAD v53: stable top-level touch coordinates and one-way handoff from the WebGL iframe to the site.
    One scroll operation per animation frame, no concurrent scene dragging. */
 (() => {
   'use strict';
@@ -84,6 +84,15 @@
     return 'other';
   };
 
+  // Iframe-local touch coordinates shift whenever the parent page scrolls.
+  // Add the iframe position so the finger stays in the SAME coordinate system.
+  // Without this, a parent scroll can be interpreted as a reverse finger swipe,
+  // causing severe up/down oscillation on Chrome for Android.
+  const globalTouch = touch => {
+    const bounds = window.frameElement?.getBoundingClientRect();
+    if (!bounds) return null;
+    return {x: touch.clientX + bounds.left, y: touch.clientY + bounds.top};
+  };
   let gesture = null;
   const release = () => {
     if (gesture?.pausedOrbit) {
@@ -95,10 +104,11 @@
   document.addEventListener('touchstart', event => {
     release();
     if (event.touches.length !== 1) return;
-    const t = event.touches[0];
+    const t = globalTouch(event.touches[0]);
+    if (!t) return;
     gesture = {
-      zone: zone(event.target), startX: t.clientX,
-      startY: t.clientY, lastY: t.clientY,
+      zone: zone(event.target), startX: t.x,
+      startY: t.y, lastY: t.y, lockSign: 0,
       vertical: false, chained: false, pausedOrbit: false
     };
   }, {capture:true,passive:true});
@@ -106,16 +116,17 @@
   document.addEventListener('touchmove', event => {
     if (!gesture) return;
     if (event.touches.length !== 1) {release(); return;}
-    const t = event.touches[0];
-    const travelX = Math.abs(t.clientX - gesture.startX);
-    const travelY = Math.abs(t.clientY - gesture.startY);
+    const t = globalTouch(event.touches[0]);
+    if (!t) {release(); return;}
+    const travelX = Math.abs(t.x - gesture.startX);
+    const travelY = Math.abs(t.y - gesture.startY);
     if (!gesture.vertical) {
       if (travelY < 8 || travelY <= travelX * 1.15) return;
       gesture.vertical = true;
     }
-    const delta = gesture.lastY - t.clientY;
-    gesture.lastY = t.clientY;
-    if (Math.abs(delta) < .4) return;
+    const delta = gesture.lastY - t.y;
+    gesture.lastY = t.y;
+    if (Math.abs(delta) < .4 || Math.abs(delta) > 130) return;
 
     if (!gesture.chained) {
       const atEnd = gesture.zone === 'scene' ? sceneAtLimit(delta)
@@ -126,6 +137,7 @@
       // Commit the rest of THIS touch gesture to the parent. Do not toggle
       // back and forth between WebGL, plan dragging and site scrolling.
       gesture.chained = true;
+      gesture.lockSign = Math.sign(delta);
       if (gesture.zone === 'scene') {
         const orbit = window.kaskadOrbitControls;
         if (orbit) {
@@ -136,6 +148,8 @@
       }
     }
     if (event.cancelable) event.preventDefault();
+    // Do not allow false reverse deltas to jerk the whole page backwards.
+    if (Math.sign(delta) !== gesture.lockSign) return;
     relay(delta);
   }, {capture:true,passive:false});
 
