@@ -4,7 +4,7 @@
    a nested, high-inertia scroll viewport inside the builder. */
 (() => {
   'use strict';
-  if (!window.matchMedia('(max-width:730px)').matches) return;
+  if (!window.matchMedia('(max-width:730px), (max-width:1080px) and (hover:none) and (pointer:coarse)').matches) return;
 
   if (window.parent === window) {
     const iframe = document.querySelector('#interactive-home iframe');
