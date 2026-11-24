@@ -103,6 +103,8 @@ async function runEmbeddedReturnScenario(){
     await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:30000});
     const embedded=page.frameLocator('#interactive-home iframe');
     await embedded.locator('#sceneEnterInterior').waitFor({state:'attached',timeout:30000});
+    await page.waitForFunction(()=>document.querySelector('#interactive-home iframe')?.contentDocument
+      ?.getElementById('modelFPS')?.textContent?.includes('3D готов'),null,{timeout:30000});
     await page.locator('[data-kaskad-open-builder]').first().evaluate(el=>el.click());
     await page.waitForTimeout(250);
     const interior=embedded.locator('#sceneEnterInterior');
