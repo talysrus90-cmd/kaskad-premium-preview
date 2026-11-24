@@ -49,8 +49,8 @@
    dock. Otherwise a visible checkbox near the bottom cannot be tapped. */
 @media(max-width:730px){
  .kaskad-3d-feature iframe{
-  height:clamp(440px,calc(100dvh - 190px),720px)!important;
-  max-height:calc(100dvh - 160px)!important;
+  height:clamp(440px,calc(100svh - 190px),720px)!important;
+  max-height:calc(100svh - 160px)!important;
  }
 }
 
@@ -67,6 +67,9 @@
 .kaskad-3d-feature.kaskad-frame-ready .k3d-viewer iframe{opacity:1}
 .kaskad-3d-feature.kaskad-frame-ready .k3d-editor-preview{opacity:0;visibility:hidden}
 @media(max-width:730px){
- .kaskad-3d-feature .k3d-editor-preview{height:clamp(248px,43dvh,322px)!important;min-height:0}
+ .kaskad-3d-feature .k3d-editor-preview{height:clamp(248px,43svh,322px)!important;min-height:0}
 }
 @media(prefers-reduced-motion:reduce){.kaskad-3d-feature .k3d-editor-preview{transition:none}}
+
+/* v52: the phone browser toolbar can collapse while scrolling. Use a stable
+   small viewport height so the iframe/WebGL canvas does not resize mid-drag. */
