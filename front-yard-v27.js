@@ -4,7 +4,15 @@
    не нормативный генплан и не проект уклонов/дренажа. */
 export function createFrontYard(THREE,scene,{lawnMaterial}={}){
  const root=new THREE.Group();root.name='КАСКАД · мощение, парковка и цветники';scene.add(root);
- const paver=new THREE.MeshStandardMaterial({color:'#d3d0c4',roughness:.86});
+ const paver=new THREE.MeshStandardMaterial({color:'#faf9f5',roughness:.89});
+ const pavementTexture=new THREE.TextureLoader();
+ pavementTexture.load(new URL('assets/3d/concrete_pavement_02_1k.webp',document.baseURI).href,
+   texture=>{
+     texture.colorSpace=THREE.SRGBColorSpace;
+     texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+     texture.anisotropy=4;
+     paver.map=texture;paver.needsUpdate=true;
+   },undefined,()=>{});
  const concrete=new THREE.MeshStandardMaterial({color:'#b6afa2',roughness:.93});
  const grout=new THREE.MeshStandardMaterial({color:'#817f75',roughness:1});
  const mulch=new THREE.MeshStandardMaterial({color:'#604c3b',roughness:1});
@@ -68,8 +76,8 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
  tiles(pergolaPath,{x0:-9.70,z0:-3.64,width:1.92,length:.88,unitX:.34,unitZ:.34});
  // Planting beds with individual stems, five petals and greenery,
  // instead of hovering dot sprites on brown rectangles.
- const petalsGeometry=new THREE.SphereGeometry(1,6,5);
- const leafGeometry=new THREE.IcosahedronGeometry(1,0);
+ const petalsGeometry=new THREE.SphereGeometry(1,9,7);
+ const leafGeometry=new THREE.IcosahedronGeometry(1,1);
  const trunk=new THREE.MeshStandardMaterial({color:'#46713f',roughness:.95});
  function flowerBed(parent,x,z,w,len,seed,kind='flower'){
   const bed=new THREE.Group();bed.name='Клумба с живыми цветами';parent.add(bed);

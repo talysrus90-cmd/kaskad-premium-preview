@@ -123,7 +123,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
 @media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
 </style>
-<link rel="stylesheet" href="builder-v25-layout.css?v=10">
+<link rel="stylesheet" href="builder-v25-layout.css?v=11">
 </head>
 <body>
 <main class="embed">
@@ -136,7 +136,18 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 
 
 
-<div class="scene-gesture-tip" id="sceneGestureTip">Поверните пальцем · Два пальца — масштаб</div>
+<div class="scene-gesture-tip" id="sceneGestureTip" aria-label="Поверните дом пальцем и измените масштаб двумя пальцами"><span class="scene-gesture-hand" aria-hidden="true"><span class="scene-gesture-icon">☝</span><span class="scene-gesture-pulse"></span></span><span class="scene-gesture-copy"><strong>Вращайте дом</strong><small>2 пальца — масштаб</small></span></div>
+<button class="scene-enter-interior" id="sceneEnterInterior" type="button" aria-pressed="false">Войти в дом</button>
+<div class="scene-room-picker" id="sceneRoomPicker" hidden aria-label="Выберите помещение">
+<span class="scene-room-heading">Интерьер · концепт отделки</span>
+<div class="scene-room-options">
+<button type="button" data-room="hall">Прихожая</button>
+<button type="button" data-room="living" aria-pressed="true">Гостиная</button>
+<button type="button" data-room="kitchen">Кухня</button>
+<button type="button" data-room="bedroom">Спальня</button>
+<button type="button" data-room="bath">Санузел</button>
+</div><small>Отделка для примера. Планировка уточняется отдельно.</small>
+</div>
 <button class="scene-overview-button" id="sceneOverviewButton" type="button" aria-label="Показать весь участок">Весь участок</button>
 <button class="secondary" id="autoRotate" type="button" aria-pressed="false" hidden aria-hidden="true" tabindex="-1">↻ Автообзор</button>
 </div>
@@ -225,6 +236,6 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </main>
 <script src="builder-gallery.js?v=14" defer></script>
 <script src="builder-v25-experience.js?v=12" defer></script>
-<script type="module" src="house-3d.bundle.js?v=20"></script>
+<script type="module" src="house-3d.bundle.js?v=21"></script>
 </body>
 </html>

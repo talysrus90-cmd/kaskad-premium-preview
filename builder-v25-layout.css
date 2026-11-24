@@ -549,3 +549,81 @@
  .scene .scene-gesture-tip{font-size:9px;max-width:58%;left:7px;bottom:7px}
  .scene .scene-overview-button{font-size:10px;right:7px;bottom:7px;padding:6px 8px}
 }
+
+
+/* KASKAD V41 - touch discoverability, interactive interior room tour */
+.scene .scene-gesture-tip{
+ top:8px!important;bottom:auto!important;left:8px!important;
+ display:flex;align-items:center;gap:6px;max-width:56%;
+ padding:5px 8px 5px 5px!important;border-radius:10px!important;
+ background:rgba(249,251,242,.88)!important;color:#2e5940!important;
+ font:700 10px/1.2 Manrope,system-ui,sans-serif!important;
+ box-shadow:0 2px 10px #172d2922!important;
+ pointer-events:none!important;
+ transition:opacity .35s ease,visibility .35s ease!important}
+.scene .scene-gesture-tip.is-used{opacity:0!important;visibility:hidden!important}
+.scene-gesture-hand{position:relative;display:grid;place-items:center;
+ width:28px;height:28px;flex:0 0 28px;border-radius:50%;
+ color:#2c5a3e;background:#e3ede2}
+.scene-gesture-icon{font-size:20px;line-height:1;position:relative;z-index:2;
+ animation:gesture-swipe-v41 2.6s ease-in-out infinite}
+.scene-gesture-pulse{position:absolute;inset:3px;border:1px solid #588c68;
+ border-radius:50%;animation:gesture-pulse-v41 2.6s ease-out infinite}
+.scene-gesture-copy{display:flex;flex-direction:column;gap:1px;white-space:nowrap}
+.scene-gesture-copy strong{font-size:10px;font-weight:900}
+.scene-gesture-copy small{font-size:9px;color:#506b54}
+@keyframes gesture-swipe-v41{
+ 0%,12%,76%,100%{transform:translateX(-2px) rotate(-8deg)}
+ 34%,49%{transform:translateX(5px) rotate(7deg)}
+ 62%{transform:translateX(-3px) rotate(-7deg)}
+}
+@keyframes gesture-pulse-v41{
+ 0%,18%{opacity:0;transform:scale(.75)}
+ 36%{opacity:.65;transform:scale(1)}
+ 72%,100%{opacity:0;transform:scale(1.35)}
+}
+.scene .scene-enter-interior{position:absolute;z-index:8;left:9px;bottom:8px;
+ display:flex;align-items:center;justify-content:center;
+ background:#2f5a44;color:#fff;border:1px solid #e3f0e4a8;
+ padding:7px 12px;min-height:33px;border-radius:8px;
+ box-shadow:0 3px 11px #112c2047;
+ font:800 11px/1.2 Manrope,system-ui,sans-serif;
+ cursor:pointer;max-width:45%}
+.scene .scene-enter-interior[aria-pressed=true]{background:#fafbf6;color:#28523d;
+ border-color:#a5c3af}
+.scene .scene-room-picker{position:absolute;z-index:7;
+ left:8px;right:8px;bottom:49px;border-radius:11px;padding:7px 9px;
+ background:#fffdf4eb;box-shadow:0 2px 16px #12302730;
+ color:#294434;pointer-events:auto}
+.scene .scene-room-picker[hidden],.scene .scene-metric-badge[hidden],
+.scene .scene-overview-button[hidden]{display:none!important}
+.scene-room-heading{font:850 11px/1.2 Manrope,system-ui,sans-serif;display:block;
+ margin-bottom:5px}
+.scene-room-options{display:flex;flex-wrap:wrap;gap:4px}
+.scene-room-options button{flex:1 1 auto;min-height:30px;border:1px solid #b8cebb;
+ border-radius:7px;padding:5px 7px;background:#fbfcf8;color:#34533b;
+ font:800 10px/1.12 Manrope,system-ui,sans-serif;cursor:pointer}
+.scene-room-options button[aria-pressed=true]{background:#305c45;color:white;
+ border-color:#305c45}
+.scene-room-picker>small{display:block;margin-top:5px;
+ font:650 9px/1.25 Manrope,system-ui,sans-serif;color:#63715e}
+@media(max-width:390px){
+ .scene .scene-gesture-tip{top:7px!important;left:7px!important;
+ max-width:61%;padding:4px!important}
+ .scene-gesture-hand{width:24px;height:24px;flex-basis:24px}
+ .scene-gesture-icon{font-size:18px}
+ .scene-gesture-copy strong{font-size:9px}
+ .scene-gesture-copy small{font-size:8px}
+ .scene .scene-enter-interior{left:7px;bottom:7px;font-size:10px;
+ padding:6px 9px}
+ .scene .scene-room-picker{left:6px;right:6px;bottom:45px}
+ .scene-room-options button{font-size:9px;padding:5px}
+}
+@media(prefers-reduced-motion:reduce){
+ .scene-gesture-icon,.scene-gesture-pulse{animation:none!important}
+}
+
+/* Room selector floats above the image's least important area, not on furniture. */
+.scene .scene-room-picker{top:39px!important;bottom:auto!important;
+ background:#fffdf3e6}
+@media(max-width:390px){.scene .scene-room-picker{top:36px!important;bottom:auto!important}}

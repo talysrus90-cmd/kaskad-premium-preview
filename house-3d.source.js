@@ -8,6 +8,7 @@ import {createRoofForms} from './roof-forms-v20.js';
 import {addNaturalFoliage} from './foliage-v16.js';
 import {createArchitectureStyles} from './architecture-styles-v19.js';
 import {createRussianHouse} from './russian-home-v26.js';
+import {createInteriorTour} from './interior-tour-v40.js';
 import {createFrontYard} from './front-yard-v27.js';
 import {HOME_VARIANTS} from './house-variants-v27.js';
 import {createFacadeMaterials} from './facade-presets-v28.js';
@@ -178,18 +179,20 @@ try {
   controls.enableDamping=true;
   controls.dampingFactor=.085;
   controls.enablePan=false;
-  controls.minDistance=13;
+  // Keep generous close inspection for roof, windows and facade details.
+  controls.minDistance=12.5;
   controls.maxDistance=75; // Whole-plot view on narrow phones
   controls.minPolarAngle=.18;
   controls.maxPolarAngle=Math.PI*.475;
   controls.autoRotate=false;
   controls.autoRotateSpeed=2.15;
-  controls.target.set(0,2.75,3);
+  controls.target.set(0,2.75,0);
   controls.update();
   // Contextual viewpoint: show the house (not just the fence) when selecting
   // architecture, but reveal the whole plot when editing the fence.
+  let isInteriorMode=false;
   const focusViews={
-    front:mobileView?{camera:[17,13,49.5],target:[0,2.25,6.8]}:{camera:[22,14,51],target:[0,2.3,6.5]},
+    front:mobileView?{camera:[14,11,37],target:[0,2.6,4]}:{camera:[18,13,43],target:[0,2.65,3.3]},
     side:{camera:[31,9,2.5],target:[0,2.8,0]},
     back:{camera:[12,8,-28],target:[0,2.7,0]},
     // Plot-wide top view centers the house and the reserved pool zone together,
@@ -199,11 +202,11 @@ try {
     facade:mobileView?{camera:[9.7,6.4,16.3],target:[0,2.45,2.4]}:{camera:[12.5,7.2,20],target:[0,2.5,2.7]},
     roof:mobileView?{camera:[10.2,10.0,17],target:[0,3.8,1.7]}:{camera:[14.3,12.1,20],target:[0,4.0,1.7]},
     fence:{camera:[23,16.5,33],target:[0,3.05,5]},
-    presets:mobileView?{camera:[17,13,49.5],target:[0,2.25,6.8]}:{camera:[22,14,51],target:[0,2.3,6.5]}
+    presets:mobileView?{camera:[14,11,37],target:[0,2.6,4]}:{camera:[18,13,43],target:[0,2.65,3.3]}
   };
   let focusTransition=null;
   window.addEventListener('kaskad:focus-view',event=>{
-    if(typeof isSitePreview!=='undefined'&&isSitePreview)return;
+    if(isInteriorMode||(typeof isSitePreview!=='undefined'&&isSitePreview))return;
     const cfg=focusViews[event.detail?.tab];
     if(!cfg)return;
     focusTransition={
@@ -214,6 +217,7 @@ try {
   controls.addEventListener('start',()=>{focusTransition=null});
   const viewpointSelect=document.getElementById('sceneViewSelect');
   function setView(key){
+    if(isInteriorMode)return;
     const cfg=focusViews[key]||focusViews.front;
     focusTransition={camera:new THREE.Vector3(...cfg.camera),target:new THREE.Vector3(...cfg.target)};
     controls.autoRotate=false;
@@ -285,6 +289,9 @@ try {
   box(13.2,.18,9.45,quartz,0,3.66,0);
   box(13.4,.28,9.6,limestone,0,6.86,0);
   box(13.0,.16,9.35,quartz,0,7.1,0);
+  // Permanent roofing support and opaque inner ceiling at the attic junction.
+  box(12.93,.22,9.13,brick,0,6.96,0);
+  box(12.85,.10,9.05,quartz,0,7.08,0);
   const porchStart=scene.children.length;
   // Low, supported entrance canopy: below the upper windows (starts ~4.7 m),
   // not the previous 4.7–4.9 m full-width slab intersecting their sills.
@@ -812,6 +819,59 @@ const veranda=createVeranda(THREE,scene);
   // to drag the camera across the plot on a narrow phone.
   poolToggle?.addEventListener('change',()=>{if(poolToggle.checked)setView('top')});
   updateOpenings();updateLandscape();
+  // One-time capture of existing EXTERIOR scene objects, excluding the lights
+  // created later. Do not delete or rebuild a configured house when entering.
+  const exteriorSceneObjects=scene.children.filter(object=>object.isMesh||object.isGroup||object.isInstancedMesh);
+  const interiorTour=createInteriorTour(THREE,scene);
+  const interiorButton=document.getElementById('sceneEnterInterior');
+  const roomPicker=document.getElementById('sceneRoomPicker');
+  const overviewButton=document.getElementById('sceneOverviewButton');
+  const sceneDimensions=document.querySelector('.scene-metric-badge');
+  let exteriorVisibility=new Map(),exteriorCamera=null,exteriorTarget=null;
+  let exteriorNear=controls.minDistance,exteriorFar=controls.maxDistance,
+      exteriorPolar=controls.maxPolarAngle;
+  const roomButtons=[...document.querySelectorAll('#sceneRoomPicker [data-room]')];
+  const showRoom=id=>{
+    const title=interiorTour.setRoom(id);
+    roomButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.room===interiorTour.getRoom())));
+    roomPicker.querySelector('.scene-room-heading').textContent='Интерьер · '+title;
+    camera.position.set(1.05,1.92,2.62);
+    controls.target.set(0,1.12,-.55);
+    controls.update();focusTransition=null;
+  };
+  const toggleInterior=()=>{
+    isInteriorMode=!isInteriorMode;
+    if(isInteriorMode){
+      exteriorVisibility=new Map(exteriorSceneObjects.map(object=>[object,object.visible]));
+      for(const object of exteriorSceneObjects)object.visible=false;
+      exteriorCamera=camera.position.clone();exteriorTarget=controls.target.clone();
+      exteriorNear=controls.minDistance;exteriorFar=controls.maxDistance;
+      exteriorPolar=controls.maxPolarAngle;
+      controls.minDistance=.95;controls.maxDistance=3.55;
+      controls.maxPolarAngle=Math.PI*.72;controls.autoRotate=false;
+      interiorTour.root.visible=true;roomPicker.hidden=false;
+      overviewButton.hidden=true;sceneDimensions.hidden=true;
+      if(gestureTip)gestureTip.classList.add('is-used');
+      interiorButton.textContent='← Снаружи';
+      interiorButton.setAttribute('aria-pressed','true');
+      showRoom('living');
+    }else{
+      interiorTour.root.visible=false;
+      for(const [object,visible] of exteriorVisibility)object.visible=visible;
+      controls.minDistance=exteriorNear;controls.maxDistance=exteriorFar;
+      controls.maxPolarAngle=exteriorPolar;
+      camera.position.copy(exteriorCamera);controls.target.copy(exteriorTarget);
+      controls.update();focusTransition=null;
+      roomPicker.hidden=true;overviewButton.hidden=false;sceneDimensions.hidden=false;
+      interiorButton.textContent='Войти в дом';
+      interiorButton.setAttribute('aria-pressed','false');
+      if(isSitePreview)refreshSitePreview();
+      else updateLandscape();
+    }
+  };
+  interiorButton?.addEventListener('click',toggleInterior);
+  roomButtons.forEach(button=>button.addEventListener('click',()=>showRoom(button.dataset.room)));
+
 
   // Color swatches reference common RAL-like palettes, with no claims of exact screen color.
   const palette={
@@ -917,6 +977,11 @@ const veranda=createVeranda(THREE,scene);
   // CC0 landscape textures load only after the 3D constructor is visited.
   // Leafy ground cover is used in flowerbeds; the lawn stays green.
   loadPhotoTexture('concrete_pavement_02_1k',2,5,tex=>{gravel.map=tex;gravel.needsUpdate=true});
+  // CC0 photographic grass replaces the flat procedural lawn: fine texture
+  // at close zoom, without adding thousands of GPU-intensive grass blades.
+  loadPhotoTexture('leafy_grass_lush_v41',30,30,tex=>{
+    meadow.map=tex;meadow.roughness=.99;meadow.needsUpdate=true;
+  });
   // Green lawn remains untouched; flowers use geometry, not brown textures.
   renderer.domElement.style.visibility='hidden';
   window.setTimeout(revealFacade,4500);

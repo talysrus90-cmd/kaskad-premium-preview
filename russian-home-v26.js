@@ -199,6 +199,13 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
    for(const end of [-1,1])box(g,edgeX*2+.1,.12,.18,0,3.75,end*(edgeZ+.06),gutterMetal);
    g.userData.guardMetal=guardMetal;g.userData.gutterMetal=gutterMetal;
   }
+  // Solid ceiling and continuity ring across every exterior wall.
+  // Roof surfaces used to float 10-15cm above the cornice in near viewpoints.
+  box(g,12.88,.17,9.10,0,3.74,0,frameTrim,false);
+  for(const side of [-1,1]){
+   box(g,.20,.25,9.12,side*6.38,3.72,0,brick,false);
+   box(g,12.83,.25,.20,0,3.72,side*4.48,brick,false);
+  }
   // Completely close and finish soffits, eave ends and underlying walls.
   for(const side of [-1,1]){
     face(g,[[side*6.41,3.72,-edgeZ],[side*edgeX,3.72,-edgeZ],
