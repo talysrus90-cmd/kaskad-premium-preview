@@ -74,13 +74,20 @@
    },origin);
   };
   jump();
-  if(iframe.contentDocument?.readyState==='complete'){
+  // Lazy iframe may initially have readyState=complete for about:blank.
+  // Announce the opening only after the real constructor document is ready.
+  if(validFrame()&&iframe.contentDocument?.readyState==='complete'){
    message();
   }else{
-   iframe.addEventListener('load',()=>{
+   const onRealFrame=()=>{
+    if(seq!==openRequest){iframe.removeEventListener('load',onRealFrame);return}
+    if(!validFrame())return;
+    iframe.removeEventListener('load',onRealFrame);
     jump();
     message();
-   },{once:true});
+   };
+   iframe.addEventListener('load',onRealFrame);
+   if(validFrame()&&iframe.contentDocument?.readyState==='complete')onRealFrame();
   }
   // A late font/layout shift should not move the editor back below the fold.
   requestAnimationFrame(()=>jump());
