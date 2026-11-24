@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v59-priority-cache';
+const VERSION='kaskad-pwa-20261124-v62-3d-edge-only';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
