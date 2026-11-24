@@ -4,7 +4,7 @@
   body{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}
   .kaskad-mobile-dock{
     position:fixed;left:0;right:0;bottom:0;z-index:100;
-    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
     align-items:stretch;gap:5px;
     padding:8px max(12px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));
     background:rgba(252,250,246,.98);backdrop-filter:blur(14px);
@@ -19,6 +19,7 @@
     cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
   }
   .kaskad-mobile-dock svg{width:20px;height:20px;flex:none;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .kaskad-mobile-dock .kaskad-dock-builder{border:1px solid #acc1ae;background:#eaf0e8;color:#294c38}
   .kaskad-mobile-dock .kaskad-dock-request{background:#355b46;color:#fff}
   .kaskad-mobile-dock>a:focus-visible,.kaskad-mobile-dock>button:focus-visible{outline:3px solid #ba7756;outline-offset:2px}
   .kaskad-mobile-dock>a:active,.kaskad-mobile-dock>button:active{transform:scale(.98)}

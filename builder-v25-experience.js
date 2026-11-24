@@ -241,6 +241,32 @@
   summary();
  }
  quickStep?.addEventListener('change',()=>show(Number(quickStep.value)));
+ // Trusted opener from parent: the mobile bottom button must reveal actual
+ // house/material cards, not merely scroll to the 3D image. Repeated clicks
+ // reopen the chooser even if the URL is already #interactive-home.
+ window.addEventListener('message',event=>{
+  if(window.parent===window||event.source!==window.parent||event.origin!==location.origin)return;
+  if(event.data?.type!=='kaskad-builder-open'||event.data?.version!==1)return;
+  const wanted=Number(event.data.step);
+  const nextStage=Number.isInteger(wanted)?Math.max(0,Math.min(stages.length-1,wanted)):0;
+  show(nextStage,true);
+  requestAnimationFrame(()=>{
+   const target=nextStage===0?
+     root.querySelector('.builder-category-filter')||root.querySelector('.builder-material-card'):
+     ({geometry:geom,roof:roofShapes,facade:facadeHelp,
+       openings:document.getElementById('builderOpenings'),
+       site:document.getElementById('builderGarden'),
+       summary:document.getElementById('builderFinal')})[stages[nextStage].id];
+   if(target&&!target.hidden){
+    const fixed=document.querySelector('.viewer-col');
+    const fixedHeight=fixed?.getBoundingClientRect().height||0;
+    const offset=target.getBoundingClientRect().top+window.scrollY-fixedHeight+8;
+    window.scrollTo({top:Math.max(0,offset),behavior:'instant'});
+   }
+   window.parent.postMessage({type:'kaskad-builder-opened',version:1,
+      stage:nextStage,choices:root.querySelectorAll('.builder-material-card').length},location.origin);
+  });
+ });
  document.getElementById('builderPrev').addEventListener('click',()=>show(step-1));
  document.getElementById('builderNext').addEventListener('click',()=>{
   if(step<stages.length-1){show(step+1);return}

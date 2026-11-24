@@ -25,3 +25,22 @@
  .kaskad-3d-feature .k3d-eyebrow{font-size:10px;letter-spacing:.11em}
  .kaskad-3d-feature iframe{height:clamp(650px,84dvh,760px)!important;overscroll-behavior:contain}
 }
+
+/* КАСКАД v29 — entry into a real configurator, not just a same-page anchor */
+.kaskad-open-builder-cta{
+ display:inline-flex;align-items:center;justify-content:center;max-width:100%;
+ margin:14px 0 0;padding:13px 18px;min-height:45px;
+ border:1px solid #325b42;border-radius:10px;
+ background:#305c43;color:#fff;box-shadow:0 5px 18px #27463425;
+ font:800 12px/1.4 Manrope,system-ui,sans-serif;text-align:center;
+ cursor:pointer;touch-action:manipulation;
+}
+.kaskad-open-builder-cta:hover{background:#234932}
+.kaskad-open-builder-cta:focus-visible{outline:3px solid #bf7653;outline-offset:3px}
+.kaskad-3d-feature.kaskad-builder-active .k3d-viewer{
+ border-color:#9cb5a2;box-shadow:0 0 0 2px rgba(53,103,72,.13),0 16px 48px #24352819
+}
+@media(max-width:730px){
+ .kaskad-open-builder-cta{display:flex;width:100%;margin:11px 0 0;
+ padding:10px 12px;min-height:44px}
+}
