@@ -951,3 +951,9 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
  .scene-top-view-button:focus-visible{outline:3px solid #b97a57;outline-offset:2px}
  body.kaskad-interior-active .scene-top-view-button{display:none!important}
 }
+
+/* v62: block native page scrolling only over the 3D image.
+   OrbitControls still rotates in both axes until the actual polar limit. */
+@media(max-width:730px), (max-width:1080px) and (hover:none) and (pointer:coarse){
+ #sceneContainer{touch-action:none!important;overscroll-behavior:contain!important}
+}
