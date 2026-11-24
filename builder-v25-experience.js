@@ -394,9 +394,21 @@
    }
    addonStatus.textContent='Модель дома изменена: '+b.querySelector('strong').textContent+'. Фасад и отделку можно выбрать отдельно.';
   }else if(b.dataset.addonVeranda){
+   // Two-balcony architecture uses the rear veranda zone: select a compatible
+   // two-floor house instead of falsely claiming a veranda was added.
+   let changedStyle=false;
+   if(fields.houseStyleSelect.value==='twoBalcony'){
+    fields.houseStyleSelect.value='twoTerrace';
+    fields.houseStyleSelect.dispatchEvent(new Event('change',{bubbles:true}));
+    fields.roofShapeSelect.value='hip';
+    fields.roofShapeSelect.dispatchEvent(new Event('change',{bubbles:true}));
+    changedStyle=true;
+   }
    fields.verandaSelect.value=b.dataset.addonVeranda;
    fields.verandaSelect.dispatchEvent(new Event('change',{bubbles:true}));
-   addonStatus.textContent='Крытая веранда добавлена к выбранному дому.';
+   addonStatus.textContent=changedStyle
+    ?'Выбран совместимый двухэтажный дом: вместо заднего балкона установлена крытая веранда.'
+    :'Крытая веранда добавлена к выбранному дому.';
   }
   syncAddons();
  });
