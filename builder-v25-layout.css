@@ -822,3 +822,7 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
   background:#f7f7f0!important;
  }
 }
+
+/* v50: stages are selected directly from the tabs; remove the redundant bottom wizard dock. */
+#builderV25Actions{display:none!important}
+@media(max-width:730px){.controls{padding-bottom:8px!important}}
