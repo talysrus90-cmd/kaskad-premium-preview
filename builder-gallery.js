@@ -160,7 +160,26 @@
    const option=document.createElement('option');option.value=category==='Все дома'?'all':category;
    option.textContent=category==='Все дома'?'Все дома ('+data.presets.length+')':category+' ('+data.presets.filter(item=>item.category===category).length+')';filter.append(option);
  }
- nav.after(filter);filter.addEventListener('change',()=>render());
+ nav.after(filter);
+ const families=document.createElement('div');families.className='builder-family-chips';
+ families.setAttribute('role','group');families.setAttribute('aria-label','Выбор этажности дома');
+ filter.after(families);
+ const familyLabels=[
+  ['all','Все'],['Одноэтажные','1 этаж'],
+  ['Одноэтажные с мансардой','1 + мансарда'],
+  ['Двухэтажные','2 этажа'],
+  ['Двухэтажные с мансардой','2 + мансарда']
+ ];
+ for(const [value,label] of familyLabels){
+  const b=document.createElement('button');b.type='button';b.dataset.category=value;
+  b.textContent=label;b.title=value==='all'?'Все дома':value;
+  b.addEventListener('click',()=>{
+   if(filter.value===value)return;
+   filter.value=value;render();
+  });
+  families.append(b);
+ }
+ filter.addEventListener('change',()=>render());
  // Sync the complete style library with the accessible select fallback.
  const chosen=fields.houseStyle.value;
  fields.houseStyle.replaceChildren(...data.presets.map(v=>new Option(v.title,v.value)));
@@ -240,6 +259,9 @@
    for(const tab of nav.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===activeTab));
    cardList.replaceChildren();
    filter.hidden=activeTab!=='presets';
+   families.hidden=activeTab!=='presets';
+   for(const b of families.children)
+    b.setAttribute('aria-pressed',String(b.dataset.category===filter.value));
    const distinctiveProjects=data.presets;
    const items=activeTab==='presets'?
      (filter.value==='all'?distinctiveProjects:distinctiveProjects.filter(item=>item.category===filter.value)):
