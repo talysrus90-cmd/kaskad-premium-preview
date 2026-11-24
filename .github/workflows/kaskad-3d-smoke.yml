@@ -1,0 +1,33 @@
+name: KASKAD 3D browser regression
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  chromium-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.57.0
+          npx playwright install --with-deps chromium
+      - name: Start local preview
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/kaskad-http.log 2>&1 &
+          sleep 2
+      - name: Desktop / mobile 3D UI smoke
+        run: node tests/v48-browser-check.mjs
+      - name: Keep screenshots on failed checks
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaskad-v48-failed-browser-screens
+          path: test-results/
+          if-no-files-found: ignore
