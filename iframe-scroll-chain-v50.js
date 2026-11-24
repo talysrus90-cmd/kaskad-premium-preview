@@ -1,4 +1,4 @@
-/* KASKAD v50: boundary-aware scrolling between the embedded house and the main page.
+/* KASKAD v51: boundary-aware scrolling between the embedded house and the main page.
    Preserve 3D orbit, plan dragging and horizontal sliders. */
 (() => {
   'use strict';
@@ -10,7 +10,8 @@
       if (event.data?.type !== 'kaskad-scroll-chain' || event.data?.version !== 1) return;
       const delta = Number(event.data.deltaY);
       if (!Number.isFinite(delta) || Math.abs(delta) < 0.1) return;
-      window.scrollBy(0, Math.max(-100, Math.min(100, delta)));
+      // Explicit instant mode overrides the site's smooth anchor-scroll CSS.
+      window.scrollBy({top: Math.max(-340, Math.min(340, delta)), behavior: 'instant'});
     }, {passive: true});
     return;
   }
@@ -21,11 +22,11 @@
   const plotHouse = document.getElementById('builderPlotHouse');
   if (!controlsPanel || !scene) return;
 
-  const relay = deltaY => {
+  const relay = (deltaY, kind='touch') => {
     if (!Number.isFinite(deltaY) || !deltaY) return;
     window.parent.postMessage({
       type: 'kaskad-scroll-chain', version: 1,
-      deltaY: Math.max(-100, Math.min(100, deltaY))
+      deltaY: Math.max(-340, Math.min(340, deltaY * (kind==='wheel' ? 1.6 : 2.8)))
     }, location.origin);
   };
   const hasMoreScroll = delta => {
@@ -110,6 +111,6 @@
       : kind === 'panel' ? !hasMoreScroll(delta) : true;
     if (!atEnd) return;
     if (event.cancelable) event.preventDefault();
-    relay(delta);
+    relay(delta,'wheel');
   }, {capture: true, passive: false});
 })();
