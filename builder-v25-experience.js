@@ -130,6 +130,12 @@
    <p class="builder-v25-toast" id="builderSaveMessage" aria-live="polite"></p>
   </section>`;
  root.after(group);
+ // Blind-area prototype is hidden until it receives a quality architectural finish.
+ const disabledBlindArea=document.getElementById('blindAreaType');
+ if(disabledBlindArea){disabledBlindArea.value='none';
+  ['blindAreaType','blindAreaColor','blindAreaWidth','blindAreaContour'].forEach(id=>
+   document.getElementById(id)?.closest('label')?.setAttribute('hidden',''));
+ }
  // Controls belong in the panel, never cover the 3D image.
  const facadeHelp=document.createElement('section');
  facadeHelp.className='builder-material-explainer';facadeHelp.hidden=true;
@@ -424,7 +430,7 @@
    ['Отмостка',name('blindAreaType')+', '+name('blindAreaWidth')+', '+name('blindAreaColor')],
    ['Бассейн',fields.poolToggle?.checked?'Есть':'Без бассейна']
   ];
-  result.replaceChildren(...rows.map(([label,value])=>{
+  result.replaceChildren(...rows.filter(([label])=>label!=='Отмостка').map(([label,value])=>{
    const p=document.createElement('p');
    const strong=document.createElement('strong');strong.textContent=label+': ';
    p.append(strong,document.createTextNode(value));

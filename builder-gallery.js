@@ -33,6 +33,10 @@
    {key:'fence',label:'Забор'},
    {key:'presets',label:'Стили домов'}
  ];
+ // Retain genuinely different massing / entry / roof families in the main
+ // catalog. Colour-only doubles belong in the Facade tab, not in Styles.
+ const duplicateProjects=new Set(['twoMansardBrick','twoClassic','twoFamily','twoEstate',
+   'practical','craft','country','italian','coastal']);
  const data={
   presets:[
     {value:"farmhouseOne",title:"Семейный с широким крыльцом",sub:"1 этаж",image:"preset_farmhouseOne_v32",category:"Одноэтажные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"farmhouseOne",houseSize:"150",roofShape:"gable"}},
@@ -205,20 +209,29 @@
    for(const tab of nav.children)tab.setAttribute('aria-selected',String(tab.dataset.builderTab===activeTab));
    cardList.replaceChildren();
    filter.hidden=activeTab!=='presets';
-   const items=activeTab==='presets'&&filter.value!=='all'?
-     data.presets.filter(item=>item.category===filter.value):data[activeTab];
+   const distinctiveProjects=data.presets.filter(item=>!duplicateProjects.has(item.value));
+   const items=activeTab==='presets'?
+     (filter.value==='all'?distinctiveProjects:distinctiveProjects.filter(item=>item.category===filter.value)):
+     data[activeTab];
    for(const item of items){
      const button=document.createElement('button');button.type='button';button.className='builder-material-card';
      button.dataset.option=item.value;
      if(activeTab==='facade')button.classList.add('builder-facade-choice');
+     if(activeTab==='fence')button.classList.add('builder-fence-choice');
      button.setAttribute('aria-pressed',String(selected(item)));
      button.setAttribute('aria-label',item.title+'. '+item.sub+'. Выбрать');
-     const img=document.createElement('img');img.src=activeTab==='facade'?src+'material_'+item.value+'_v37.webp':src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
+     const img=document.createElement('img');img.src=activeTab==='facade'?src+'material_'+item.value+'_v37.webp':activeTab==='fence'?src+'fence_sample_'+item.value+'_v42.webp':src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
      const title=document.createElement('strong');title.textContent=item.title;
      const caption=document.createElement('span');
      caption.textContent=activeTab==='presets'?item.category+' · размеры изменяются отдельно':item.sub;
      if(activeTab==='facade'){
        img.loading='eager';img.fetchPriority='low';img.width=64;img.height=64;
+       button.append(img,title);
+     }else if(activeTab==='fence'){
+       img.width=176;img.height=76;
+       // The full fence set is only a few dozen kilobytes; load it eagerly
+       // to avoid missing previews during a quick tab switch on mobile.
+       img.loading='eager';
        button.append(img,title);
      }else button.append(img,title,caption);
      button.addEventListener('click',()=>choose(item));

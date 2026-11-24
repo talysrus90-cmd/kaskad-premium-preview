@@ -28,6 +28,14 @@ export function addNaturalFoliage(THREE,scene,{trunkMat}){
     m.position.set(x,y,z);m.rotation.set(angleX,0,angleZ);
     m.castShadow=true;scene.add(m);
   };
+  const jointedBranch=(x1,y1,z1,x2,y2,z2,radius)=>{
+    const a=new THREE.Vector3(x1,y1,z1),b=new THREE.Vector3(x2,y2,z2),
+      diff=b.clone().sub(a);
+    const m=new THREE.Mesh(new THREE.CylinderGeometry(radius*.62,radius,diff.length(),7),trunkMat);
+    m.position.copy(a.add(b).multiplyScalar(.5));
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),diff.normalize());
+    m.castShadow=true;scene.add(m);
+  };
   function leaf(x,y,z,width,height,shade=0,rot=0){
     positions[shade%positions.length].push([x,y,z,width,height,rot]);
   }
@@ -37,7 +45,7 @@ export function addNaturalFoliage(THREE,scene,{trunkMat}){
     for(let b=0;b<7;b++){
       const a=b*2.399+variety, dx=Math.cos(a),dz=Math.sin(a);
       const len=(1.25+(b%3)*.35)*s, cy=h*.73+(b%3)*.23*s;
-      trunk(x+dx*len*.25,cy,z+dz*len*.25,.06*s,.10*s,len*.92,0,dx*.45);
+      jointedBranch(x,h*.60,z,x+dx*len*.67,cy,z+dz*len*.67,.09*s);
       const ccx=x+dx*len*.77,ccz=z+dz*len*.77;
       for(let j=0;j<14;j++){
         const angle=j*2.4+b,spread=(.2+rand()*.83)*s;

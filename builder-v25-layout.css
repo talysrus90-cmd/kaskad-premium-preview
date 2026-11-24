@@ -627,3 +627,108 @@
 .scene .scene-room-picker{top:39px!important;bottom:auto!important;
  background:#fffdf3e6}
 @media(max-width:390px){.scene .scene-room-picker{top:36px!important;bottom:auto!important}}
+
+
+/* KASKAD v42: no large overlay over interior views. */
+#sceneRoomPicker.builder-room-panel{
+ position:relative!important;top:auto!important;left:auto!important;right:auto!important;
+ bottom:auto!important;z-index:auto!important;
+ width:100%!important;max-width:100%!important;box-sizing:border-box;
+ margin:3px 0 7px!important;padding:8px 9px!important;
+ background:#f7f7f0!important;border:1px solid #d3ddce!important;
+ border-radius:10px!important;box-shadow:none!important;
+ color:#31563c!important;pointer-events:auto!important;
+}
+#sceneRoomPicker.builder-room-panel[hidden]{display:none!important}
+#sceneRoomPicker.builder-room-panel .scene-room-heading{
+ font-size:12px!important;margin-bottom:6px!important
+}
+#sceneRoomPicker.builder-room-panel .scene-room-options{gap:5px!important;display:flex!important}
+#sceneRoomPicker.builder-room-panel .scene-room-options button{
+ min-height:34px!important;font-size:11px!important;flex:1 1 25%!important
+}
+#sceneRoomPicker.builder-room-panel .room-photo-mode{
+ display:block;width:100%;margin-top:7px;padding:7px;
+ border:1px solid #b5c9bc;border-radius:8px;background:white;
+ color:#315642;font:800 11px/1.3 Manrope,system-ui,sans-serif;
+ cursor:pointer
+}
+body.kaskad-interior-active #builderQuickTabs,
+body.kaskad-interior-active #builderGallery,
+body.kaskad-interior-active #builderComponentScroll,
+body.kaskad-interior-active #builderStepLabel,
+body.kaskad-interior-active #builderControlsScroll{
+ /* The controls are managed by the original builder; hide only tabs/catalog,
+    never the room panel or its parent scroll container. */
+}
+body.kaskad-interior-active #builderQuickTabs{display:none!important}
+body.kaskad-interior-active #builderGallery{display:none!important}
+body.kaskad-interior-active .builder-v25-intro{display:none!important}
+.scene .scene-interior-photo{
+ position:absolute;z-index:6;inset:0;width:100%;height:100%;
+ object-fit:cover;object-position:center center;pointer-events:none;
+ border-radius:inherit;
+}
+.scene .scene-interior-photo[hidden],.scene .scene-interior-photo-caption[hidden]{display:none!important}
+.scene .scene-interior-photo-caption{
+ position:absolute;z-index:7;top:9px;right:9px;max-width:68%;
+ padding:4px 7px;border-radius:7px;background:#f9faf4dc;
+ color:#31553e;font:800 10px/1.25 Manrope,system-ui,sans-serif;
+ pointer-events:none
+}
+/* Dedicated, small fence samples. No whole-house photos in this tab. */
+#builderGallery[data-active-material="fence"] .builder-gallery-tabs{display:none!important}
+#builderGallery[data-active-material="fence"] .builder-choice-summary{display:none!important}
+#builderGallery[data-active-material="fence"] .builder-material-list{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-auto-flow:row!important;grid-auto-columns:auto!important;
+ gap:7px!important;overflow:visible!important;scroll-snap-type:none!important;
+ padding:3px 0 8px!important
+}
+#builderGallery[data-active-material="fence"] .builder-fence-choice{
+ display:flex!important;flex-direction:column!important;gap:5px!important;
+ min-width:0!important;min-height:111px!important;width:100%!important;
+ padding:6px!important;border-radius:10px!important;
+ scroll-snap-align:none!important;box-shadow:none!important
+}
+#builderGallery[data-active-material="fence"] .builder-fence-choice img{
+ display:block!important;width:100%!important;height:72px!important;
+ object-fit:cover!important;border-radius:7px!important;border:1px solid #d4dfd1
+}
+#builderGallery[data-active-material="fence"] .builder-fence-choice strong{
+ font:800 11px/1.18 Manrope,system-ui,sans-serif!important;color:#354e3c!important;
+ padding:0 14px 0 2px!important;overflow-wrap:anywhere
+}
+#builderGallery[data-active-material="fence"] .builder-fence-choice[aria-pressed=true]{
+ border:2px solid #346449!important;background:#eef5ec!important
+}
+#builderGarden label[hidden]{display:none!important}
+.kaskad-site-scene-hint[hidden]{display:none!important}
+@media(min-width:720px){
+ #builderGallery[data-active-material="fence"] .builder-material-list{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important
+ }
+}
+@media(max-width:390px){
+ #builderGallery[data-active-material="fence"] .builder-fence-choice img{height:65px!important}
+ #builderGallery[data-active-material="fence"] .builder-fence-choice{min-height:102px!important}
+ #sceneRoomPicker.builder-room-panel .scene-room-options button{font-size:10px!important;padding:6px!important}
+}
+
+
+/* Finish interior navigation without a bulky card or wizard footer. */
+#sceneRoomPicker.builder-room-panel .scene-photo-toggle{
+ display:block!important;width:auto!important;margin:7px 0 0!important;
+ padding:7px 10px!important;min-height:32px!important;
+ border:1px solid #aec8b5!important;border-radius:8px!important;
+ color:#35583e!important;background:#fff!important;
+ font:800 11px/1.2 Manrope,system-ui,sans-serif!important;
+ box-shadow:none!important;cursor:pointer!important
+}
+body.kaskad-interior-active #builderPrev,
+body.kaskad-interior-active #builderNext,
+body.kaskad-interior-active #builderStepLabel,
+body.kaskad-interior-active #builderStepTitle,
+body.kaskad-interior-active #builderProgress{display:none!important}
+body.kaskad-interior-active :has(> #builderPrev),
+body.kaskad-interior-active :has(> #builderProgress){display:none!important}

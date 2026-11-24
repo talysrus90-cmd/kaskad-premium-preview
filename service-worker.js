@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v41-interior-closed-roof';
+const VERSION='kaskad-pwa-20261124-v42-site-stability';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -17,15 +17,15 @@ const core=[
  './interactive-home.css?v=10',
  './mobile-usability-20261123.css?v=1',
  './kaskad-type-tuning.css?v=1',
- './3d-house-embed.html?v=25',
- './house-3d.bundle.js?v=21',
+ './3d-house-embed.html?v=26',
+ './house-3d.bundle.js?v=22',
  './3d-house.css?v=4',
- './builder-v25-layout.css?v=11',
- './builder-v25-experience.js?v=12',
+ './builder-v25-layout.css?v=12',
+ './builder-v25-experience.js?v=13',
  './mobile-dock-20261110.css?v=2',
  './mobile-dock-20261110.js?v=4',
  './builder-launch-v29.js?v=2',
- './builder-gallery.js?v=14',
+ './builder-gallery.js?v=15',
  './roof-relief-v25.js',
  './russian-home-v26.js',
  './house-variants-v27.js',

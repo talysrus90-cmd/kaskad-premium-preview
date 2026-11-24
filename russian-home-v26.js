@@ -45,9 +45,10 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  const addons=createExteriorAddons(THREE,root,{stone:limestone,brick,wood:timber,metal:darkMetal});
  // Real front door and external opening reveals; porch only in front of entrance,
  // never over the first/attic floor windows.
- box(main,13.28,.36,9.46,0,.27,0,limestone);
+ const foundationFinish=new THREE.MeshStandardMaterial({color:'#55524c',roughness:.93});
+ box(main,13.28,.36,9.46,0,.27,0,foundationFinish);
  const wall=box(main,12.8,3.18,9.0,0,1.98,0,brick);
- box(main,13.03,.13,9.24,0,.53,0,frameTrim);
+ box(main,13.03,.13,9.24,0,.53,0,foundationFinish);
  box(main,13.05,.16,9.26,0,3.62,0,frameTrim);
  const frontDoorStart=main.children.length;
  const frontDoor=box(main,1.58,2.29,.15,0,1.7,4.64,doorMat);

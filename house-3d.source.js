@@ -242,6 +242,8 @@ try {
   });
   const limestone=M('#e6dece',.79);
   const quartz=M('#ede7da',.57);
+  const baseStone=M('#55534d',.91);
+  const stepCladding=M('#94877b',.86);
   const roofMat=M('#3e4849',.82);
   const doorMat=M('#4a3a31',.67,{metalness:.08});
   const bronze=M('#6f6555',.53,{metalness:.48});
@@ -274,7 +276,7 @@ try {
   // Capture only the building's geometry, not plot, trees, pool or fence.
   const houseStart=scene.children.length;
   // Foundations, warm brick masonry, cornices, porch with stone columns.
-  box(13.6,.42,9.65,limestone,0,.29,0);
+  box(13.6,.42,9.65,baseStone,0,.29,0);
   // A single facade material is shared by all four walls and BOTH roof gables.
   // Side UV is scaled to its actual 9m width (front/back 12.8m), so the
   // masonry pattern has the same physical size around every corner.
@@ -487,13 +489,14 @@ const veranda=createVeranda(THREE,scene);
     veranda.setDimensions(width,length);
     blindArea.setLayout({
       houseWidth:width,houseLength:length,
-      type:blindAreaType?.value||'concrete',
+      type:'none',
       color:blindAreaColor?.value||'graphite',
       width:Number(blindAreaWidth?.value)||.9,
       contour:blindAreaContour?.value||'all',
       verandaOn:(verandaSelect?.value||'none')!=='none'
     });
   };
+  blindArea.root.visible=false;
   [plinthSelect,verandaSelect,blindAreaType,blindAreaColor,blindAreaWidth,blindAreaContour].forEach(el=>el?.addEventListener('change',updateExteriorDetails));
   updateExteriorDetails();
   const twoStoryEntrance=createEntranceVariants(THREE,houseRoot,{
@@ -580,7 +583,7 @@ const veranda=createVeranda(THREE,scene);
   roofShapeSelect?.addEventListener('change',applyRoofShape);
   applyWholeStyle();
   // Connected entrance steps and a single central walkway, separate vehicle gate.
-  for(let i=0;i<3;i++)box(3.35+i*.42,.16,.69,quartz,0,.34-i*.09,6.54+i*.55);
+  for(let i=0;i<3;i++)box(3.35+i*.42,.16,.69,stepCladding,0,.34-i*.09,6.54+i*.55);
   const frontYard=createFrontYard(THREE,scene,{lawnMaterial:meadow});
   // Pool and borders on the lawn; do not use video or external heavy textures.
   const poolStart=scene.children.length;
@@ -712,17 +715,19 @@ const veranda=createVeranda(THREE,scene);
     plotHousePivot.position.set(isSitePreview?deltaX:0,0,isSitePreview?deltaZ:0);
     plotOutline.visible=isSitePreview;
     if(isSitePreview){
+      camera.far=600;camera.updateProjectionMatrix();
+      if(scene.fog){scene.fog.near=170;scene.fog.far=600}
       frontYard.root.visible=false;foliageGroup.visible=false;poolGroup.visible=false;
       const selected=fenceSystem.setType(fenceSelect?.value||'iron');selected.visible=false;
       if(width!==lastFramedWidth||depth!==lastFramedDepth){
-        const topHeight=Math.max(29,Math.max(width,depth)*1.25);
-        focusTransition={camera:new THREE.Vector3(width*.76,topHeight,mid+depth*.64),
+        const topHeight=Math.max(29,Math.max(width,depth)*.92);
+        focusTransition={camera:new THREE.Vector3(width*.59,topHeight,mid+depth*.48),
           target:new THREE.Vector3(0,1.1,mid)};
         lastFramedWidth=width;lastFramedDepth=depth;
       }
       controls.maxDistance=Math.max(100,Math.max(width,depth)*1.9);
       // Sizing remains based on selected side lengths, never on an arbitrary square.
-      siteSceneHint.hidden=false;
+      siteSceneHint.hidden=true;
       siteSceneHint.textContent='🏠 '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+
         (width*depth/100).toLocaleString('ru-RU',{maximumFractionDigits:2})+
         ' сот. · удерживайте дом и двигайте';
@@ -735,6 +740,8 @@ const veranda=createVeranda(THREE,scene);
     if(isSitePreview){refreshSitePreview()}
     else{
       siteSceneHint.hidden=true;lastFramedWidth=0;lastFramedDepth=0;
+      camera.far=170;camera.updateProjectionMatrix();
+      if(scene.fog){scene.fog.near=50;scene.fog.far=110}
       plotHousePivot.position.set(0,0,0);plotOutline.visible=false;
       frontYard.root.visible=true;
       fenceSystem.setType(fenceSelect?.value||'iron');
@@ -825,14 +832,41 @@ const veranda=createVeranda(THREE,scene);
   const interiorTour=createInteriorTour(THREE,scene);
   const interiorButton=document.getElementById('sceneEnterInterior');
   const roomPicker=document.getElementById('sceneRoomPicker');
+  document.getElementById('builderQuickTabs')?.after(roomPicker);
+  roomPicker.classList.add('builder-room-panel');
   const overviewButton=document.getElementById('sceneOverviewButton');
   const sceneDimensions=document.querySelector('.scene-metric-badge');
+  const interiorPhoto=document.createElement('img');
+  interiorPhoto.className='scene-interior-photo';interiorPhoto.hidden=true;
+  interiorPhoto.alt='Фотография примера интерьера, не планировка выбранного дома';
+  container.append(interiorPhoto);
+  const photoCredit=document.createElement('span');
+  photoCredit.className='scene-interior-photo-caption';
+  photoCredit.textContent='Фото-пример отделки';photoCredit.hidden=true;
+  container.append(photoCredit);
+  const realRooms={
+    hall:'room-13.jpg',living:'room-07.jpg',kitchen:'room-11.jpg',
+    bedroom:'room-08.jpg',bath:'room-06.jpg'
+  };
+  let showRealPhotos=true;
+  const photoToggle=document.createElement('button');photoToggle.type='button';
+  photoToggle.className='scene-photo-toggle';
+  photoToggle.textContent='Посмотреть 3D-эскиз';
+  roomPicker.append(photoToggle);
+  const updatePhoto=()=>{
+    interiorPhoto.hidden=!isInteriorMode||!showRealPhotos;
+    photoCredit.hidden=interiorPhoto.hidden;
+    photoToggle.textContent=showRealPhotos?'Посмотреть 3D-эскиз':'Вернуться к фото';
+  };
+  photoToggle.addEventListener('click',()=>{showRealPhotos=!showRealPhotos;updatePhoto()});
   let exteriorVisibility=new Map(),exteriorCamera=null,exteriorTarget=null;
   let exteriorNear=controls.minDistance,exteriorFar=controls.maxDistance,
       exteriorPolar=controls.maxPolarAngle;
   const roomButtons=[...document.querySelectorAll('#sceneRoomPicker [data-room]')];
   const showRoom=id=>{
     const title=interiorTour.setRoom(id);
+    interiorPhoto.src=new URL('assets/ideas/'+realRooms[id],document.baseURI).href;
+    updatePhoto();
     roomButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.room===interiorTour.getRoom())));
     roomPicker.querySelector('.scene-room-heading').textContent='Интерьер · '+title;
     camera.position.set(1.05,1.92,2.62);
@@ -841,6 +875,7 @@ const veranda=createVeranda(THREE,scene);
   };
   const toggleInterior=()=>{
     isInteriorMode=!isInteriorMode;
+    document.body.classList.toggle('kaskad-interior-active',isInteriorMode);
     if(isInteriorMode){
       exteriorVisibility=new Map(exteriorSceneObjects.map(object=>[object,object.visible]));
       for(const object of exteriorSceneObjects)object.visible=false;
@@ -856,7 +891,7 @@ const veranda=createVeranda(THREE,scene);
       interiorButton.setAttribute('aria-pressed','true');
       showRoom('living');
     }else{
-      interiorTour.root.visible=false;
+      interiorTour.root.visible=false;interiorPhoto.hidden=true;photoCredit.hidden=true;
       for(const [object,visible] of exteriorVisibility)object.visible=visible;
       controls.minDistance=exteriorNear;controls.maxDistance=exteriorFar;
       controls.maxPolarAngle=exteriorPolar;

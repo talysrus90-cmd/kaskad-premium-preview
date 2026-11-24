@@ -22,7 +22,7 @@ export function createExteriorAddons(THREE,parent,{stone,brick,wood,metal}={}){
   tile:mat('#878a88',.79,tileMap),
   dagestan:mat('#c0b6a2',.90,stoneMap),
   decorative:mat('#6c6f6d',.92,stoneMap),
-  graphite:mat('#454a4d'),
+  graphite:mat('#62605b',.90,stoneMap),
   taupe:mat('#71665b',.89,stoneMap),
   light:mat('#8c8781')
  };
@@ -33,8 +33,8 @@ export function createExteriorAddons(THREE,parent,{stone,brick,wood,metal}={}){
  // Thin facing material is laid on the four exterior faces over foundation.
  // This deliberately does not recolor all cornices and all window trims.
  // Высота облицовки 28 см, нижний край касается фундаментного пояса.
- for(const z of [-4.57,4.57])box(plinth,13.1,.28,.12,0,.56,z,materialTypes.graphite);
- for(const x of [-6.52,6.52])box(plinth,.12,.28,9.21,x,.56,0,materialTypes.graphite);
+ for(const z of [-4.82,4.82])box(plinth,13.45,.59,.12,0,.45,z,materialTypes.graphite);
+ for(const x of [-6.72,6.72])box(plinth,.12,.59,9.54,x,.45,0,materialTypes.graphite);
  const deck=box(terrace,5.5,.15,2.8,0,.37,-5.86,stone);
  const edging=box(terrace,5.65,.095,2.95,0,.48,-5.86,wood);
  const posts=[-2.45,2.45];

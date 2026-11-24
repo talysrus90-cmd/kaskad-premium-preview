@@ -76,8 +76,17 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
  tiles(pergolaPath,{x0:-9.70,z0:-3.64,width:1.92,length:.88,unitX:.34,unitZ:.34});
  // Planting beds with individual stems, five petals and greenery,
  // instead of hovering dot sprites on brown rectangles.
- const petalsGeometry=new THREE.SphereGeometry(1,9,7);
- const leafGeometry=new THREE.IcosahedronGeometry(1,1);
+ const flowerPetal=new THREE.Shape();
+ flowerPetal.moveTo(0,0);
+ flowerPetal.bezierCurveTo(.030,.035,.075,.10,0,.16);
+ flowerPetal.bezierCurveTo(-.075,.10,-.030,.035,0,0);
+ const petalsGeometry=new THREE.ShapeGeometry(flowerPetal,5);
+ petals.forEach(material=>{material.side=THREE.DoubleSide});
+ // Delicate pointed leaves rather than the previous green icosahedron balls.
+ const leafShape=new THREE.Shape();leafShape.moveTo(0,0);
+ leafShape.bezierCurveTo(.055,.05,.085,.13,.013,.20);
+ leafShape.bezierCurveTo(-.085,.13,-.055,.05,0,0);
+ const leafGeometry=new THREE.ShapeGeometry(leafShape,4);
  const trunk=new THREE.MeshStandardMaterial({color:'#46713f',roughness:.95});
  function flowerBed(parent,x,z,w,len,seed,kind='flower'){
   const bed=new THREE.Group();bed.name='Клумба с живыми цветами';parent.add(bed);
@@ -90,10 +99,16 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
   for(let a=0;a<columns;a++)for(let b=0;b<rows;b++){
    const px=x-w/2+(a+.5)*w/columns+(rand()-.5)*.11;
    const pz=z-len/2+(b+.5)*len/rows+(rand()-.5)*.17;
-   const height=kind==='bush'?.32+rand()*.20:.30+rand()*.24;
+   const height=kind==='bush'?.24+rand()*.40:.25+rand()*.37;
    g(bed,.023,height,.023,px,.24+height/2,pz,trunk);
-   const tuft=new THREE.Mesh(leafGeometry,rand()>.5?leaf:leaf2);
-   tuft.scale.set(.24,.17,.25);tuft.position.set(px,.28+height*.57,pz);bed.add(tuft);
+   for(let foliageLayer=0;foliageLayer<5;foliageLayer++){
+     const a=rand()*6.283;
+     const blade=new THREE.Mesh(leafGeometry,rand()>.4?leaf:leaf2);
+     blade.position.set(px+.07*Math.cos(a),.31+height*.40,pz+.07*Math.sin(a));
+     blade.rotation.set(.27+rand()*.55,a,.10+(rand()-.5)*.2);
+     blade.scale.set(.58+rand()*.30,.63+rand()*.37,1);
+     bed.add(blade);
+   }
    if(kind==='bush')continue;
    const petalMat=petals[(a*3+b+seed)%petals.length];
    const bloomY=.25+height;
@@ -102,15 +117,16 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
    for(let k=0;k<5;k++){
     const angle=2*Math.PI*k/5;
     const petal=new THREE.Mesh(petalsGeometry,petalMat);
-    petal.scale.set(.09,.035,.065);
-    petal.position.set(px+.095*Math.cos(angle),bloomY,pz+.095*Math.sin(angle));
-    petal.rotation.y=-angle;bed.add(petal);
+    const size=.65+rand()*.35;
+    petal.scale.set(size,size,size);
+    petal.position.set(px+.07*Math.cos(angle),bloomY,pz+.07*Math.sin(angle));
+    petal.rotation.set(-Math.PI/2,0,angle);bed.add(petal);
    }
   }
  }
  for(const side of [-1,1]){
   flowerBed(classic,side*3.2,13.0,2.3,8.1,37+(side+1)*7);
-  flowerBed(family,side*3.3,13.2,2.6,6.7,123+(side+1)*13,side>0?'bush':'flower');
+  flowerBed(family,side*3.3,13.2,2.6,6.7,123+(side+1)*13,'flower');
   flowerBed(modern,side*3.25,13.4,1.65,7.5,222+(side+1)*19,'bush');
   flowerBed(garden,side*4.15,12.5,3.0,7.6,471+(side+1)*11);
  }

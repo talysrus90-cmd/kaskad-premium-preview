@@ -12,13 +12,17 @@ export function createEntranceVariants(THREE,parent,{stone,trim,wood,metal}){
   const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r*1.04,h,18),mat);
   m.position.set(x,y,z);m.castShadow=true;g.add(m);return m;
  };
+ const stepTexture=new THREE.TextureLoader().load(new URL('assets/3d/concrete_pavement_02_1k.webp',document.baseURI).href);
+ stepTexture.colorSpace=THREE.SRGBColorSpace;
+ stepTexture.wrapS=stepTexture.wrapT=THREE.RepeatWrapping;stepTexture.repeat.set(2.2,1.4);
+ const stoneSteps=new THREE.MeshStandardMaterial({color:'#a5a094',roughness:.77,map:stepTexture});
  const make=(id)=>{
   const g=new THREE.Group();g.name='Входная группа · '+id;parent.add(g);styles.set(id,g);
   // Все опоры опираются на общую неподвижную площадку, а не на газон или воздух.
   const width=id==='columns'?5.55:id==='modern'?5.10:5.12;
-  box(g,width,.21,2.38,0,.405,5.55,stone);
-  box(g,width+.13,.075,2.52,0,.548,5.55,trim);
-  box(g,width+.17,.13,.74,0,.275,7.03,stone);
+  box(g,width,.21,2.38,0,.405,5.55,stoneSteps);
+  box(g,width+.13,.075,2.52,0,.548,5.55,stoneSteps);
+  box(g,width+.17,.13,.74,0,.275,7.03,stoneSteps);
   if(id==='simple'){
     box(g,3.65,.19,1.69,0,3.03,5.38,trim);
     box(g,3.80,.075,1.80,0,3.18,5.38,metal);
