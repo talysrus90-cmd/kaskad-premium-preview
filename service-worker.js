@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-v58-priority-loading';
+const VERSION='kaskad-pwa-20261124-v59-priority-cache';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -9,7 +9,7 @@ const ROOT=self.registration.scope;
 const core=[
  './','./index.html',
  './manifest.webmanifest','./pwa.js?v=1','./fonts.css?v=pwa1',
- './premium.css?v=houses-20261108','./gallery-viewer.css?v=20261124-fast','./ui-enhancements-20261108.css?v=1',
+ './premium.css?v=lead-mobile-20261109c','./gallery-viewer.css?v=20261124-fast','./ui-enhancements-20261108.css?v=1',
  './site-clarity-20261109.css?v=1',
  './gallery-fullscreen-20261109.css?v=3',
  './gallery-four-20261109.css?v=2',
@@ -163,7 +163,7 @@ const core=[
 const offlineCore=[
  './','./index.html','./manifest.webmanifest',
  './assets/offline-photo.svg','./assets/ideas/card/hero-960.webp',
- './fonts.css?v=pwa1','./premium.css?v=houses-20261108'
+ './fonts.css?v=pwa1','./premium.css?v=lead-mobile-20261109c'
 ];
 const URL_OF=p=>new URL(p,ROOT);
 const isInScope=url=>url.origin===new URL(ROOT).origin&&url.pathname.startsWith(new URL(ROOT).pathname);
@@ -258,8 +258,14 @@ const getCachedImage=async(request,url,event)=>{
 };
 const staleWhileRevalidate=async(request)=>{
  const store=await caches.open(RUNTIME);
- // Respect cache-busting asset versions; an older stylesheet must not override a new design.
  const old=await caches.match(request);
+ const url=new URL(request.url);
+ // Explicitly versioned CSS/JS does not need a duplicate network fetch on
+ // every visit. Unversioned scripts continue to revalidate in the background.
+ // Bump each asset's ?v= URL when changing its contents.
+ const versionedStatic=url.searchParams.has('v')
+   && (request.destination==='style'||request.destination==='script');
+ if(old&&versionedStatic)return old;
  const fresh=fetch(request).then(async(response)=>{
    if(response.ok){await put(store,request,response);await limitCache(store,50)}
    return response;
