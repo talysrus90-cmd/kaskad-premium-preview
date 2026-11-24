@@ -145,7 +145,13 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
     addRoof([a[i],a[j],b[j],b[i]]);
     addRoof([b[i],b[j],c[j],c[i]]);
    }
-   addRoof(c);
+   // Four pitched upper faces converge on a short central ridge instead
+   // of trapping snow on the previous horizontal rectangular centre.
+   const ridgeY=7.58,ridgeZ=1.30;
+   addRoof([c[0],c[1],[0,ridgeY,-ridgeZ]]);
+   addRoof([c[2],c[3],[0,ridgeY,ridgeZ]]);
+   addRoof([c[3],c[0],[0,ridgeY,-ridgeZ],[0,ridgeY,ridgeZ]]);
+   addRoof([c[1],c[2],[0,ridgeY,ridgeZ],[0,ridgeY,-ridgeZ]]);
    // Two VERTICAL dormers face the formal entrance (+Z), replacing
    // side-facing skylights. Dormers have real cheeks, lintels and small
    // gable roofs; their walls embed into the front mansard roof pitch.
@@ -176,6 +182,23 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
    for(const side of [-1,1])box(g,.24,.37,edgeZ*2+.2,side*edgeX,4.03,0,darkMetal);
    for(const z of [-edgeZ,edgeZ])box(g,edgeX*2+.3,.37,.24,0,4.03,z,darkMetal);
   }
+  if(shape!=='flat'){
+   // Close to eaves, powder-coated to roof colour.
+   const guardMetal=new THREE.MeshStandardMaterial({color:'#424d52',metalness:.50,roughness:.52});
+   const gutterMetal=new THREE.MeshStandardMaterial({color:'#434c50',metalness:.40,roughness:.58});
+   const slopeX=shape==='mansard'?6.46:6.38;
+   const slopeY=shape==='mansard'?4.64:shape==='gable'?4.13:4.02;
+   for(const side of [-1,1]){
+    for(const rise of [0,.10]){
+     box(g,.060,.058,edgeZ*2-.90,side*slopeX,slopeY+rise,0,guardMetal);
+    }
+    for(const z of [-3.4,0,3.4])box(g,.08,.21,.11,side*slopeX,slopeY-.055,z,guardMetal);
+    box(g,.18,.12,edgeZ*2+.03,side*(edgeX+.06),3.75,0,gutterMetal);
+    box(g,.11,3.3,.11,side*(edgeX+.06),1.95,side===1?edgeZ-.36:-edgeZ+.36,gutterMetal);
+   }
+   for(const end of [-1,1])box(g,edgeX*2+.1,.12,.18,0,3.75,end*(edgeZ+.06),gutterMetal);
+   g.userData.guardMetal=guardMetal;g.userData.gutterMetal=gutterMetal;
+  }
   // Completely close and finish soffits, eave ends and underlying walls.
   for(const side of [-1,1]){
     face(g,[[side*6.41,3.72,-edgeZ],[side*edgeX,3.72,-edgeZ],
@@ -200,6 +223,10 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   activeShape=safe;
   const profile=METAL_PROFILES[kind]&&safe!=='flat'?kind:'flat';
   const mat=roofSystem.getMaterial();
+  if(mat?.color&&newRoof.userData.guardMetal){
+    newRoof.userData.guardMetal.color.copy(mat.color);
+    newRoof.userData.gutterMetal.color.copy(mat.color).multiplyScalar(.74);
+  }
   for(const m of newRoof.children){
    if(!m.userData.corners)continue;
    m.material=mat;

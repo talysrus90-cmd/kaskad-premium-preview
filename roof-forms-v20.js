@@ -88,8 +88,40 @@ export function createRoofForms(THREE,houseRoot,{roofSystem,roofRidge,gableFacad
     face(mansard,[a[i],a[j],b[j],b[i]]);
     face(mansard,[b[i],b[j],c[j],c[i]]);
   }
-  face(mansard,c);
+  // A true four-sided pitched upper cap, not the former flat snow pocket.
+  // The upper hip transitions into a short raised ridge along Z.
+  const topRidgeY=9.84,topRidgeZ=1.42;
+  face(mansard,[c[0],c[1],[0,topRidgeY,-topRidgeZ]]);
+  face(mansard,[c[2],c[3],[0,topRidgeY,topRidgeZ]]);
+  face(mansard,[c[3],c[0],[0,topRidgeY,-topRidgeZ],[0,topRidgeY,topRidgeZ]]);
+  face(mansard,[c[1],c[2],[0,topRidgeY,topRidgeZ],[0,topRidgeY,-topRidgeZ]]);
   eaves(mansard,6.92);
+  // Discreet, roofing-coloured tubular snow guards and organised gutters.
+  // These are visual accessories; load/spacing must be designed for the site.
+  const accessoryMetal=new THREE.MeshStandardMaterial({color:'#50585a',metalness:.48,roughness:.54});
+  const gutterMetal=new THREE.MeshStandardMaterial({color:'#4d5557',metalness:.36,roughness:.62});
+  const protection=(g,xx,yy,halfSpan)=> {
+    for(const yyOffset of [0,.15]){
+      const tube=box(g,.065,.065,halfSpan*2,xx,yy+yyOffset,0,accessoryMetal);
+      tube.name='Снегозадержатель, аккуратные две трубы';
+    }
+    for(const zz of [-halfSpan+.6,0,halfSpan-.6]){
+      box(g,.075,.26,.12,xx,yy-.08,zz,accessoryMetal);
+    }
+  };
+  const drainage=(g,baseY)=>{
+    for(const side of [-1,1]){
+      box(g,.20,.13,z*2+.05,side*(x+.06),baseY,0,gutterMetal).name='Водосточный желоб';
+      const drain=box(g,.115,6.6,.115,side*(x+.06),3.57,side===1?z-.35:-z+.35,gutterMetal);
+      drain.name='Водосточная труба';
+    }
+    for(const end of [-1,1])box(g,x*2+.12,.13,.20,0,baseY,end*(z+.06),gutterMetal);
+  };
+  protection(gable,-6.40,7.28,z-.36);protection(gable,6.40,7.28,z-.36);
+  protection(hip,-6.47,7.31,z-.38);protection(hip,6.47,7.31,z-.38);
+  protection(mansard,-6.63,7.57,z-.38);protection(mansard,6.63,7.57,z-.38);
+  drainage(gable,6.91);drainage(hip,6.91);drainage(mansard,6.91);
+  const accessoryGroups=[gable,hip,mansard];
   // Flush glazed attic rooflights: old two-storey variant must not have
   // a featureless roof when the customer selects the mansard option.
   const glazing=new THREE.MeshStandardMaterial({color:'#476676',roughness:.32,metalness:.15});
@@ -115,6 +147,10 @@ export function createRoofForms(THREE,houseRoot,{roofSystem,roofRidge,gableFacad
   }
   function setMaterial(){
     const mat=roofSystem.getMaterial(),kind=roofSystem.getType();
+    if(mat?.color){
+      accessoryMetal.color.copy(mat.color);
+      gutterMetal.color.copy(mat.color).multiplyScalar(.73);
+    }
     const g=groups.get(selected);
     if(!g)return;
     for(const m of g.children){

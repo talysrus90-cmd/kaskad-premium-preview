@@ -70,13 +70,15 @@
   </section>
   <section class="builder-v25-panel builder-v25-garden" id="builderGarden" hidden aria-label="Благоустройство участка">
    <h3>Ваш земельный участок</h3>
-   <label class="builder-range-label" for="plotAreaSlider">Площадь участка <output id="plotAreaValue">6 соток</output></label>
-   <input id="plotAreaSlider" type="range" min="3" max="30" step="0.5" value="6" aria-label="Площадь участка в сотках">
-   <label class="builder-range-label" for="plotRatioSlider">Форма участка <output id="plotRatioValue">Средний</output></label>
-   <input id="plotRatioSlider" type="range" min="0.6" max="2.0" step="0.1" value="1" aria-label="Отношение ширины участка к его глубине">
+   <p class="builder-plot-lead">Укажите реальные стороны земли, а затем передвиньте дом пальцем.</p>
+   <label class="builder-range-label" for="plotWidthSlider">Ширина участка по улице <output id="plotWidthValue">20 м</output></label>
+   <input id="plotWidthSlider" type="range" min="10" max="60" step="0.5" value="20" aria-label="Ширина участка вдоль улицы в метрах">
+   <label class="builder-range-label" for="plotLengthSlider">Глубина участка <output id="plotLengthValue">30 м</output></label>
+   <input id="plotLengthSlider" type="range" min="10" max="70" step="0.5" value="30" aria-label="Глубина участка от улицы до дальнего забора в метрах">
+   <p class="builder-plot-area">Площадь: <strong id="plotAreaValue">6 соток</strong></p>
    <p id="plotDimensions" class="builder-plot-dimensions" aria-live="polite"></p>
    <div class="builder-plot-plan" id="builderPlotPlan" aria-label="Масштабный план земельного участка; перетащите дом для размещения">
-     <div class="builder-plot-house" id="builderPlotHouse" role="img" aria-label="Пятно застройки">Дом</div>
+     <div class="builder-plot-house" id="builderPlotHouse" role="img" aria-label="Дом, вид сверху, перетащите для изменения положения"><svg viewBox="0 0 110 100" aria-hidden="true" focusable="false"><path d="M9 38L55 10L101 38L101 83L9 83Z" fill="#e1d2ba"/><path d="M4 42L55 4L106 42L55 76Z" fill="#52666f"/><path d="M4 42L55 76L55 89L4 54Z" fill="#344852"/><path d="M106 42L55 76L55 89L106 54Z" fill="#405860"/><path d="M15 62H31V76H15Z" fill="#88b1ba"/><path d="M79 62H95V76H79Z" fill="#88b1ba"/></svg><span id="builderPlotHouseLabel">10 × 10 м</span></div>
      <span class="builder-plot-front">Улица / фасад</span>
    </div>
    <p id="plotFitNote" class="builder-plot-note" role="status"></p>
@@ -193,8 +195,8 @@
   const footprint=Math.round(width*length*100)/100;
   const mansardAboveTwo=(document.getElementById('houseStyleSelect')?.value||'').startsWith('twoMansard');
   const floorLabel=mansardAboveTwo?'2 этажа + мансарда':{one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
-  const info=width+' × '+length+' м · пятно '+footprint+' м² · '+floorLabel;
-  sizeText.textContent=info+(floors==='two'?' · суммарно до '+footprint*2+' м² (до вычета стен и лестниц)':'');
+  const info=width+' × '+length+' м · '+footprint+' м² · '+floorLabel;
+  sizeText.textContent=info+(floors==='two'?' · суммарно до '+footprint*2+' м²':'');
   sizeButtons.forEach(b=>b.setAttribute('aria-pressed',
    String(b.dataset.homeSize===String(width)+'x'+String(length))));
   floorButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeFloors===floors)));
@@ -274,15 +276,15 @@
  renderQuickStages();
  function name(id){const el=fields[id];return el?.selectedOptions?.[0]?.textContent?.trim()||
    (el?.checked?'Да':'Нет')||'—';}
- const plotArea=document.getElementById('plotAreaSlider');
- const plotRatio=document.getElementById('plotRatioSlider');
+ const plotWidth=document.getElementById('plotWidthSlider');
+ const plotLength=document.getElementById('plotLengthSlider');
  const plotPlan=document.getElementById('builderPlotPlan');
  const plotHouse=document.getElementById('builderPlotHouse');
  let plotX=.5,plotZ=.58;
  function plotGeometry(){
-  const area=Math.max(3,Math.min(30,Number(plotArea.value)||6))*100;
-  const ratio=Math.max(.6,Math.min(2,Number(plotRatio.value)||1));
-  return {width:Math.sqrt(area*ratio),depth:Math.sqrt(area/ratio),area};
+  const width=Math.max(10,Math.min(60,Number(plotWidth.value)||20));
+  const depth=Math.max(10,Math.min(70,Number(plotLength.value)||30));
+  return {width,depth,area:width*depth};
  }
  function renderPlot(){
   const {width,depth,area}=plotGeometry();
@@ -300,11 +302,12 @@
   plotHouse.style.height=(house.length/depth*100)+'%';
   plotHouse.style.left=(px/width*100)+'%';
   plotHouse.style.top=(pz/depth*100)+'%';
-  plotHouse.style.background=fits?'#527d66':'#aa5c4f';
-  plotHouse.textContent=house.width+'×'+house.length+' м';
-  const sotka=(area/100).toLocaleString('ru-RU');
-  document.getElementById('plotAreaValue').textContent=sotka+' сот.';
-  document.getElementById('plotRatioValue').textContent=(width/depth).toFixed(1).replace('.',',')+':1';
+  plotHouse.style.borderColor=fits?'#d6e0d2':'#e58b7c';
+  document.getElementById('builderPlotHouseLabel').textContent=house.width+' × '+house.length+' м';
+  const sotka=(area/100).toLocaleString('ru-RU',{maximumFractionDigits:2});
+  document.getElementById('plotAreaValue').textContent=sotka+' соток';
+  document.getElementById('plotWidthValue').textContent=width+' м';
+  document.getElementById('plotLengthValue').textContent=depth+' м';
   document.getElementById('plotDimensions').textContent='Участок '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+area.toFixed(0)+' м²';
   const coverage=house.width*house.length/area*100;
   const percent=coverage.toFixed(1).replace('.',',');
@@ -314,7 +317,15 @@
   window.dispatchEvent(new CustomEvent('kaskad:plot-changed',
    {detail:{width,depth,area,houseX:px,houseZ:pz,houseWidth:house.width,houseLength:house.length,fits}}));
  }
- for(const slider of [plotArea,plotRatio])slider.addEventListener('input',()=>{renderPlot();summary()});
+ for(const slider of [plotWidth,plotLength])slider.addEventListener('input',()=>{renderPlot();summary()});
+ window.addEventListener('kaskad:plot-move',event=>{
+  const {houseX,houseZ}=event.detail||{};
+  const {width,depth}=plotGeometry(),house=sizeValues();
+  if(!Number.isFinite(houseX)||!Number.isFinite(houseZ))return;
+  plotX=(width>house.width)?Math.max(0,Math.min(1,houseX/(width-house.width))):0;
+  plotZ=(depth>house.length)?Math.max(0,Math.min(1,houseZ/(depth-house.length))):0;
+  renderPlot();
+ });
  const movePlot=e=>{
   if(e.cancelable)e.preventDefault();
   const rect=plotPlan.getBoundingClientRect();
@@ -336,7 +347,7 @@
    ['Архитектура',name('houseStyleSelect')],
    ['Размеры',dims.width+' × '+dims.length+' м'],
    ['Пятно застройки',(dims.width*dims.length)+' м²'],
-   ['Участок',(Number(plotArea.value)||6)+' сот.'],
+   ['Участок',(plotGeometry().area/100).toLocaleString('ru-RU',{maximumFractionDigits:2})+' сот.'],
    ['Этажность',(fields.houseStyleSelect.value.startsWith('twoMansard')?'2 этажа + мансарда':({one:'1 этаж',mansard:'1 + мансарда',two:'2 этажа'})[dims.floors])],
    ['Форма крыши',name('roofShapeSelect')],
    ['Покрытие',name('roofSelect')],
@@ -424,7 +435,7 @@
  const defaults={
   houseStyleSelect:'family',houseSizeSelect:'100',roofShapeSelect:'hip',
   houseWidthInput:'10',houseLengthInput:'10',houseFloorsSelect:'one',
-  plotAreaSlider:'6',plotRatioSlider:'1',
+  plotWidthSlider:'20',plotLengthSlider:'30',
   facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
   doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
@@ -452,7 +463,7 @@
   }
   plotX=Number.isFinite(Number(state.plotX))?Math.max(0,Math.min(1,Number(state.plotX))):.5;
   plotZ=Number.isFinite(Number(state.plotZ))?Math.max(0,Math.min(1,Number(state.plotZ))):.58;
-  for(const [el,key] of [[plotArea,'plotAreaSlider'],[plotRatio,'plotRatioSlider']]){
+  for(const [el,key] of [[plotWidth,'plotWidthSlider'],[plotLength,'plotLengthSlider']]){
    const value=Number(state[key]);
    if(Number.isFinite(value)&&value>=Number(el.min)&&value<=Number(el.max))el.value=String(value);
   }
@@ -492,8 +503,8 @@
    fenceColor:fields.fenceColorSelect.value,
    houseStyle:fields.houseStyleSelect.value,houseSize:fields.houseSizeSelect.value,
    houseWidth:fields.houseWidthInput.value,houseLength:fields.houseLengthInput.value,
-   houseFloors:fields.houseFloorsSelect.value,plotSotkas:plotArea.value,
-   plotAspect:plotRatio.value,plotPositionX:plotX.toFixed(3),plotPositionZ:plotZ.toFixed(3),
+   houseFloors:fields.houseFloorsSelect.value,plotWidth:plotWidth.value,plotLength:plotLength.value,
+   plotSotkas:(plotGeometry().area/100).toFixed(2),plotPositionX:plotX.toFixed(3),plotPositionZ:plotZ.toFixed(3),
    roofShape:fields.roofShapeSelect.value,
    frameColor:fields.frameColorSelect.value,doorColor:fields.doorColorSelect.value,
    glassTint:fields.glassTintSelect.value,landscape:fields.landscapeSelect.value,
@@ -517,7 +528,7 @@
   try{
    const data={};
    for(const id of fieldIds){const el=fields[id];data[id]=el.type==='checkbox'?el.checked:el.value;}
-   data.plotAreaSlider=plotArea.value;data.plotRatioSlider=plotRatio.value;
+   data.plotWidthSlider=plotWidth.value;data.plotLengthSlider=plotLength.value;
    data.plotX=plotX;data.plotZ=plotZ;
    localStorage.setItem(storageKey,JSON.stringify(data));
    document.getElementById('builderSaveMessage').textContent='Сохранено на этом устройстве.';

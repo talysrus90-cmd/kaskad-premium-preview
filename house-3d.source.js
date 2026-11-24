@@ -620,7 +620,11 @@ const veranda=createVeranda(THREE,scene);
   const plotHousePivot=new THREE.Group();plotHousePivot.name='Участок · положение дома';scene.add(plotHousePivot);
   for(const model of [houseRoot,russianHome.root,veranda.root,blindArea.root])plotHousePivot.add(model);
   const plotOutline=new THREE.Group();plotOutline.name='Участок · границы в масштабе';scene.add(plotOutline);
-  const boundaryMat=M('#3b6849',.86),edgeMat=M('#c6b89b',.9);
+  const boundaryMat=M('#2f6d40',.86),edgeMat=M('#c6b89b',.9);
+  // Show genuine lawn and an unmistakable border, not a blue sheet.
+  const siteSceneHint=document.createElement('div');siteSceneHint.className='kaskad-site-scene-hint';
+  siteSceneHint.hidden=true;siteSceneHint.textContent='Участок · переместите дом пальцем';
+  container.append(siteSceneHint);
   const plotEdges=[];
   for(let i=0;i<4;i++){
     const edge=new THREE.Mesh(new THREE.BoxGeometry(1,.22,1),boundaryMat);
@@ -632,10 +636,47 @@ const veranda=createVeranda(THREE,scene);
     post.position.y=.60;plotOutline.add(post);plotCornerPosts.push(post);
   }
   const measuredPlotGround=new THREE.Mesh(new THREE.PlaneGeometry(1,1),
-    new THREE.MeshStandardMaterial({color:'#adc79d',transparent:true,opacity:.22,roughness:1,depthWrite:false}));
+    new THREE.MeshStandardMaterial({color:'#78b46b',transparent:true,opacity:.38,roughness:1,depthWrite:false}));
   measuredPlotGround.rotation.x=-Math.PI/2;measuredPlotGround.position.y=.018;plotOutline.add(measuredPlotGround);
+  const localFence=new THREE.Group();localFence.name='Участок · периметр и калитка';plotOutline.add(localFence);
+  const fenceGeo=new THREE.BoxGeometry(.085,1.25,.085);
+  const fenceMaterial=M('#354b43',.5,{metalness:.3});
+  const pathMaterial=M('#d0c5af',.88);
+  const routeMesh=new THREE.Mesh(new THREE.BoxGeometry(1,.07,1),pathMaterial);
+  routeMesh.name='Дорожка от калитки к входу';routeMesh.position.y=.045;plotOutline.add(routeMesh);
+  let lastFenceWidth=0,lastFenceDepth=0;
+  const buildSiteFence=(width,depth,frontage)=>{
+    if(width===lastFenceWidth&&depth===lastFenceDepth)return;
+    lastFenceWidth=width;lastFenceDepth=depth;
+    localFence.clear();
+    const segments=[
+      [-width/2,frontage,-1.28,frontage],
+      [1.28,frontage,width/2,frontage],
+      [-width/2,frontage,-width/2,frontage-depth],
+      [width/2,frontage,width/2,frontage-depth],
+      [-width/2,frontage-depth,width/2,frontage-depth]
+    ];
+    for(const [x1,z1,x2,z2] of segments){
+      const len=Math.hypot(x2-x1,z2-z1),n=Math.max(2,Math.ceil(len/.9));
+      const dx=(x2-x1)/len,dz=(z2-z1)/len;
+      for(let i=0;i<=n;i++){
+        const x=x1+(x2-x1)*i/n,z=z1+(z2-z1)*i/n;
+        const post=new THREE.Mesh(fenceGeo,fenceMaterial);post.position.set(x,.68,z);
+        post.castShadow=false;localFence.add(post);
+      }
+      for(const h of [.55,1.09]){
+        const rail=new THREE.Mesh(new THREE.BoxGeometry(len,.075,.075),fenceMaterial);
+        rail.position.set((x1+x2)/2,h,(z1+z2)/2);
+        rail.rotation.y=-Math.atan2(z2-z1,x2-x1);
+        localFence.add(rail);
+      }
+    }
+    const gate=new THREE.Mesh(new THREE.BoxGeometry(2.54,.12,.16),fenceMaterial);
+    gate.name='Калитка · въезд на участок';gate.position.set(0,.13,frontage);
+    localFence.add(gate);
+  };
   plotOutline.visible=false;
-  let isSitePreview=false,plotDetails=null;
+  let isSitePreview=false,plotDetails=null,lastFramedWidth=0,lastFramedDepth=0;
   const refreshSitePreview=()=>{
     if(!plotDetails)return;
     const {width,depth,houseX,houseZ,houseWidth,houseLength,fits}=plotDetails;
@@ -647,6 +688,15 @@ const veranda=createVeranda(THREE,scene);
     edge(plotEdges[3],.22,depth,right,mid);
     [[left,frontage],[right,frontage],[left,rear],[right,rear]].forEach(([x,z],i)=>plotCornerPosts[i].position.set(x,.60,z));
     measuredPlotGround.scale.set(width,depth,1);measuredPlotGround.position.set(0,.018,mid);
+    buildSiteFence(width,depth,frontage);
+    // Simple scale-aware walk from the central pedestrian gate to the front door.
+    const doorX=-width/2+houseX+houseWidth/2,frontDoorZ=frontage-houseZ;
+    const dx=doorX,dz=frontDoorZ-frontage+1;
+    const walkLength=Math.hypot(dx,dz);
+    routeMesh.visible=walkLength>.4&&fits;
+    routeMesh.scale.set(1.32,1,Math.max(.1,walkLength));
+    routeMesh.rotation.y=Math.atan2(dx,dz);
+    routeMesh.position.set(doorX/2,.045,(frontage+frontDoorZ+1)/2);
     const deltaX=-width/2+houseX+houseWidth/2;
     const deltaZ=frontage-houseZ-4.63;
     plotHousePivot.position.set(isSitePreview?deltaX:0,0,isSitePreview?deltaZ:0);
@@ -654,10 +704,18 @@ const veranda=createVeranda(THREE,scene);
     if(isSitePreview){
       frontYard.root.visible=false;foliageGroup.visible=false;poolGroup.visible=false;
       const selected=fenceSystem.setType(fenceSelect?.value||'iron');selected.visible=false;
-      const topHeight=Math.max(40,Math.max(width,depth)*2.6);
-      focusTransition={camera:new THREE.Vector3(width*.16,topHeight,mid+depth*.1),
-        target:new THREE.Vector3(0,1.2,mid)};
-      controls.maxDistance=Math.max(75,topHeight*1.3);
+      if(width!==lastFramedWidth||depth!==lastFramedDepth){
+        const topHeight=Math.max(29,Math.max(width,depth)*1.25);
+        focusTransition={camera:new THREE.Vector3(width*.76,topHeight,mid+depth*.64),
+          target:new THREE.Vector3(0,1.1,mid)};
+        lastFramedWidth=width;lastFramedDepth=depth;
+      }
+      controls.maxDistance=Math.max(100,Math.max(width,depth)*1.9);
+      // Sizing remains based on selected side lengths, never on an arbitrary square.
+      siteSceneHint.hidden=false;
+      siteSceneHint.textContent='🏠 '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+
+        (width*depth/100).toLocaleString('ru-RU',{maximumFractionDigits:2})+
+        ' сот. · удерживайте дом и двигайте';
     }
     plotEdges.forEach(e=>e.material.color.set(fits?'#3b6849':'#a85243'));
   };
@@ -666,12 +724,60 @@ const veranda=createVeranda(THREE,scene);
     isSitePreview=event.detail?.active===true;
     if(isSitePreview){refreshSitePreview()}
     else{
+      siteSceneHint.hidden=true;lastFramedWidth=0;lastFramedDepth=0;
       plotHousePivot.position.set(0,0,0);plotOutline.visible=false;
       frontYard.root.visible=true;
       fenceSystem.setType(fenceSelect?.value||'iron');
       updateLandscape();
     }
   });
+  // Direct, one-finger house placement on the Three.js canvas, without
+  // requiring the user to understand a separate technical 2D footprint.
+  const plotRaycaster=new THREE.Raycaster();
+  const plotPointer=new THREE.Vector2(),plotGroundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+  const plotHit=new THREE.Vector3();
+  let draggingPlotHouse=false,dragPointerId=null,dragOffsetX=0,dragOffsetZ=0;
+  const groundAtPointer=event=>{
+    const bounds=renderer.domElement.getBoundingClientRect();
+    plotPointer.set(((event.clientX-bounds.left)/bounds.width)*2-1,
+      -((event.clientY-bounds.top)/bounds.height)*2+1);
+    plotRaycaster.setFromCamera(plotPointer,camera);
+    return plotRaycaster.ray.intersectPlane(plotGroundPlane,plotHit)?plotHit.clone():null;
+  };
+  renderer.domElement.addEventListener('pointerdown',event=>{
+    if(!isSitePreview||!plotDetails||event.button!==0)return;
+    groundAtPointer(event);
+    const hits=plotRaycaster.intersectObject(plotHousePivot,true)
+      .filter(hit=>hit.object.visible&&hit.object.isMesh);
+    if(!hits.length)return; // unoccupied ground retains normal orbit control
+    const ground=groundAtPointer(event);
+    if(!ground)return;
+    draggingPlotHouse=true;dragPointerId=event.pointerId;
+    dragOffsetX=ground.x-plotHousePivot.position.x;
+    dragOffsetZ=ground.z-plotHousePivot.position.z;
+    controls.enabled=false;focusTransition=null;
+    renderer.domElement.setPointerCapture(event.pointerId);
+    event.preventDefault();event.stopImmediatePropagation();
+  },true);
+  renderer.domElement.addEventListener('pointermove',event=>{
+    if(!draggingPlotHouse||event.pointerId!==dragPointerId||!plotDetails)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const hit=groundAtPointer(event);if(!hit)return;
+    const {width,depth,houseWidth,houseLength}=plotDetails,frontage=20.5;
+    const centerX=hit.x-dragOffsetX,deltaZ=hit.z-dragOffsetZ;
+    const houseX=clamp(centerX+width/2-houseWidth/2,0,Math.max(0,width-houseWidth));
+    const houseZ=clamp(frontage-4.63-deltaZ,0,Math.max(0,depth-houseLength));
+    window.dispatchEvent(new CustomEvent('kaskad:plot-move',{detail:{houseX,houseZ}}));
+  },true);
+  const finishPlotDrag=event=>{
+    if(!draggingPlotHouse||event.pointerId!==dragPointerId)return;
+    draggingPlotHouse=false;dragPointerId=null;controls.enabled=true;
+    if(renderer.domElement.hasPointerCapture(event.pointerId))
+      renderer.domElement.releasePointerCapture(event.pointerId);
+    event.preventDefault();event.stopImmediatePropagation();
+  };
+  renderer.domElement.addEventListener('pointerup',finishPlotDrag,true);
+  renderer.domElement.addEventListener('pointercancel',finishPlotDrag,true);
   // The old random floating dots and rectangular beds are removed.
   // Front-yard flowers are stems/petals/bushes in raised bordered beds.
   const frameColors={bronze:'#6f6555',graphite:'#394348',white:'#f4eee2',wood:'#7b4b2d'};
