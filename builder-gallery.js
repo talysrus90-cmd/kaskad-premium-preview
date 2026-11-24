@@ -33,10 +33,10 @@
  ];
  const data={
   presets:[
-    {value:'classic',title:'Загородная классика',sub:'Колонны · карнизы · черепица',image:'preset_classic_v20',set:{facade:'brick',roof:'slate',roofColor:'graphite',houseStyle:'classic',houseSize:'260',roofShape:'hip'}},
+    {value:'classic',title:'Загородная классика',sub:'Колонны · карнизы · черепица',image:'preset_classic_v20',set:{facade:'brick',roof:'metalGraphite',roofColor:'graphite',houseStyle:'classic',houseSize:'260',roofShape:'hip'}},
     {value:'italian',title:'Итальянский двор',sub:'Арки · терракота · тёплый кирпич',image:'preset_italian_v20',set:{facade:'tuscan',roof:'terracotta',roofColor:'terracotta',houseStyle:'italian',houseSize:'300',roofShape:'hip'}},
     {value:'modern',title:'Современный дом',sub:'Стекло · козырёк · фальц',image:'preset_modern_v20',set:{facade:'stone',roof:'standingSeam',roofColor:'graphite',houseStyle:'modern',houseSize:'350',roofShape:'flat'}},
-    {value:'estate',title:'Усадьба',sub:'Парадные пилоны · карнизы',image:'preset_estate_v20',set:{facade:'gray',roof:'metalBurgundy',roofColor:'burgundy',houseStyle:'estate',houseSize:'350',roofShape:'mansard'}},
+    {value:'estate',title:'Усадьба',sub:'Парадные пилоны · карнизы',image:'preset_estate_v20',set:{facade:'gray',roof:'metalGraphite',roofColor:'burgundy',houseStyle:'estate',houseSize:'350',roofShape:'mansard'}},
     {value:'kavkaz',title:'Кавказский стиль',sub:'Каменные арки · объёмная крыша',image:'preset_kavkaz_v20',set:{facade:'stone',roof:'metal3d',roofColor:'chocolate',houseStyle:'kavkaz',houseSize:'300',roofShape:'hip'}},
     {value:'coastal',title:'Светлый минимализм',sub:'Деревянные ламели · лёгкий козырёк',image:'preset_coastal_v24',set:{facade:'plaster',roof:'metalModular',roofColor:'gray',houseStyle:'coastal',houseSize:'220',roofShape:'hip'}},
     {value:'practical',title:'Практичный дом',sub:'Простой портик · профлист',image:'preset_practical_v20',set:{facade:'brick',roof:'profiled',roofColor:'green',houseStyle:'practical',houseSize:'150',roofShape:'gable'}},
@@ -54,10 +54,10 @@
     {value:'terracotta',title:'Терракотовая',sub:'Черепица под керамику',image:'roof_terracotta',defaultColor:'terracotta'},
     {value:'graphite',title:'Графитовая черепица',sub:'Классическая',image:'roof_graphite',defaultColor:'graphite'},
     {value:'ceramic',title:'Керамическая',sub:'Объёмная поверхность',image:'roof_ceramic',defaultColor:'terracotta'},
-    {value:'metalGraphite',title:'Металлочерепица',sub:'Классика · графит',image:'roof_metalGraphite',defaultColor:'graphite'},
-    {value:'metalBurgundy',title:'Металлочерепица',sub:'Классика · бордо',image:'roof_metalBurgundy',defaultColor:'burgundy'},
-    {value:'metal3d',title:'Металлочерепица 3D',sub:'Выраженная ступень',image:'roof_metal3d',defaultColor:'graphite'},
-    {value:'metalModular',title:'Модульная',sub:'Крупные модули',image:'roof_metalModular',defaultColor:'chocolate'},
+    {value:'metalGraphite',title:'Классическая волна',sub:'Волна · шаг 350 мм',image:'roof_metalGraphite_v25',defaultColor:'graphite'},
+    {value:'metal3d',title:'Высокий рельеф',sub:'Глубокая волна и ступень',image:'roof_metal3d_v25',defaultColor:'graphite'},
+    {value:'metalModular',title:'Симметричный профиль',sub:'Чёткая геометрия волны',image:'roof_metalModular_v25',defaultColor:'chocolate'},
+    {value:'metalTramontana',title:'Рельефная волна',sub:'Объёмная штамповка',image:'roof_metalTramontana_v25',defaultColor:'green'},
     {value:'standingSeam',title:'Фальцевая',sub:'Продольные фальцы',image:'roof_standingSeam',defaultColor:'graphite'},
     {value:'flexible',title:'Гибкая черепица',sub:'Мягкая кровля',image:'roof_flexible',defaultColor:'black'},
     {value:'composite',title:'Композитная',sub:'Рельефная',image:'roof_composite',defaultColor:'chocolate'},

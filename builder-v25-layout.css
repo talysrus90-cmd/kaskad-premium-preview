@@ -1,0 +1,134 @@
+/* КАСКАД v25 — dedicated configurator sidebar, independent desktop scrolling */
+:root{--builder-deep:#244735;--builder-soft:#f6f6ef;--builder-rust:#aa6548}
+@media(min-width:731px){
+ html,body{height:100%;min-height:0;overflow:hidden!important}
+ .embed{height:100%;min-height:0;overflow:hidden}
+ .workspace{height:100%;min-height:0;max-height:100%;overflow:hidden;
+    display:grid;grid-template-columns:minmax(0,1fr) clamp(340px,29%,380px);align-items:stretch}
+ .viewer-col{height:100%;min-height:0;min-width:0}
+ .scene{height:100%!important;min-height:0!important;max-height:none!important}
+ .controls{height:100%;min-height:0!important;max-height:100%;padding:0!important;
+   display:flex!important;flex-direction:column;gap:0;overflow:hidden!important;
+   border-left:1px solid #d3d8cf;background:#faf9f4}
+ .builder-v25-scroll{flex:1 1 0;min-height:0;max-height:100%;overflow-x:hidden;overflow-y:auto;
+   overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-color:#9cae9f transparent;
+   padding:18px 18px 15px}
+ .builder-v25-actions{flex:0 0 auto;padding:13px 17px 15px;z-index:2;
+   background:#fcfbf7;box-shadow:0 -8px 20px #193b2a10;border-top:1px solid #e3e2d8}
+ .builder-v25-intro{margin:0 0 13px}
+ .builder-v25-intro p{display:block!important}
+ .builder-geometry-strip{margin:0 0 12px!important}
+ .builder-geometry-strip select{min-height:43px!important;font-size:12px!important}
+ .builder-geometry-strip label{font-size:11px!important}
+ .builder-material-list{grid-auto-columns:minmax(125px,47%);padding-bottom:13px}
+ .builder-material-card img{height:105px!important}
+ .builder-material-card strong{font-size:12px}
+ .builder-material-card span{font-size:10px}
+ .builder-gallery-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+   overflow:visible;padding:3px 1px 12px}
+ .builder-gallery-tabs button{min-width:0;min-height:42px;border-radius:9px;text-align:left;
+   white-space:normal;padding:9px 11px;font-size:11px}
+ .builder-choice-summary{white-space:normal;overflow:visible;font-size:11px;line-height:1.6}
+ .builder-advanced summary{font-size:12px}
+ .builder-swatch-row{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .builder-v25-panel{min-width:0}
+ .builder-v25-preset-help{font-size:12px}
+ .note{display:block;margin-top:11px;font-size:10px;line-height:1.6}
+}
+.builder-v25-intro .eyebrow{display:block;color:#a36546;font:850 10px/1.4 Manrope,sans-serif;
+  letter-spacing:.12em;text-transform:uppercase}
+.builder-v25-intro h2{margin:4px 0 6px;color:#263d30;font:500 23px/1.18 Prata,Georgia,serif}
+.builder-v25-intro p{margin:0;color:#647468;font:550 11px/1.6 Manrope,sans-serif}
+.builder-v25-actions{display:flex;flex-direction:column;gap:10px}
+.builder-v25-step-indicator{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font:800 11px/1.4 Manrope,system-ui,sans-serif;color:#3e5a49}
+.builder-v25-progress{height:4px;overflow:hidden;border-radius:99px;background:#e0e7dd}
+.builder-v25-progress span{display:block;height:100%;width:14.285%;
+  background:#a5684b;border-radius:inherit;transition:width .28s ease}
+.builder-v25-nav-buttons{display:grid;grid-template-columns:1fr 1.5fr;gap:9px}
+.builder-v25-nav-buttons button{min-height:44px;padding:9px 10px;border-radius:9px;
+  font:800 12px/1.35 Manrope,system-ui,sans-serif;cursor:pointer}
+#builderPrev{border:1px solid #ccd9cc;background:#f6f9f5;color:#314a38}
+#builderNext{border:1px solid #2d593d;background:#305d42;color:#fff}
+#builderPrev:disabled{opacity:.42;cursor:default}
+.builder-v25-panel[hidden],.builder-geometry-strip[hidden],
+.builder-v25-garden[hidden],.builder-v25-openings[hidden]{display:none!important}
+.builder-v25-panel h3{color:#304d3a;font:850 13px/1.45 Manrope,system-ui,sans-serif;margin:7px 0 10px}
+.builder-v25-panel p{font:500 11px/1.6 Manrope,system-ui,sans-serif;color:#647366}
+.builder-v25-control{display:flex;flex-direction:column;gap:5px;margin:12px 0;color:#385343;
+  font:800 11px/1.35 Manrope,system-ui,sans-serif}
+.builder-v25-control select{min-height:43px;width:100%;border:1px solid #d3dbd0;border-radius:8px;
+ padding:9px;background:#fffdf8;color:#334936;font:700 12px/1.3 Manrope,system-ui,sans-serif}
+.builder-v25-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:center}
+.builder-v25-checkbox{display:flex;align-items:center;gap:10px;min-height:44px;
+  font:700 12px/1.45 Manrope,system-ui,sans-serif;color:#344b3b}
+.builder-v25-checkbox input{width:19px;height:19px;accent-color:#385f49}
+.builder-v25-summary{background:#f4f6f0;border:1px solid #dfe6da;
+  border-radius:10px;padding:12px}
+.builder-v25-summary p{margin:7px 0}
+.builder-v25-summary strong{color:#2d4d39}
+.builder-v25-panel button{cursor:pointer}
+.builder-v25-inline-btn{border:1px solid #9daf9f;background:#fff;padding:10px 12px;
+  border-radius:8px;min-height:43px;font:800 11px/1.4 Manrope,sans-serif;color:#355b44}
+#builderReset{margin-top:10px;width:100%}
+#builderSave{margin-top:10px;width:100%;background:#e8eee5}
+.builder-v25-disclaimer{font-size:10px!important}
+.builder-v25-toast{font:800 11px/1.5 Manrope,sans-serif;color:#345e45;min-height:0}
+@media(max-width:730px){
+ html{scroll-behavior:auto}
+ .builder-v25-scroll{overflow:visible;padding:8px 10px 2px}
+ .controls{overflow:visible!important}
+ .builder-v25-intro{margin:4px 0 9px}
+ .builder-v25-intro h2{font-size:19px}
+ .builder-v25-intro p{font-size:10px}
+ .builder-v25-actions{margin:5px 10px 10px;padding:9px 0;background:#faf9f4;
+  border-top:1px solid #e3e2d8}
+ .builder-v25-step-indicator{font-size:10px}
+ .builder-gallery-tabs{display:flex!important;gap:5px!important;overflow-x:auto!important;
+  padding-bottom:6px!important}
+ .builder-gallery-tabs button{min-height:38px!important;font-size:10px!important;
+  padding:8px 11px!important;border-radius:10px!important}
+ .builder-v25-control select{min-height:44px}
+ .builder-v25-row{gap:7px}
+ .builder-v25-panel h3{margin:7px 0}
+ .builder-choice-summary{white-space:normal!important;overflow:visible!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .builder-v25-progress span{transition:none}
+}
+
+/* v25 step-navigation — one decision at a time, no hidden horizontal tabs */
+.builder-v25-step-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0 0 13px}
+.builder-v25-step-tabs button{display:flex;align-items:center;gap:8px;min-height:42px;min-width:0;
+ padding:8px 10px;border:1px solid #dce2d8;border-radius:9px;background:#f4f6f0;color:#4c6352;
+ cursor:pointer;text-align:left;font:800 11px/1.3 Manrope,system-ui,sans-serif}
+.builder-v25-step-tabs button .number{display:inline-grid;place-items:center;flex:0 0 22px;height:22px;
+ background:#e3eae1;color:#416049;border-radius:50%;font:800 10px/1 Manrope,sans-serif}
+.builder-v25-step-tabs button[aria-current=step]{background:#2e583e;color:#fff;border-color:#2e583e}
+.builder-v25-step-tabs button[aria-current=step] .number{background:#f4eee1;color:#31573d}
+.builder-v25-step-tabs button:focus-visible,.builder-v25-actions button:focus-visible,
+.builder-v25-control select:focus-visible{outline:3px solid #c77c57;outline-offset:2px}
+#builderGallery>.builder-gallery-tabs{display:none!important}
+#builderGallery[hidden]{display:none!important}
+#builderAdvanced[hidden]{display:none!important}
+.builder-v25-step-tabs button:last-child{grid-column:1/-1}
+@media(max-width:730px){
+ .builder-v25-step-tabs{display:flex;gap:5px;overflow-x:auto;overscroll-behavior-x:contain;
+   scrollbar-width:thin;padding:2px 0 8px;margin:0 0 5px}
+ .builder-v25-step-tabs button{flex:0 0 110px;min-height:39px;font-size:10px;padding:6px}
+ .builder-v25-step-tabs button:last-child{flex-basis:110px}
+}
+
+/* Keep scene controls compact on desktop; legacy .secondary had width:100%. */
+.scene #autoRotate{width:auto!important;min-width:94px;max-width:140px!important;
+  min-height:36px;border-radius:9px;background:rgba(248,249,245,.94)}
+.scene .scene-tip{left:12px;right:auto;transform:none;max-width:calc(100% - 160px);
+  width:auto;white-space:normal;font-size:10px;line-height:1.35}
+.builder-v25-scroll>.note[hidden]{display:none!important}
+@media(max-width:730px){
+ .scene #autoRotate{min-width:85px;max-width:128px!important}
+ .scene .scene-tip{max-width:52%;font-size:9px}
+}
+
+/* Legacy embedded CSS hid ALL sidebar paragraphs; restore active v25 content. */
+.controls .builder-v25-panel p,.controls #builderFinalSummary p{display:block!important;margin:6px 0!important;line-height:1.55!important}

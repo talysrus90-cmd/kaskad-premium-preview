@@ -49,3 +49,8 @@
 - assets/3d/wood_planks_hd.webp — Poly Haven CC0 https://polyhaven.com/a/wood_planks; original 2K diffuse JPG from https://api.polyhaven.com/files/wood_planks, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
 - assets/3d/metal_roof_base_hd.webp — Poly Haven CC0 https://polyhaven.com/a/corrugated_iron_02; original 2K diffuse JPG from https://api.polyhaven.com/files/corrugated_iron_02, locally converted to 2048x2048 WebP 90. Neutralized roof/metal diffuse retains color palette selection where applicable.
 - assets/3d/cards/preset_*_v20.webp — own 3D scene captures (840x520 WebP) showing the new footprint/roof, not photos of constructed buildings.
+
+## v25 — ground and paving materials (Poly Haven CC0)
+- `leafy_grass_1k.webp`, `leafy_grass_2k.webp`: derived from Poly Haven **Leafy Grass**, author Charlotte Baglioni, CC0 1.0. Original: https://polyhaven.com/a/leafy_grass. JPEG diffuse converted to WebP; used for landscaping flowerbeds.
+- `concrete_pavement_02_1k.webp`, `concrete_pavement_02_2k.webp`: derived from Poly Haven **Concrete Pavement 02**, CC0 1.0. Original: https://polyhaven.com/a/concrete_pavement_02. JPEG diffuse converted to WebP; used for paths.
+- Original files are not trademarks or representations of a specific product's technical performance; imagery is a visual concept.

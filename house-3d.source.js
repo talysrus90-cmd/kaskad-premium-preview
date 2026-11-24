@@ -22,6 +22,11 @@ const fenceColorSelect=document.getElementById('fenceColorSelect');
 const houseStyleSelect=document.getElementById('houseStyleSelect');
 const roofShapeSelect=document.getElementById('roofShapeSelect');
 const houseSizeSelect=document.getElementById('houseSizeSelect');
+const frameColorSelect=document.getElementById('frameColorSelect');
+const doorColorSelect=document.getElementById('doorColorSelect');
+const glassTintSelect=document.getElementById('glassTintSelect');
+const landscapeSelect=document.getElementById('landscapeSelect');
+const poolToggle=document.getElementById('poolToggle');
 const highDetailButton=document.getElementById('highDetailButton');
 const qualitySelect=document.getElementById('qualitySelect');
 const autoButton=document.getElementById('autoRotate');
@@ -143,7 +148,7 @@ try {
   container.appendChild(renderer.domElement);
 
   const camera=new THREE.PerspectiveCamera(48,1,.2,130);
-  const initialPos=new THREE.Vector3(23,16.5,33);
+  const initialPos=new THREE.Vector3(19,12.8,26);
   camera.position.copy(initialPos);
   const controls=new OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;
@@ -191,6 +196,7 @@ try {
   const roofMat=M('#3e4849',.82);
   const doorMat=M('#4a3a31',.67,{metalness:.08});
   const bronze=M('#6f6555',.53,{metalness:.48});
+  const windowFrameMetal=M('#6f6555',.46,{metalness:.47});
   const rail=M('#a9b2aa',.35,{metalness:.52});
   const gravel=M('#ffffff',.86,{map:paverImage()});
   const meadow=M('#ffffff',.97,{map:lawnImage()});
@@ -334,16 +340,16 @@ try {
     // Backing around every window is the SAME facade texture, not a white
     // decorative panel that makes the front appear to use another material.
     cell(w+.25,h+.32,.13,brick,0,0,0);
-    cell(w+.05,h+.10,.14,bronze,0,0,.09);
+    cell(w+.05,h+.10,.14,windowFrameMetal,0,0,.09);
     const glass=cell(w-.10,h-.18,.025,glassMat,0,0,.18);
     frames.push(glass);
     cell(.065,h-.04,.055,quartz,0,0,.23);
     cell(w-.04,.065,.055,quartz,0,0,.23);
     cell(w+.30,.16,.35,quartz,0,-h/2-.13,.13);
-    cell(.043,h-.22,.055,bronze,-w*.26,0,.243);
-    cell(.043,h-.22,.055,bronze,w*.26,0,.243);
-    cell(w-.11,.032,.055,bronze,0,-h*.23,.245);
-    cell(w-.11,.032,.055,bronze,0,h*.23,.245);
+    cell(.043,h-.22,.055,windowFrameMetal,-w*.26,0,.243);
+    cell(.043,h-.22,.055,windowFrameMetal,w*.26,0,.243);
+    cell(w-.11,.032,.055,windowFrameMetal,0,-h*.23,.245);
+    cell(w-.11,.032,.055,windowFrameMetal,0,h*.23,.245);
     windowGroups.push({group,x,y,z,rot});
     return group;
   };
@@ -435,6 +441,7 @@ try {
   box(3.8,.075,15,gravel,0,.05,13.6,false);
   for(let i=0;i<12;i++)box(3.65,.016,.09,limestone,0,.094,7.9+i*.95,false);
   // Pool and borders on the lawn; do not use video or external heavy textures.
+  const poolStart=scene.children.length;
   box(6.4,.21,10.3,quartz,14.35,.15,2.4,false);
   // Ceramic pool liner below translucent, reflective water; thin grout lines
   // and a real stair ledge make the basin read as an object, not a flat color.
@@ -445,8 +452,18 @@ try {
   for(let i=0;i<3;i++)box(3.35-i*.34,.045,.56,poolStep,14.35,.23+i*.008,-2.08+i*.40,false);
   for(const x of [11.18,17.52])box(.2,.24,10.4,limestone,x,.20,2.4,false);
   for(const z of [-2.7,7.5])box(6.5,.24,.2,limestone,14.35,.20,z,false);
+  const poolGroup=new THREE.Group();poolGroup.name='КАСКАД · бассейн';
+  for(const part of scene.children.slice(poolStart))poolGroup.add(part);
+  scene.add(poolGroup);
   const trunkMat=M('#6b5847',.96);
+  const foliageStart=scene.children.length;
   addNaturalFoliage(THREE,scene,{trunkMat});
+  const foliageGroup=new THREE.Group();foliageGroup.name='КАСКАД · деревья и кустарники';
+  for(const part of scene.children.slice(foliageStart)){
+    if(part.isInstancedMesh)part.userData.defaultCount=part.count;
+    foliageGroup.add(part);
+  }
+  scene.add(foliageGroup);
 
   // Complete landscaped plot: low foundation walls, operable-looking gates,
   // detailed planting and three alternative fence treatments. All drawn on device.
@@ -466,6 +483,7 @@ try {
     gardenStone,postBrick,tuscanBrick,tuscanFenceWall,copingStone,fenceIron,timber
   });
   // Planter borders and small flowering areas remain lightweight.
+  const bedStart=scene.children.length;
   const bedMat=M('#55483d',1);
   for(const [x,z,w,d] of [[-7.85,12,3.7,10.2],[6.65,14,2.75,6.8]]){
     box(w,.08,d,bedMat,x,.09,z,false);
@@ -478,6 +496,29 @@ try {
     const bloom=new THREE.Mesh(new THREE.SphereGeometry(.085,7,6),flowers[k%3]);
     bloom.position.set(x,.27,z);scene.add(bloom);
   }
+  const flowerBeds=new THREE.Group();flowerBeds.name='КАСКАД · клумбы';
+  for(const part of scene.children.slice(bedStart))flowerBeds.add(part);
+  scene.add(flowerBeds);
+  const frameColors={bronze:'#6f6555',graphite:'#394348',white:'#f4eee2',wood:'#7b4b2d'};
+  const doorColors={walnut:'#4a3a31',graphite:'#373d3e',oak:'#c29c6b',white:'#f4eee2'};
+  const glassColors={clear:'#a6bdc7',smoke:'#768a91',blue:'#8ebdcc'};
+  const updateOpenings=()=>{
+    windowFrameMetal.color.set(frameColors[frameColorSelect?.value]||frameColors.bronze);
+    doorMat.color.set(doorColors[doorColorSelect?.value]||doorColors.walnut);
+  };
+  const updateLandscape=()=>{
+    const mode=landscapeSelect?.value||'lush';
+    poolGroup.visible=poolToggle?.checked!==false;
+    foliageGroup.visible=mode!=='open';flowerBeds.visible=mode!=='open';
+    for(let i=0;i<foliageGroup.children.length;i++){
+      const part=foliageGroup.children[i];
+      part.visible=mode==='lush'||mode==='modern'&&i%4!==0;
+      if(part.isInstancedMesh)part.count=mode==='modern'?Math.ceil(part.userData.defaultCount*.72):part.userData.defaultCount;
+    }
+  };
+  [frameColorSelect,doorColorSelect].forEach(el=>el?.addEventListener('change',updateOpenings));
+  [landscapeSelect,poolToggle].forEach(el=>el?.addEventListener('change',updateLandscape));
+  updateOpenings();updateLandscape();
 
   // Color swatches reference common RAL-like palettes, with no claims of exact screen color.
   const palette={
@@ -576,7 +617,13 @@ try {
     loadPhotoTexture('roof_tile_neutral_hd',3,3,tex=>roofSystem.setTileMap(tex));
     loadPhotoTexture('wood_planks_hd',1,1,tex=>{timber.map=tex;timber.needsUpdate=true;});
     loadPhotoTexture('metal_roof_base_hd',2,2,tex=>roofSystem.setPhotoMap(tex));
+    loadPhotoTexture('concrete_pavement_02_2k',2,5,tex=>{gravel.map=tex;gravel.needsUpdate=true});
+    loadPhotoTexture('leafy_grass_2k',2,5,tex=>{bedMat.map=tex;bedMat.color.set('#abc3a0');bedMat.needsUpdate=true});
   };
+  // CC0 landscape textures load only after the 3D constructor is visited.
+  // Leafy ground cover is used in flowerbeds; the lawn stays green.
+  loadPhotoTexture('concrete_pavement_02_1k',2,5,tex=>{gravel.map=tex;gravel.needsUpdate=true});
+  loadPhotoTexture('leafy_grass_1k',2,5,tex=>{bedMat.map=tex;bedMat.color.set('#abc3a0');bedMat.needsUpdate=true});
   renderer.domElement.style.visibility='hidden';
   window.setTimeout(revealFacade,4500);
   loadPhotoTexture('red_brick',3.25,2.15,tex=>{
@@ -680,12 +727,13 @@ try {
     const on=windowsToggle.checked;
     const warmth=on?(.15+evening*1.9):0;
     glassMat.emissiveIntensity=warmth;
-    glassMat.color.set(on&&evening>.5?'#edc69b':'#a6bdc7');
+    glassMat.color.set(on&&evening>.5?'#edc69b':(glassColors[glassTintSelect?.value]||glassColors.clear));
     warm.intensity=on?evening*26:0;
     sun.shadow.needsUpdate=true;
   };
   hourInput.addEventListener('input',updateLighting);
   windowsToggle.addEventListener('change',updateLighting);
+  glassTintSelect?.addEventListener('change',updateLighting);
   autoButton.addEventListener('click',()=>{
     controls.autoRotate=!controls.autoRotate;
     autoButton.setAttribute('aria-pressed',String(controls.autoRotate));

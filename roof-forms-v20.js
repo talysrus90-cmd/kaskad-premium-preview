@@ -1,4 +1,5 @@
-/* КАСКАД v24 — roof forms with finished eaves / soffits.
+import {METAL_PROFILES,makeStampedSurface} from './roof-relief-v25.js';
+/* КАСКАД v25 — roof forms with finished eaves / soffits.
    Concept geometry, not a structural or construction drawing. */
 export function createRoofForms(THREE,houseRoot,{roofSystem,roofRidge,gableFacades}){
   const forms=['gable','hip','flat','mansard']; // no single-slope option
@@ -17,7 +18,7 @@ export function createRoofForms(THREE,houseRoot,{roofSystem,roofRidge,gableFacad
     geo.setIndex(indices);geo.computeVertexNormals();
     const mesh=new THREE.Mesh(geo,mat);
     mesh.castShadow=true;mesh.receiveShadow=true;
-    if(mat===initialRoof)mesh.userData.isRoofShell=true;
+    if(mat===initialRoof){mesh.userData.isRoofShell=true;mesh.userData.corners=v.map(q=>[...q]);mesh.userData.baseGeometry=geo;}
     g.add(mesh);return mesh;
   };
   const box=(g,w,h,d,px,py,pz,mat=metalTrim)=>{
@@ -96,11 +97,25 @@ export function createRoofForms(THREE,houseRoot,{roofSystem,roofRidge,gableFacad
     roofRidge.visible=selected==='gable';
     gableFacades.visible=selected==='gable';
     for(const [k,g] of groups)g.visible=k===selected;
+    setMaterial();
   }
   function setMaterial(){
-    const mat=roofSystem.getMaterial();
-    for(const g of groups.values())for(const m of g.children)
-      if(m.userData.isRoofShell)m.material=mat;
+    const mat=roofSystem.getMaterial(),kind=roofSystem.getType();
+    const g=groups.get(selected);
+    if(!g)return;
+    for(const m of g.children){
+      if(!m.userData.isRoofShell)continue;
+      m.material=mat;
+      const profile=selected==='flat'||!METAL_PROFILES[kind]?'flat':kind;
+      if(m.userData.currentProfile===profile)continue;
+      if(m.userData.dynamicGeometry){m.userData.dynamicGeometry.dispose();m.userData.dynamicGeometry=null;}
+      if(profile==='flat')m.geometry=m.userData.baseGeometry;
+      else {
+        const geometry=makeStampedSurface(THREE,m.userData.corners,kind);
+        m.geometry=geometry;m.userData.dynamicGeometry=geometry;
+      }
+      m.userData.currentProfile=profile;
+    }
   }
   setShape(selected);
   return {forms,setShape,setMaterial,getShape:()=>selected,

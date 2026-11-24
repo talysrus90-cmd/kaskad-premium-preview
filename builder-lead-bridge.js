@@ -6,7 +6,7 @@
   facade:{brick:'Красный кирпич',tuscan:'Тосканский кирпич',stone:'Светлый камень',plaster:'Светлая штукатурка',gray:'Серо-бежевый кирпич'},
   roof:{slate:'Тёмная черепица',terracotta:'Терракотовая черепица',graphite:'Графитовая черепица',ceramic:'Керамическая черепица',
     metalGraphite:'Металлочерепица — классика',metalBurgundy:'Металлочерепица — классика',
-    metal3d:'Металлочерепица 3D',metalModular:'Модульная металлочерепица',
+    metal3d:'Металлочерепица 3D',metalModular:'Симметричная металлочерепица',metalTramontana:'Рельефная металлочерепица',
     standingSeam:'Фальцевая кровля',flexible:'Гибкая черепица',
     composite:'Композитная черепица',profiled:'Кровельный профлист'},
   fence:{iron:'Кованый металл',tuscan:'Высокий кирпичный забор',
@@ -17,6 +17,15 @@
   fenceColor:{graphite:'Графит',chocolate:'Шоколад',burgundy:'Бордо',green:'Тёмно-зелёный',black:'Чёрный',gray:'Серый',terracotta:'Терракота',sand:'Песочный'}
  };
  const fields=['facade','roof','fence','roofColor','fenceColor'];
+ const optional={
+  houseStyle:{classic:'Загородная классика',italian:'Итальянский двор',modern:'Современный дом',estate:'Усадьба',kavkaz:'Кавказский стиль',coastal:'Светлый минимализм',practical:'Практичный дом',craft:'Садовый особняк'},
+  houseSize:{150:'150 м²',180:'180 м²',220:'220 м²',260:'260 м²',300:'300 м²',350:'350 м²'},
+  roofShape:{gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'},
+  frameColor:{bronze:'Бронза',graphite:'Графит',white:'Белый',wood:'Тёплый орех'},
+  doorColor:{walnut:'Тёмный орех',graphite:'Графит',oak:'Светлый дуб',white:'Белый'},
+  glassTint:{clear:'Прозрачное',smoke:'Тонированное',blue:'Холодное голубое'},
+  landscape:{lush:'Сад с деревьями',modern:'Современное озеленение',open:'Открытый газон'}
+ };
  function intake(raw){
    if(!raw||typeof raw!=='object')return;
    const cfg={
@@ -29,9 +38,14 @@
    service.value='Строительство дома, коттеджа или виллы';
    service.dispatchEvent(new Event('change',{bubbles:true}));
    const prior=comment.value.split('\n').filter(line=>!line.startsWith('3D-концепция КАСКАД:'));
+   const extra=Object.entries(optional).filter(([key,values])=>
+     typeof cfg[key]==='string'&&Object.hasOwn(values,cfg[key]))
+     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок'}[key]+' — '+values[cfg[key]]));
+   if(typeof cfg.pool==='boolean')extra.push('Бассейн — '+(cfg.pool?'есть':'нет'));
    const text='3D-концепция КАСКАД: фасад — '+valid.facade[cfg.facade]+
      '; кровля — '+valid.roof[cfg.roof]+', цвет — '+valid.roofColor[cfg.roofColor]+
      '; забор — '+valid.fence[cfg.fence]+', цвет металлических деталей — '+valid.fenceColor[cfg.fenceColor]+
+     (extra.length?'; '+extra.join('; '):'')+
      '. Предварительная визуальная идея; тип, производитель, наличие, комплектация и стоимость уточняются по смете.';
    comment.value=[...prior,text].filter(Boolean).join('\n');
    comment.dispatchEvent(new Event('input',{bubbles:true}));
@@ -41,11 +55,8 @@
  window.addEventListener('message',event=>{
    if(event.origin!==location.origin||!iframe||event.source!==iframe.contentWindow)return;
    if(event.data?.type==='kaskad-3d-frame-height'){
-     const h=Number(event.data.height);
-     if(!window.matchMedia('(max-width:730px)').matches&&Number.isFinite(h)&&h>=400&&h<=1600){
-       const styleHeight=Math.ceil(h+2)+'px';
-       if(iframe.style.height!==styleHeight)iframe.style.height=styleHeight;
-     }
+     // v25: the desktop iframe has a fixed responsive height; the sidebar
+     // scrolls independently. Never enlarge the iframe to its content height.
      return;
    }
    if(event.data?.type==='kaskad-design-inquiry'&&event.data?.version===1)intake(event.data.config);

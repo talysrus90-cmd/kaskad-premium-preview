@@ -123,6 +123,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
 @media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
 </style>
+<link rel="stylesheet" href="builder-v25-layout.css?v=1">
 </head>
 <body>
 <main class="embed">
@@ -139,6 +140,9 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="footbar"><span>Дом и участок</span><span id="modelFPS">Загрузка</span></div>
 </div>
 <aside class="controls" aria-label="Управление трёхмерной моделью">
+<div class="builder-v25-scroll" id="builderV25Scroll">
+<header class="builder-v25-intro"><span class="eyebrow">КАСКАД · КОНСТРУКТОР</span><h2>Ваш будущий дом</h2><p>Выберите архитектуру и отделку. Изображение обновляется при выборе.</p></header>
+<nav id="builderStepNav" class="builder-v25-step-tabs" aria-label="Этапы настройки дома"></nav>
 <div class="builder-geometry-strip" aria-label="Размеры и форма дома"><label for="roofShapeSelect">Форма крыши<select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip">Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select></label><label for="houseSizeSelect">Площадь дома<select id="houseSizeSelect"><option value="150">≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220" selected>≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select></label></div>
 <div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
   <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
@@ -159,7 +163,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
   <summary>Все материалы списком</summary>
 <div class="builder-options" aria-label="Дополнительный выбор материалов">
     <label for="facadeSelect">Фасад<select id="facadeSelect"><option value="brick">Красный кирпич</option><option value="tuscan">Тосканская кладка</option><option value="stone">Светлый камень</option><option value="plaster">Светлая штукатурка</option><option value="gray">Серо-бежевый кирпич</option></select></label>
-    <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая черепица</option><option value="graphite">Графитовая черепица</option><option value="ceramic">Керамическая</option><option value="metalGraphite">Металлочерепица — классика, графит</option><option value="metalBurgundy">Металлочерепица — классика, бордо</option><option value="metal3d">Металлочерепица 3D</option><option value="metalModular">Металлочерепица модульная</option><option value="standingSeam">Фальцевая кровля</option><option value="flexible">Гибкая черепица</option><option value="composite">Композитная черепица</option><option value="profiled">Кровельный профлист</option></select></label>
+    <label for="roofSelect">Кровля<select id="roofSelect"><option value="slate">Тёмная черепица</option><option value="terracotta">Терракотовая черепица</option><option value="graphite">Графитовая черепица</option><option value="ceramic">Керамическая</option><option value="metalGraphite" selected>Классическая металлочерепица</option><option value="metalBurgundy">Металлочерепица — классика, бордо</option><option value="metal3d">Металлочерепица 3D</option><option value="metalModular">Симметричная металлочерепица</option><option value="metalTramontana">Рельефная металлочерепица</option><option value="standingSeam">Фальцевая кровля</option><option value="flexible">Гибкая черепица</option><option value="composite">Композитная черепица</option><option value="profiled">Кровельный профлист</option></select></label>
     <label for="fenceSelect">Забор<select id="fenceSelect"><option value="iron">Кованый металл</option><option value="tuscan">Кирпичная ограда</option><option value="wood">Деревянные ламели</option><option value="stone">Каменные секции</option><option value="brickIron">Кирпичные столбы + ковка</option><option value="louvers">Забор-жалюзи</option><option value="picket">Евроштакетник</option><option value="chess">Штакетник шахматка</option><option value="ranch">Ранчо</option><option value="profiled">Сплошной профлист</option><option value="panel3d">Сварные 3D-панели</option></select></label>
     <label for="roofColorSelect">Цвет кровли<select id="roofColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
     <label for="fenceColorSelect">Цвет металлических элементов<select id="fenceColorSelect"><option value="graphite">Графит</option><option value="chocolate">Шоколад</option><option value="burgundy">Бордо</option><option value="green">Зелёный</option><option value="black">Чёрный</option><option value="gray">Серый</option><option value="terracotta">Терракота</option><option value="sand">Песочный</option></select></label>
@@ -170,10 +174,13 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </details>
 </div></details>
 <div class="note">Демонстрационная 3D-модель. Не фото построенного объекта и не проектная документация.</div>
+</div>
+<div class="builder-v25-actions" id="builderV25Actions"><div class="builder-v25-step-indicator"><span id="builderStepLabel">Шаг 1 из 7</span><span id="builderStepTitle">Стиль дома</span></div><div class="builder-v25-progress" aria-hidden="true"><span id="builderProgress"></span></div><div class="builder-v25-nav-buttons"><button type="button" id="builderPrev">← Назад</button><button type="button" id="builderNext">Далее →</button></div></div>
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=6" defer></script>
-<script type="module" src="house-3d.bundle.js?v=10"></script>
+<script src="builder-gallery.js?v=7" defer></script>
+<script src="builder-v25-experience.js?v=1" defer></script>
+<script type="module" src="house-3d.bundle.js?v=11"></script>
 </body>
 </html>

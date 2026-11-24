@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261123-touch-roofs-v24';
+const VERSION='kaskad-pwa-20261124-builder-v25';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -14,14 +14,17 @@ const core=[
  './gallery-fullscreen-20261109.css?v=3',
  './gallery-four-20261109.css?v=2',
  './faq-legal-20261109.css?v=2',
- './interactive-home.css?v=7',
+ './interactive-home.css?v=8',
  './mobile-usability-20261123.css?v=1',
- './3d-house-embed.html?v=10',
- './house-3d.bundle.js?v=10',
+ './3d-house-embed.html?v=11',
+ './house-3d.bundle.js?v=11',
  './3d-house.css?v=4',
+ './builder-v25-layout.css?v=1',
+ './builder-v25-experience.js?v=1',
  './mobile-dock-20261110.css?v=1',
  './mobile-dock-20261110.js?v=3',
- './builder-gallery.js?v=6',
+ './builder-gallery.js?v=7',
+ './roof-relief-v25.js',
  './architecture-styles-v19.js',
  './assets/3d/cards/preset_classic_v20.webp',
  './assets/3d/cards/preset_italian_v20.webp',
@@ -32,7 +35,7 @@ const core=[
  './assets/3d/cards/preset_practical_v20.webp',
  './assets/3d/cards/preset_craft_v20.webp',
  './builder-gallery.css?v=3',
- './builder-lead-bridge.js?v=3',
+ './builder-lead-bridge.js?v=4',
  './assets/3d/roof_tile_neutral.webp',
  './roof-market-v16.js',
  './roof-forms-v20.js',
@@ -54,6 +57,10 @@ const core=[
  './assets/3d/cards/roof_flexible.webp',
  './assets/3d/cards/roof_metal3d.webp',
  './assets/3d/cards/roof_metalModular.webp',
+ './assets/3d/cards/roof_metalGraphite_v25.webp',
+ './assets/3d/cards/roof_metal3d_v25.webp',
+ './assets/3d/cards/roof_metalModular_v25.webp',
+ './assets/3d/cards/roof_metalTramontana_v25.webp',
  './assets/3d/cards/roof_profiled.webp',
  './assets/3d/cards/roof_standingSeam.webp',
  './assets/3d/italian_brick_diff.webp',
@@ -62,6 +69,10 @@ const core=[
  './assets/3d/rustic_brick_nor_gl.webp',
  './assets/3d/metal_roof_diff.webp',
  './assets/3d/metal_roof_base.webp',
+ './assets/3d/concrete_pavement_02_1k.webp',
+ './assets/3d/concrete_pavement_02_2k.webp',
+ './assets/3d/leafy_grass_1k.webp',
+ './assets/3d/leafy_grass_2k.webp',
  './assets/3d/metal_roof_nor_gl.webp',
  './assets/3d/metal_roof_rough.webp',
  './assets/3d/rooitou_park_1k.hdr',
