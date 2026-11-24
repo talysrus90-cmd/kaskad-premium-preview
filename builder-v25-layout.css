@@ -826,3 +826,52 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
 /* v50: stages are selected directly from the tabs; remove the redundant bottom wizard dock. */
 #builderV25Actions{display:none!important}
 @media(max-width:730px){.controls{padding-bottom:8px!important}}
+
+/* v51: four architecture families, clear mobile navigation and real addition presets. */
+.builder-family-chips{
+ display:flex;gap:6px;max-width:100%;overflow-x:auto;
+ padding:5px 2px 9px;scrollbar-width:thin;overscroll-behavior-x:contain;
+ -webkit-overflow-scrolling:touch
+}
+.builder-family-chips[hidden]{display:none!important}
+.builder-family-chips button{
+ flex:0 0 auto;min-height:38px;padding:8px 12px;
+ border:1px solid #c9d6ca;border-radius:999px;background:#fffdf9;
+ color:#35563f;font:800 11px/1.3 Manrope,system-ui,sans-serif;
+ touch-action:manipulation;white-space:nowrap
+}
+.builder-family-chips button[aria-pressed=true]{
+ color:#fff;background:#315d44;border-color:#315d44
+}
+.builder-family-chips button:focus-visible,.builder-addon-button:focus-visible{
+ outline:3px solid #b97955;outline-offset:2px
+}
+.builder-addon-picks{
+ margin:14px 0 17px;padding:11px;
+ border:1px solid #d6e0d3;border-radius:12px;background:#f3f6ef
+}
+.builder-addon-picks h3{margin:0 0 5px!important;font-size:14px!important}
+.controls .builder-addon-picks p{
+ display:block!important;margin:3px 0 9px!important;
+ font:550 11px/1.5 Manrope,system-ui,sans-serif;color:#526754
+}
+.builder-addon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.builder-addon-button{
+ display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+ text-align:left;min-width:0;min-height:70px;gap:4px;
+ padding:9px 10px;border:1px solid #c9d7c9;border-radius:9px;
+ color:#34513f;background:#fffefa;touch-action:manipulation;cursor:pointer
+}
+.builder-addon-button strong{font:800 12px/1.3 Manrope,system-ui,sans-serif}
+.builder-addon-button small{font:550 10px/1.35 Manrope,system-ui,sans-serif;color:#627463}
+.builder-addon-button[aria-pressed=true]{border:2px solid #356649;background:#e8f1e5}
+@media(max-width:730px){
+ .builder-category-filter:not([hidden]){
+  position:absolute!important;width:1px!important;height:1px!important;
+  overflow:hidden!important;clip:rect(0 0 0 0)!important;
+  white-space:nowrap!important;border:0!important;padding:0!important
+ }
+ .builder-family-chips{margin:0 2px 2px}
+ .builder-family-chips button{min-height:38px}
+}
+@media(min-width:731px){.builder-family-chips{display:none!important}}
