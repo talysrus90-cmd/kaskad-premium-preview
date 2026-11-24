@@ -19,7 +19,7 @@
  const fieldIds=['houseStyleSelect','houseSizeSelect','roofShapeSelect','facadeSelect',
   'roofSelect','roofColorSelect','fenceSelect','fenceColorSelect','frameColorSelect',
   'doorColorSelect','glassTintSelect','landscapeSelect','poolToggle',
-  'yardStyleSelect','parkingToggle','gazeboToggle','terraceToggle','entranceStyleSelect','plinthSelect',
+  'yardStyleSelect','parkingToggle','gazeboToggle','terraceToggle','entranceStyleSelect','plinthSelect','verandaSelect','blindAreaType','blindAreaColor','blindAreaWidth','blindAreaContour',
   'houseWidthInput','houseLengthInput','houseFloorsSelect'];
  const fields={};
  const geom=document.querySelector('.builder-geometry-strip');
@@ -86,7 +86,23 @@
     </select>
    </label>
    <label class="builder-v25-checkbox"><input id="parkingToggle" type="checkbox" checked> Парковка с отдельными воротами</label>
-   <label class="builder-v25-checkbox"><input id="terraceToggle" type="checkbox"> Терраса у дома со стороны сада</label>
+    <input id="terraceToggle" type="checkbox" hidden>
+    <label class="builder-v25-control">Веранда
+      <select id="verandaSelect"><option value="none">Без веранды</option><option value="open">Открытая</option><option value="covered">Крытая</option><option value="columns">С колоннами</option><option value="modern">Современная</option><option value="garden">Со стороны сада</option></select>
+    </label>
+    <p id="siteCompatibilityNote" role="status" aria-live="polite"></p>
+    <label class="builder-v25-control">Отмостка — материал
+      <select id="blindAreaType"><option value="concrete">Бетонная</option><option value="tile">Плитка</option><option value="pavers">Брусчатка</option><option value="stone">Камень</option><option value="wide">Широкая декоративная</option><option value="none">Без отмостки (эскиз)</option></select>
+    </label>
+    <label class="builder-v25-control">Цвет отмостки
+      <select id="blindAreaColor"><option value="graphite">Графит</option><option value="gray">Серый</option><option value="brown">Серо-коричневый</option><option value="sand">Песочный</option></select>
+    </label>
+    <label class="builder-v25-control">Ширина отмостки
+      <select id="blindAreaWidth"><option value="0.6">0,6 м</option><option value="0.8">0,8 м</option><option value="0.9" selected>0,9 м</option><option value="1.2">1,2 м</option><option value="1.5">1,5 м</option></select>
+    </label>
+    <label class="builder-v25-control">Контур отмостки
+      <select id="blindAreaContour"><option value="all">Вокруг дома</option><option value="front">Только спереди (демо)</option><option value="rear">Только сзади (демо)</option></select>
+    </label>
    <label class="builder-v25-checkbox"><input id="gazeboToggle" type="checkbox"> Пергола / зона отдыха</label>
    <label class="builder-v25-checkbox"><input id="poolToggle" type="checkbox"> Бассейн на участке</label>
    <p>Главная дорожка соединяет калитку и вход. Парковка — справа, со своим въездом.</p>
@@ -103,7 +119,7 @@
  // Controls belong in the panel, never cover the 3D image.
  const facadeHelp=document.createElement('section');
  facadeHelp.className='builder-material-explainer';facadeHelp.hidden=true;
- facadeHelp.innerHTML='<h3>Материал и цвет фасада</h3><p>Выберите фактуру на карточке ниже. Дом изменится сразу.</p><label class="builder-v25-control">Отделка цоколя<select id="plinthSelect"><option value="stone">Светлый камень</option><option value="graphite">Тёмный графит</option><option value="light">Светлая штукатурка</option><option value="brick">Кирпичная облицовка</option><option value="none">Без декоративной облицовки</option></select></label>';
+ facadeHelp.innerHTML='<h3>Материал и цвет фасада</h3><p>Выберите фактуру на карточке ниже. Дом изменится сразу.</p><label class="builder-v25-control">Отделка цоколя<select id="plinthSelect"><option value="graphite">Практичный графит (по умолчанию)</option><option value="stone">Природный камень</option><option value="brick">Облицовочный кирпич</option><option value="tile">Тёмная фасадная плитка</option><option value="dagestan">Дагестанский камень</option><option value="decorative">Тёмный декоративный камень</option><option value="taupe">Серо-коричневый камень</option><option value="none">Без декоративной облицовки</option></select></label>';
  root.before(facadeHelp);
  const roofShapes=document.createElement('section');
  roofShapes.className='builder-v28-roof-forms';roofShapes.hidden=true;
@@ -201,10 +217,10 @@
  floorsSelect.addEventListener('change',()=>{
   const floor=floorsSelect.value,style=document.getElementById('houseStyleSelect'),
    roof=document.getElementById('roofShapeSelect');
-  const compatible=floor==='two'?['classic']:
+  const compatible=floor==='two'?['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily']:
     floor==='mansard'?['mansardHome','gableAttic']:null;
   const nextStyle=floor==='two'?'classic':floor==='mansard'?'mansardHome':'family';
-  if(compatible?!compatible.includes(style.value):['classic','mansardHome','gableAttic'].includes(style.value)){
+  if(compatible?!compatible.includes(style.value):['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','mansardHome','gableAttic'].includes(style.value)){
    style.value=nextStyle;style.dispatchEvent(new Event('change',{bubbles:true}));
   }
   if(floor==='mansard'&&roof.value!=='mansard'){
@@ -216,7 +232,7 @@
  });
  document.getElementById('houseStyleSelect')?.addEventListener('change',()=>{
   const style=document.getElementById('houseStyleSelect').value;
-  const inferred=style==='classic'?'two':
+  const inferred=['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily'].includes(style)?'two':
    ['mansardHome','gableAttic'].includes(style)?'mansard':'one';
   if(floorsSelect.value!==inferred){floorsSelect.value=inferred;syncDimensions();summary()}
  });
@@ -260,7 +276,8 @@
    ['Парадный двор',name('yardStyleSelect')],
    ['Парковка',fields.parkingToggle?.checked?'Есть':'Нет'],
    ['Беседка',fields.gazeboToggle?.checked?'Есть':'Нет'],
-   ['Терраса',fields.terraceToggle?.checked?'Есть':'Нет'],
+   ['Веранда',name('verandaSelect')],
+   ['Отмостка',name('blindAreaType')+', '+name('blindAreaWidth')+', '+name('blindAreaColor')],
    ['Бассейн',fields.poolToggle?.checked?'Есть':'Без бассейна']
   ];
   result.replaceChildren(...rows.map(([label,value])=>{
@@ -333,11 +350,14 @@
   doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
   entranceStyleSelect:'simple',
   yardStyleSelect:'family',parkingToggle:true,gazeboToggle:false,
-  terraceToggle:false,plinthSelect:'stone'
+  terraceToggle:false,plinthSelect:'graphite',verandaSelect:'none',
+   blindAreaType:'concrete',blindAreaColor:'graphite',
+   blindAreaWidth:'0.9',blindAreaContour:'all'
  };
  const storageKey='kaskad-v30-exterior-selection';
  function apply(state){
   if(!state||typeof state!=='object')return;
+   if(state.terraceToggle===true&&!state.verandaSelect)state={...state,verandaSelect:'open',terraceToggle:false};
   for(const [id,value] of Object.entries(defaults)){
    const el=fields[id];
    if(!el)continue;
@@ -394,6 +414,9 @@
    pool:fields.poolToggle.checked,
    yardStyle:fields.yardStyleSelect.value,parking:fields.parkingToggle.checked,
    gazebo:fields.gazeboToggle.checked,terrace:fields.terraceToggle.checked,
+   veranda:fields.verandaSelect.value,blindArea:fields.blindAreaType.value,
+   blindAreaColor:fields.blindAreaColor.value,blindAreaWidth:fields.blindAreaWidth.value,
+   blindAreaContour:fields.blindAreaContour.value,
    plinth:fields.plinthSelect.value};
   if(window.parent!==window){
    window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);

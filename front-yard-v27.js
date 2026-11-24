@@ -18,6 +18,8 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
  const modern=new THREE.Group();modern.name='Минималистичные посадки';root.add(modern);
  const garden=new THREE.Group();garden.name='Загородный сад';root.add(garden);
  const gazebo=new THREE.Group();gazebo.name='Беседка/пергола';root.add(gazebo);
+ const poolPath=new THREE.Group();poolPath.name='Пешеходная дорожка к бассейну';root.add(poolPath);
+ const pergolaPath=new THREE.Group();pergolaPath.name='Пешеходная дорожка к перголе';root.add(pergolaPath);
  const g=(parent,w,h,depth,x,y,z,mat)=>{
   const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,depth),mat);
   m.position.set(x,y,z);m.receiveShadow=true;m.castShadow=h>.09;parent.add(m);return m;
@@ -57,6 +59,13 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
  tiles(parking,{x0:9.5,z0:15.1,width:4.5,length:11.2,unitX:.43,unitZ:.34});
  tiles(parking,{x0:9.5,z0:9.55,width:5.3,length:4.2,unitX:.44,unitZ:.30});
  for(const x of [7.14,11.86])g(parking,.14,.08,11.2,x,.11,15.1,concrete);
+ // Проход по правой стороне дома проходит между фасадом и бассейном,
+ // и заканчивается у южного борта, не перекрывая въезд.
+ tiles(poolPath,{x0:9.40,z0:.55,width:1.05,length:13.20,unitX:.35,unitZ:.35});
+ tiles(poolPath,{x0:10.32,z0:-5.06,width:2.05,length:.96,unitX:.35,unitZ:.35});
+ // Отдельный проход к садовой перголе вдоль левой стороны.
+ tiles(pergolaPath,{x0:-8.75,z0:-1.1,width:1.02,length:8.8,unitX:.34,unitZ:.34});
+ tiles(pergolaPath,{x0:-9.70,z0:-3.64,width:1.92,length:.88,unitX:.34,unitZ:.34});
  // Planting beds with individual stems, five petals and greenery,
  // instead of hovering dot sprites on brown rectangles.
  const petalsGeometry=new THREE.SphereGeometry(1,6,5);
@@ -114,9 +123,10 @@ export function createFrontYard(THREE,scene,{lawnMaterial}={}){
   garden.visible=mode==='garden';
  }
  function setParking(on){parking.visible=!!on}
- function setGazebo(on){gazebo.visible=!!on}
- setStyle('family');setParking(true);setGazebo(false);
- return {root,path,parking,classic,family,modern,garden,gazebo,setStyle,setParking,setGazebo,
+ function setGazebo(on){gazebo.visible=!!on;pergolaPath.visible=!!on}
+ function setPool(on){poolPath.visible=!!on}
+ setStyle('family');setParking(true);setGazebo(false);setPool(false);
+ return {root,path,parking,classic,family,modern,garden,gazebo,poolPath,pergolaPath,setStyle,setParking,setGazebo,setPool,
   getState:()=>({style:classic.visible?'classic':family.visible?'family':modern.visible?'modern':'garden',
     parking:parking.visible,gazebo:gazebo.visible})};
 }

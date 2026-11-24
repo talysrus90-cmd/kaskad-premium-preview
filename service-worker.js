@@ -1,7 +1,7 @@
 /* КАСКАД PWA Service Worker — offline shell + viewed photos, no caching of personal data.
    Only this published preview scope is controlled. No subscription to push notifications. */
 'use strict';
-const VERSION='kaskad-pwa-20261124-configurator-v30';
+const VERSION='kaskad-pwa-20261124-configurator-v30-quality';
 const SHELL=VERSION+'-shell';
 const IMAGES=VERSION+'-images';
 const RUNTIME=VERSION+'-runtime';
@@ -16,15 +16,15 @@ const core=[
  './faq-legal-20261109.css?v=2',
  './interactive-home.css?v=10',
  './mobile-usability-20261123.css?v=1',
- './3d-house-embed.html?v=16',
- './house-3d.bundle.js?v=15',
+ './3d-house-embed.html?v=17',
+ './house-3d.bundle.js?v=16',
  './3d-house.css?v=4',
  './builder-v25-layout.css?v=4',
- './builder-v25-experience.js?v=6',
+ './builder-v25-experience.js?v=7',
  './mobile-dock-20261110.css?v=2',
  './mobile-dock-20261110.js?v=4',
  './builder-launch-v29.js?v=1',
- './builder-gallery.js?v=11',
+ './builder-gallery.js?v=12',
  './roof-relief-v25.js',
  './russian-home-v26.js',
  './house-variants-v27.js',
@@ -32,6 +32,9 @@ const core=[
  './facade-presets-v28.js',
  './entrance-v28.js',
  './exterior-addons-v30.js',
+ './blind-area-v31.js',
+ './veranda-v31.js',
+ './two-storey-v31.js',
  './architecture-styles-v19.js',
  './assets/3d/cards/facade_brickBeige_v28.webp',
  './assets/3d/cards/facade_brickGraphite_v28.webp',
@@ -46,6 +49,14 @@ const core=[
  './assets/3d/cards/facade_stone_v28.webp',
  './assets/3d/cards/facade_tuscan_v28.webp',
  './assets/3d/cards/facade_venetian_v28.webp',
+ './assets/3d/cards/preset_twoClassic_v31.webp',
+ './assets/3d/cards/preset_twoBrick_v31.webp',
+ './assets/3d/cards/preset_twoColumns_v31.webp',
+ './assets/3d/cards/preset_twoModern_v31.webp',
+ './assets/3d/cards/preset_twoBalcony_v31.webp',
+ './assets/3d/cards/preset_twoTerrace_v31.webp',
+ './assets/3d/cards/preset_twoEstate_v31.webp',
+ './assets/3d/cards/preset_twoFamily_v31.webp',
  './assets/3d/cards/preset_barnhouse_v27.webp',
  './assets/3d/cards/preset_bungalow_v27.webp',
  './assets/3d/cards/preset_chalet_v27.webp',

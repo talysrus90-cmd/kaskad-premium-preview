@@ -59,10 +59,22 @@ export function addNaturalFoliage(THREE,scene,{trunkMat}){
       }
     }
   }
+  // Зоны исключения расширены на радиус кроны: бассейн, подъезд, веранда,
+  // пергола, проходы. Деревья не создаются внутри будущих объектов.
+  const reserved=[
+    [11.08,17.62,-4.73,5.75], // бассейн и борта
+    [7.05,12.22,7.18,20.85],  // парковка и въезд
+    [-14.38,-9.60,-3.52,.53], // пергола
+    [-4.7,4.7,-19,-4.2],      // веранда при любом размере дома
+    [-1.65,1.65,5.55,20.95],  // входная дорожка
+    [8.68,10.03,-8.5,7.15]   // боковой проход к бассейну
+  ];
+  const available=(x,z,margin)=>reserved.every(([x0,x1,z0,z1])=>
+    x<x0-margin||x>x1+margin||z<z0-margin||z>z1+margin);
   [[-14.8,-10.6,1.05],[13.6,-11.6,.97],[-14.7,13.2,.84],[15.8,14.2,.92],[-6.8,-13,.78]]
-    .forEach((entry,i)=>deciduous(...entry,i));
+    .forEach((entry,i)=>{if(available(entry[0],entry[1],2.8*entry[2]))deciduous(...entry,i)});
   [[-11.6,4],[-11.2,0],[-10.6,-4],[16.4,-4],[16.4,0],[16.4,4],[5,-9],[-6,-10],[-13,-10]]
-    .forEach(([x,z],i)=>cypress(x,z,3.15+(i%3)*.65,i));
+    .forEach(([x,z],i)=>{if(available(x,z,1.3))cypress(x,z,3.15+(i%3)*.65,i)});
   // Low shrubs are confined to the left lawn. The right-hand driveway
   // must remain clear for a vehicle, not overgrown with floating leaves.
   for(let k=0;k<14;k++){

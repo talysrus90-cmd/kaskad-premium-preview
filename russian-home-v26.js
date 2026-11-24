@@ -215,7 +215,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  function setEntrance(style){legacyEntry.visible=false;entryVariants.setStyle(style)}
  function setStyle(style){
   currentStyle=style;
-  root.visible=style!=='classic'&&HOME_VARIANTS.some(item=>item.id===style);
+  root.visible=HOME_VARIANTS.some(item=>item.id===style&&item.group!=='Двухэтажные');
   variants.setStyle(style);
   if(attics.has('gable'))attics.get('gable').visible=style==='gableAttic';
  }

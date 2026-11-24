@@ -13,6 +13,9 @@ import {HOME_VARIANTS} from './house-variants-v27.js';
 import {createFacadeMaterials} from './facade-presets-v28.js';
 import {createEntranceVariants} from './entrance-v28.js';
 import {createExteriorAddons} from './exterior-addons-v30.js';
+import {createBlindArea} from './blind-area-v31.js';
+import {createVeranda} from './veranda-v31.js';
+import {createTwoStoreyStyles} from './two-storey-v31.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -42,6 +45,11 @@ const terraceToggle=document.getElementById('terraceToggle');
 const yardStyleSelect=document.getElementById('yardStyleSelect');
 const parkingToggle=document.getElementById('parkingToggle');
 const gazeboToggle=document.getElementById('gazeboToggle');
+const verandaSelect=document.getElementById('verandaSelect');
+const blindAreaType=document.getElementById('blindAreaType');
+const blindAreaColor=document.getElementById('blindAreaColor');
+const blindAreaWidth=document.getElementById('blindAreaWidth');
+const blindAreaContour=document.getElementById('blindAreaContour');
 const highDetailButton=document.getElementById('highDetailButton');
 const qualitySelect=document.getElementById('qualitySelect');
 const autoButton=document.getElementById('autoRotate');
@@ -409,7 +417,11 @@ try {
     const style=houseStyleSelect?.value||'classic';
     houseRoot.visible=!oneStoreyStyles.has(style);
     russianHome.setStyle(style);
-    if(houseRoot.visible)architectureSystem.setStyle(style);
+    const arch={twoClassic:'classic',twoBrick:'practical',twoColumns:'classic',
+      twoModern:'modern',twoBalcony:'classic',twoTerrace:'classic',
+      twoEstate:'estate',twoFamily:'practical'}[style]||style;
+    if(houseRoot.visible)architectureSystem.setStyle(arch);
+    twoStoryStyles.setStyle(style);
     for(const window of windowGroups){
       const onFront=Math.abs(window.z-4.58)<.2;
       const onBack=Math.abs(window.z+4.58)<.2;
@@ -436,15 +448,40 @@ try {
   const russianHome=createRussianHouse(THREE,scene,{
     brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat
   });
-  const oneStoreyStyles=new Set(HOME_VARIANTS.filter(item=>item.id!=='classic').map(item=>item.id));
+  const oneStoreyStyles=new Set(HOME_VARIANTS.filter(item=>item.group!=='Двухэтажные').map(item=>item.id));
   const woodAccent=M('#806447',.81);
   const twoStoryAddons=createExteriorAddons(THREE,houseRoot,{stone:limestone,brick,wood:woodAccent,metal:roofMat});
+const twoStoryStyles=createTwoStoreyStyles(THREE,houseRoot,{
+  stone:limestone,brick,trim:quartz,wood:woodAccent,dark:roofMat,glass:glassMat
+});
+const blindArea=createBlindArea(THREE,scene);
+const veranda=createVeranda(THREE,scene);
   const updateExteriorDetails=()=>{
-    const plinth=plinthSelect?.value||'stone';const terrace=terraceToggle?.checked===true;
-    twoStoryAddons.setPlinth(plinth);twoStoryAddons.setTerrace(terrace);
-    russianHome.setPlinth(plinth);russianHome.setTerrace(terrace);
+    const plinth=plinthSelect?.value||'graphite';
+    // Старый независимый навес террасы не используется: одна веранда — одна модель.
+    twoStoryAddons.setPlinth(plinth);twoStoryAddons.setTerrace(false);
+    russianHome.setPlinth(plinth);russianHome.setTerrace(false);
+    const width=Number(houseWidthInput?.value)||10,length=Number(houseLengthInput?.value)||10;
+    // Задний балкон уже занимает эту конструктивную зону; не накладываем
+    // на него отдельную кровлю веранды.
+    if(houseStyleSelect?.value==='twoBalcony'&&verandaSelect?.value!=='none'){
+      verandaSelect.value='none';
+      verandaSelect.dispatchEvent(new Event('change',{bubbles:true}));
+      const note=document.getElementById('siteCompatibilityNote');
+      if(note)note.textContent='Веранда отключена: задний балкон занимает ту же зону.';
+    }
+    veranda.setStyle(verandaSelect?.value||'none');
+    veranda.setDimensions(width,length);
+    blindArea.setLayout({
+      houseWidth:width,houseLength:length,
+      type:blindAreaType?.value||'concrete',
+      color:blindAreaColor?.value||'graphite',
+      width:Number(blindAreaWidth?.value)||.9,
+      contour:blindAreaContour?.value||'all',
+      verandaOn:(verandaSelect?.value||'none')!=='none'
+    });
   };
-  [plinthSelect,terraceToggle].forEach(el=>el?.addEventListener('change',updateExteriorDetails));
+  [plinthSelect,verandaSelect,blindAreaType,blindAreaColor,blindAreaWidth,blindAreaContour].forEach(el=>el?.addEventListener('change',updateExteriorDetails));
   updateExteriorDetails();
   const twoStoryEntrance=createEntranceVariants(THREE,houseRoot,{
     stone:limestone,trim:quartz,wood:woodAccent,metal:roofMat
@@ -508,12 +545,19 @@ try {
     houseRoot.userData.footprint={width,length,floors};
     russianHome.setDimensions(width,length);
     twoStoryAddons.setDimensions(width,length);
+    updateExteriorDetails();
   };
   window.addEventListener('kaskad:dimensions-changed',()=>applyHouseSize());
   for(const el of [houseWidthInput,houseLengthInput,houseFloorsSelect])
     el?.addEventListener('change',applyHouseSize);
   const applyRoofShape=()=>{
-    const shape=roofShapeSelect?.value||'hip';
+    let shape=roofShapeSelect?.value||'hip';
+    const modern=['modernOne','minimal','coastal','twoModern'].includes(houseStyleSelect?.value);
+    if(shape==='flat'&&!modern){
+      shape='hip';
+      if(roofShapeSelect)roofShapeSelect.value=shape;
+      roofShapeSelect?.dispatchEvent(new CustomEvent('kaskad:roof-guard'));
+    }
     roofForms.setShape(shape);
     russianHome.setRoof(shape,roofSystem.getType());
   };
@@ -527,16 +571,15 @@ try {
   const frontYard=createFrontYard(THREE,scene,{lawnMaterial:meadow});
   // Pool and borders on the lawn; do not use video or external heavy textures.
   const poolStart=scene.children.length;
-  box(6.4,.21,10.3,quartz,14.35,.15,2.4,false);
-  // Ceramic pool liner below translucent, reflective water; thin grout lines
-  // and a real stair ledge make the basin read as an object, not a flat color.
-  const poolLiner=M('#a1c6c6',.72,{metalness:.03});
-  box(5.87,.035,9.84,poolLiner,14.35,.24,2.4,false);
-  box(5.85,.015,9.82,water,14.35,.269,2.4,false);
-  const poolStep=M('#dfdfd1',.62);
-  for(let i=0;i<3;i++)box(3.35-i*.34,.045,.56,poolStep,14.35,.23+i*.008,-2.08+i*.40,false);
-  for(const x of [11.18,17.52])box(.2,.24,10.4,limestone,x,.20,2.4,false);
-  for(const z of [-2.7,7.5])box(6.5,.24,.2,limestone,14.35,.20,z,false);
+  // Каменный борт-кольцо вместо сплошного блока под водой.
+  // Зеркало ниже борта на 11 см; визуально читается чаша с бортиком.
+  const poolCoping=M('#a6a29b',.83),poolLiner=M('#8eb7b6',.72,{metalness:.03});
+  box(5.88,.065,9.85,poolLiner,14.35,.04,.50,false);
+  box(5.84,.015,9.79,water,14.35,.145,.50,false);
+  for(const x of [11.20,17.50])box(.32,.22,10.42,poolCoping,x,.175,.50,false);
+  for(const z of [-4.63,5.63])box(6.52,.22,.31,poolCoping,14.35,.175,z,false);
+  const poolStep=M('#d2d3ce',.64);
+  for(let i=0;i<3;i++)box(3.3-i*.25,.035,.55,poolStep,14.35,.123-i*.012,-4.04+i*.38,false);
   const poolGroup=new THREE.Group();poolGroup.name='КАСКАД · бассейн';
   for(const part of scene.children.slice(poolStart))poolGroup.add(part);
   scene.add(poolGroup);
@@ -582,6 +625,7 @@ try {
     foliageGroup.visible=mode!=='open';
     frontYard.setStyle(mode==='open'?'none':(yardStyleSelect?.value||'family'));
     frontYard.setParking(parkingToggle?.checked!==false);
+    frontYard.setPool(poolGroup.visible);
     fenceSystem.setVehicleAccess(parkingToggle?.checked!==false);
     frontYard.setGazebo(gazeboToggle?.checked===true);
     for(let i=0;i<foliageGroup.children.length;i++){

@@ -21,8 +21,10 @@ export function createArchitectureStyles(THREE,scene,{limestone,quartz,bronze,do
   const arch=(g,x,y,z,r,mat=limestone)=>{
     const curve=new THREE.Mesh(new THREE.TorusGeometry(r,.10,10,36,Math.PI),mat);
     curve.position.set(x,y,z);curve.castShadow=true;g.add(curve);
-    block(g,mat,.20,1.15,.19,x-r, y-.55,z);
-    block(g,mat,.20,1.15,.19,x+r, y-.55,z);
+    // Арки не держатся на коротких подвешенных отрезках: опоры до фундамента.
+    const supportHeight=y-.50;
+    block(g,mat,.20,supportHeight,.19,x-r,.50+supportHeight/2,z);
+    block(g,mat,.20,supportHeight,.19,x+r,.50+supportHeight/2,z);
   };
   const add=(name,fn)=>{
     const g=new THREE.Group();g.name='КАСКАД Архитектура · '+name;
@@ -64,9 +66,8 @@ export function createArchitectureStyles(THREE,scene,{limestone,quartz,bronze,do
       block(g,materials.white,.75,6.20,.40,x,3.56,4.73);
       block(g,materials.white,1.07,.30,.55,x,6.65,4.76);
     }
-    for(const x of [-4.45,-2.95,2.95,4.45]){
-      block(g,materials.pale,.17,2.15,.15,x,4.15,5.84);
-    }
+    // Прежние подвешенные балясины удалены: у них не было площадки или балки.
+
     block(g,materials.white,10.9,.35,1.37,0,6.91,5.15);
     block(g,materials.copper,7.1,.10,1.45,0,7.17,5.0);
   });

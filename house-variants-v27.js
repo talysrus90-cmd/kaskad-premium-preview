@@ -19,7 +19,15 @@ export const HOME_VARIANTS=[
  {id:'coastal',name:'Светлая загородная вилла',group:'Современные',shape:'flat',area:180,facade:'plaster'},
  {id:'practical',name:'Практичный кирпичный',group:'Одноэтажные',shape:'gable',area:150,facade:'brick'},
  {id:'craft',name:'Садовый дом',group:'Одноэтажные',shape:'gable',area:150,facade:'plaster'},
- {id:'classic',name:'Двухэтажный коттедж',group:'Двухэтажные',shape:'hip',area:220,facade:'tuscan'}
+ {id:'classic',name:'Двухэтажный коттедж',group:'Двухэтажные',shape:'hip',area:220,facade:'tuscan'},
+ {id:'twoClassic',name:'Классический двухэтажный коттедж',group:'Двухэтажные',shape:'hip',area:220,facade:'gray'},
+ {id:'twoBrick',name:'Кирпичный двухэтажный',group:'Двухэтажные',shape:'gable',area:240,facade:'brick'},
+ {id:'twoColumns',name:'Двухэтажный с колоннами',group:'Двухэтажные',shape:'hip',area:280,facade:'stone'},
+ {id:'twoModern',name:'Современный двухэтажный',group:'Двухэтажные',shape:'flat',area:240,facade:'plaster'},
+ {id:'twoBalcony',name:'Двухэтажный с балконом',group:'Двухэтажные',shape:'gable',area:240,facade:'gray'},
+ {id:'twoTerrace',name:'Двухэтажный с верандой',group:'Двухэтажные',shape:'hip',area:230,facade:'stone'},
+ {id:'twoEstate',name:'Двухэтажная усадьба',group:'Двухэтажные',shape:'hip',area:280,facade:'tuscan'},
+ {id:'twoFamily',name:'Компактный двухэтажный семейный',group:'Двухэтажные',shape:'gable',area:180,facade:'brick'}
 ];
 export function createHouseVariations(THREE,base,{stone,trim,windowFrame,glass,wood,dark}){
  const groups=new Map();

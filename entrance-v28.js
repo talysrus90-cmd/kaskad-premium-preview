@@ -14,6 +14,11 @@ export function createEntranceVariants(THREE,parent,{stone,trim,wood,metal}){
  };
  const make=(id)=>{
   const g=new THREE.Group();g.name='Входная группа · '+id;parent.add(g);styles.set(id,g);
+  // Все опоры опираются на общую неподвижную площадку, а не на газон или воздух.
+  const width=id==='columns'?5.55:id==='modern'?5.10:5.12;
+  box(g,width,.21,2.38,0,.405,5.55,stone);
+  box(g,width+.13,.075,2.52,0,.548,5.55,trim);
+  box(g,width+.17,.13,.74,0,.275,7.03,stone);
   if(id==='simple'){
     box(g,3.65,.19,1.69,0,3.03,5.38,trim);
     box(g,3.80,.075,1.80,0,3.18,5.38,metal);
@@ -44,9 +49,12 @@ export function createEntranceVariants(THREE,parent,{stone,trim,wood,metal}){
   if(id==='modern'){
     box(g,4.65,.24,1.86,0,3.18,5.36,metal);
     box(g,4.85,.065,2.06,0,3.34,5.36,trim);
-    box(g,.27,2.73,.35,-2.14,1.89,5.75,stone);
-    box(g,.16,2.54,.16,2.14,1.80,6.23,metal);
-    box(g,.19,.15,.25,2.14,.53,6.23,stone);
+    // Парные стойки одинаковы по материалу, высоте и расположению.
+    for(const x of [-2.14,2.14]){
+      box(g,.20,2.63,.20,x,1.87,6.18,metal);
+      box(g,.34,.15,.34,x,.57,6.18,stone);
+      box(g,.34,.12,.34,x,3.19,6.18,metal);
+    }
   }
   return g;
  };
