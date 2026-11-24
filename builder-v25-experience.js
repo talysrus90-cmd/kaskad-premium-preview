@@ -1,4 +1,4 @@
-/* КАСКАД v25 — пошаговый 3D-конструктор, без регистрации и внешних запросов. */
+﻿/* КАСКАД v25 — пошаговый 3D-конструктор, без регистрации и внешних запросов. */
 (function(){
  'use strict';
  const root=document.getElementById('builderGallery');
@@ -11,7 +11,7 @@
   {id:'geometry',title:'Размер',brief:'Укажите ширину, длину и этажность дома'},
   {id:'facade',title:'Фасад',brief:'Облицовочный кирпич, штукатурка, камень или дерево'},
   {id:'roof',title:'Кровля',brief:'Форма крыши, металлочерепица, профиль и цвет'},
-  {id:'openings',title:'Окна и вход',brief:'Окна, двери, колонны и главный вход'},
+  {id:'openings',title:'Вход и окна',brief:'Выберите входную группу, цвет рам, стекло и дверь — всё меняется в 3D'},
   {id:'fence',title:'Забор',brief:'Ограждение, ворота и цвет'},
   {id:'site',title:'Участок',brief:'Дорожка, парковка, клумбы и бассейн'},
   {id:'summary',title:'Итог',brief:'Сохраните или обсудите ваш вариант'}
@@ -33,7 +33,8 @@
  group.id='builderV25Panels';
  group.innerHTML=`
   <section class="builder-v25-panel builder-v25-openings" id="builderOpenings" hidden aria-label="Окна, двери и парадный вход">
-   <h3>Окна, двери и парадный вход</h3>
+   <h3>Парадный вход</h3>
+   <p class="builder-entry-explainer">Четыре конструкции крыльца. Нажмите на вариант — навес, опоры и площадка изменятся на доме.</p>
    <label class="builder-v25-control">Оформление главного входа
     <select id="entranceStyleSelect">
      <option value="simple">Лаконичный навес · две опоры</option>
@@ -43,7 +44,9 @@
     </select>
    </label>
    <div class="builder-entrance-choices" id="builderEntranceChoices" aria-label="Варианты оформления входа"></div>
-   <p>Изменения сразу отображаются на 3D-модели. Это варианты отделки, а не спецификация производителя.</p>
+   <p id="builderEntranceStatus" class="builder-entrance-status" role="status" aria-live="polite"></p>
+   <h3 class="builder-window-heading">Окна и входная дверь</h3>
+   <p>Цвет рам, оттенок стекла и входная дверь меняются отдельно от выбранного крыльца.</p>
    <label class="builder-v25-control">Цвет оконных рам
     <select id="frameColorSelect">
      <option value="bronze">Бронза и тёмное дерево</option>
@@ -201,14 +204,36 @@
  syncRoofForms();
  const entryButtons=document.getElementById('builderEntranceChoices');
  const entrySelect=document.getElementById('entranceStyleSelect');
- const entryLabels=[['simple','Навес','Две опоры'],['columns','Колонны','Классический портик'],['timber','Дерево','Балки и стойки'],['modern','Современный','Металл и камень']];
+ const entryLabels=[
+  ['simple','Классический навес','Две стройные опоры'],
+  ['columns','Парадный портик','Две массивные колонны'],
+  ['timber','Деревянный вход','Балки, стойки и стропила'],
+  ['modern','Современный портал','Симметричный металл и камень']
+ ];
+ // Simple architectural silhouettes help users compare the entry structures.
+ // These are controls, not misleading full-house pictures.
+ const entrySvg={
+  simple:'<path d="M4 14H60M10 19H54M17 19V53M47 19V53M12 53H52" stroke-width="3"/>',
+  columns:'<path d="M4 16H60M8 20H56M12 25H52M16 25V53M23 25V53M41 25V53M48 25V53M12 54H52" stroke-width="3.8"/>',
+  timber:'<path d="M4 14H60M10 18H54M16 19V53M48 19V53M16 30L27 19M48 30L37 19M12 54H52" stroke-width="3.4"/>',
+  modern:'<path d="M4 15H60V21H4zM13 21V53M51 21V53M11 53H53M17 30H47" stroke-width="3.8"/>'
+ };
  for(const [key,title,sub] of entryLabels){
   const b=document.createElement('button');b.type='button';b.dataset.entryStyle=key;
-  b.innerHTML='<strong></strong><small></small>';b.firstChild.textContent=title;b.lastChild.textContent=sub;
-  b.addEventListener('click',()=>{entrySelect.value=key;entrySelect.dispatchEvent(new Event('change',{bubbles:true}))});
+  b.className='builder-entry-option';
+  b.innerHTML='<svg viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="square">'+entrySvg[key]+'</svg><strong></strong><small></small>';
+  b.querySelector('strong').textContent=title;b.querySelector('small').textContent=sub;
+  b.addEventListener('click',()=>{
+    entrySelect.value=key;entrySelect.dispatchEvent(new Event('change',{bubbles:true}));
+    window.dispatchEvent(new CustomEvent('kaskad:focus-view',{detail:{tab:'facade'}}));
+  });
   entryButtons.append(b);
  }
- const syncEntrance=()=>{for(const b of entryButtons.children)b.setAttribute('aria-pressed',String(b.dataset.entryStyle===entrySelect.value))};
+ const entryStatus=document.getElementById('builderEntranceStatus');
+ const syncEntrance=()=>{
+  for(const b of entryButtons.children)b.setAttribute('aria-pressed',String(b.dataset.entryStyle===entrySelect.value));
+  entryStatus.textContent='На модели выбран: '+(entryLabels.find(x=>x[0]===entrySelect.value)?.slice(1).join(' · ')||'Навес');
+ };
  entrySelect.addEventListener('change',syncEntrance);syncEntrance();
  for(const id of fieldIds)fields[id]=document.getElementById(id);
  const stepButtons=[];
@@ -301,10 +326,10 @@
  floorsSelect.addEventListener('change',()=>{
   const floor=floorsSelect.value,style=document.getElementById('houseStyleSelect'),
    roof=document.getElementById('roofShapeSelect');
-  const compatible=floor==='two'?['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns']:
+  const compatible=floor==='two'?['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns','krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo']:
     floor==='mansard'?['mansardHome','gableAttic','mansardBrick','mansardEstate']:null;
   const nextStyle=floor==='two'?'classic':floor==='mansard'?'mansardHome':'family';
-  if(compatible?!compatible.includes(style.value):['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns','mansardHome','gableAttic','mansardBrick','mansardEstate'].includes(style.value)){
+  if(compatible?!compatible.includes(style.value):['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns','krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo','mansardHome','gableAttic','mansardBrick','mansardEstate'].includes(style.value)){
    style.value=nextStyle;style.dispatchEvent(new Event('change',{bubbles:true}));
   }
   if(floor==='mansard'&&roof.value!=='mansard'){
@@ -316,7 +341,7 @@
  });
  document.getElementById('houseStyleSelect')?.addEventListener('change',()=>{
   const style=document.getElementById('houseStyleSelect').value;
-  const inferred=['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns'].includes(style)?'two':
+  const inferred=['classic','twoClassic','twoBrick','twoColumns','twoModern','twoBalcony','twoTerrace','twoEstate','twoFamily','twoMansard','twoMansardBrick','twoMansardColumns','krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo'].includes(style)?'two':
    ['mansardHome','gableAttic','mansardBrick','mansardEstate'].includes(style)?'mansard':'one';
   if(floorsSelect.value!==inferred){floorsSelect.value=inferred;syncDimensions();summary()}
  });
@@ -560,8 +585,8 @@
   });
  });
  document.getElementById('builderPrev').addEventListener('click',()=>show(step-1));
- function openInquiry(){
-  const config={facade:fields.facadeSelect.value,roof:fields.roofSelect.value,
+ function collectConfig(){
+  return {facade:fields.facadeSelect.value,roof:fields.roofSelect.value,
    fence:fields.fenceSelect.value,roofColor:fields.roofColorSelect.value,
    fenceColor:fields.fenceColorSelect.value,
    houseStyle:fields.houseStyleSelect.value,houseSize:fields.houseSizeSelect.value,
@@ -579,6 +604,10 @@
    blindAreaColor:fields.blindAreaColor.value,blindAreaWidth:fields.blindAreaWidth.value,
    blindAreaContour:fields.blindAreaContour.value,
    plinth:fields.plinthSelect.value};
+ }
+ function openInquiry(){
+  const config=collectConfig();
+  closeRequestMenu();
   if(window.parent!==window){
    window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);
   }else{
@@ -591,7 +620,83 @@
   if(step<stages.length-1){show(step+1);return}
   openInquiry();
  });
- document.getElementById('sceneRequestButton')?.addEventListener('click',openInquiry);
+ const requestButton=document.getElementById('sceneRequestButton');
+ const requestMenu=document.getElementById('sceneRequestMenu');
+ const requestStatus=document.getElementById('sceneRequestStatus');
+ function closeRequestMenu(){
+   requestMenu.hidden=true;requestButton?.setAttribute('aria-expanded','false');
+ }
+ requestButton?.addEventListener('click',()=>{
+   requestMenu.hidden=!requestMenu.hidden;
+   requestButton.setAttribute('aria-expanded',String(!requestMenu.hidden));
+ });
+ document.addEventListener('click',event=>{
+   if(requestMenu.hidden||!event.isTrusted||requestMenu.contains(event.target)||event.target===requestButton)return;
+   closeRequestMenu();
+ });
+ document.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&!requestMenu.hidden){closeRequestMenu();requestButton.focus()}
+ });
+ const selectedName=id=>{
+   const control=document.getElementById(id);
+   return control?.selectedOptions?.[0]?.textContent?.trim()||control?.value||'Не указано';
+ };
+ const readableConfig=()=>{
+   const config=collectConfig();
+   const lines=[
+     'КАСКАД — ваша предварительная конфигурация дома',
+     'Дата: '+new Date().toLocaleDateString('ru-RU'),
+     '',
+     'Архитектура: '+selectedName('houseStyleSelect'),
+     'Размеры дома: '+config.houseWidth+' × '+config.houseLength+' м',
+     'Пятно застройки: '+(Number(config.houseWidth)*Number(config.houseLength)).toFixed(1)+' м²',
+     'Этажность: '+selectedName('houseFloorsSelect'),
+     'Кровля: '+selectedName('roofShapeSelect')+', '+selectedName('roofSelect'),
+     'Цвет кровли: '+selectedName('roofColorSelect'),
+     'Фасад: '+selectedName('facadeSelect'),
+     'Цоколь: '+selectedName('plinthSelect'),
+     'Окна: '+selectedName('frameColorSelect')+'; стекло: '+selectedName('glassTintSelect'),
+     'Вход: '+selectedName('entranceStyleSelect')+'; дверь: '+selectedName('doorColorSelect'),
+     'Забор: '+selectedName('fenceSelect')+'; цвет: '+selectedName('fenceColorSelect'),
+     'Участок: '+config.plotWidth+' × '+config.plotLength+' м ('+config.plotSotkas+' сот.)',
+     'Озеленение: '+selectedName('landscapeSelect')+'; двор: '+selectedName('yardStyleSelect'),
+     'Веранда: '+selectedName('verandaSelect'),
+     'Бассейн: '+(config.pool?'да':'нет')+'; парковка: '+(config.parking?'да':'нет')+
+       '; пергола: '+(config.gazebo?'да':'нет'),
+     '',
+     'Визуальный эскиз. Не является рабочим проектом, сметой или публичной офертой.',
+     'Сайт: '+new URL('index.html',document.baseURI).href
+   ];
+   return lines.join('\\n').replace(/\\n/g,'\n');
+ };
+ document.getElementById('sceneRequestDownload')?.addEventListener('click',()=>{
+   const body=readableConfig();
+   const url=URL.createObjectURL(new Blob(['\\uFEFF'.replace('\\uFEFF','\uFEFF')+body],{type:'text/plain;charset=utf-8'}));
+   const a=document.createElement('a');
+   a.href=url;a.download='KASKAD-dom-'+collectConfig().houseWidth+'x'+collectConfig().houseLength+'.txt';
+   document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),1500);
+   requestStatus.textContent='Конфигурация подготовлена для скачивания.';
+ });
+ document.getElementById('sceneRequestShare')?.addEventListener('click',async()=>{
+   const text=readableConfig();
+   if(navigator.share){
+     try{
+       await navigator.share({title:'Мой проект дома КАСКАД',text});
+       requestStatus.textContent='Выберите приложение для отправки.';
+     }catch(e){
+       if(e.name!=='AbortError')requestStatus.textContent='Не удалось поделиться. Попробуйте скачать файл.';
+     }
+     return;
+   }
+   try{
+     await navigator.clipboard.writeText(text);
+     requestStatus.textContent='Текст скопирован. Можно вставить в сообщение.';
+   }catch{
+     requestStatus.textContent='Поделиться не удалось. Воспользуйтесь скачиванием.';
+   }
+ });
+ document.getElementById('sceneRequestSend')?.addEventListener('click',openInquiry);
  document.getElementById('builderSave').addEventListener('click',()=>{
   try{
    const data={};

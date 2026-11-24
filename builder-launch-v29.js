@@ -20,12 +20,19 @@
  if(iframe.contentDocument?.readyState==='complete'&&validFrame())markFrameReady();
  let openRequest=0;
  let builderHistoryActive=false;
+ let interiorHistoryActive=false;
+ let priorScrollRestoration=null;
+ const iframeMessage=(type)=>iframe.contentWindow?.postMessage({type,version:1},origin);
  const sectionTop=()=>{
   const header=document.querySelector('header.header');
   const sticky=header?.getBoundingClientRect().height||70;
   return Math.max(0,section.getBoundingClientRect().top+window.scrollY-sticky-8);
  };
  function markBuilderEntry(){
+  if(priorScrollRestoration===null){
+    priorScrollRestoration=history.scrollRestoration;
+    history.scrollRestoration='manual';
+  }
   if(history.state?.kaskadBuilderOpened){builderHistoryActive=true;return;}
   try{
    history.pushState({...history.state,kaskadBuilderOpened:true,
@@ -79,13 +86,33 @@
   requestAnimationFrame(()=>jump());
  }
  window.addEventListener('popstate',event=>{
+  // Android Back must first close the interior room, then return to the
+  // original 3D section. The user never loses the KASKAD page.
+  if(interiorHistoryActive&&!event.state?.kaskadInteriorOpen){
+    interiorHistoryActive=false;
+    iframeMessage('kaskad-interior-exit');
+    requestAnimationFrame(()=>window.scrollTo({top:sectionTop(),behavior:'instant'}));
+    return;
+  }
+  if(event.state?.kaskadInteriorOpen){
+    interiorHistoryActive=true;return;
+  }
   if(!builderHistoryActive||event.state?.kaskadBuilderOpened)return;
   builderHistoryActive=false;
   section.classList.remove('kaskad-builder-active');
-  // Return exactly to the 3D section in the main page. The visitor can
-  // continue scrolling down rather than being sent back out of the website.
+  // Let the layout and mobile iframe settle, then restore this section.
+  // Native automatic history scroll otherwise overrides the position after
+  // Android Back, especially when first touching an iframe control.
   const restore=()=>window.scrollTo({top:sectionTop(),behavior:'instant'});
   requestAnimationFrame(()=>requestAnimationFrame(restore));
+  window.setTimeout(restore,150);
+  window.setTimeout(()=>{
+    restore();
+    if(priorScrollRestoration!==null){
+      history.scrollRestoration=priorScrollRestoration;
+      priorScrollRestoration=null;
+    }
+  },360);
  });
  document.querySelectorAll('[data-kaskad-open-builder]').forEach(control=>{
   control.addEventListener('click',openBuilder);
@@ -94,6 +121,23 @@
  window.addEventListener('message',event=>{
   if(event.origin!==origin||event.source!==iframe.contentWindow)return;
   if(event.data?.version!==1)return;
+  if(event.data.type==='kaskad-interior-enter'){
+    // This extra same-origin history step is above the builder entry,
+    // so Back is deterministic even when the visitor enters from a hash URL.
+    markBuilderEntry();
+    if(history.state?.kaskadInteriorOpen){interiorHistoryActive=true;return}
+    try{
+      history.pushState({...history.state,kaskadBuilderOpened:true,
+        kaskadInteriorOpen:true},'',
+        location.pathname+location.search+'#interactive-home');
+      interiorHistoryActive=true;
+    }catch(e){}
+    return;
+  }
+  if(event.data.type==='kaskad-interior-leave'){
+    if(history.state?.kaskadInteriorOpen&&interiorHistoryActive)history.back();
+    return;
+  }
   if(event.data.type==='kaskad-builder-first-frame'){
     markFrameReady();return;
   }

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="3d-house.css?v=4">
 <link rel="stylesheet" href="builder-gallery.css?v=3">
 <link rel="preload" as="image" href="assets/3d/preview-start-v43.webp" fetchpriority="high">
-<link rel="modulepreload" href="house-3d.bundle.js?v=25">
+<link rel="modulepreload" href="house-3d.bundle.js?v=26">
 <style>
 html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .embed{padding:0;margin:0}.workspace{max-width:none;margin:0;display:grid;grid-template-columns:minmax(0,1fr) 228px;gap:0;align-items:stretch}
@@ -125,7 +125,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
 @media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
 </style>
-<link rel="stylesheet" href="builder-v25-layout.css?v=13">
+<link rel="stylesheet" href="builder-v25-layout.css?v=14">
 </head>
 <body>
 <main class="embed">
@@ -141,7 +141,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="scene-gesture-tip" id="sceneGestureTip" aria-label="Поверните дом пальцем и измените масштаб двумя пальцами"><span class="scene-gesture-hand" aria-hidden="true"><span class="scene-gesture-icon">☝</span><span class="scene-gesture-pulse"></span></span><span class="scene-gesture-copy"><strong>Вращайте дом</strong><small>2 пальца — масштаб</small></span></div>
 <button class="scene-enter-interior" id="sceneEnterInterior" type="button" aria-pressed="false">Войти в дом</button>
 <div class="scene-room-picker" id="sceneRoomPicker" hidden aria-label="Выберите помещение">
-<span class="scene-room-heading">Интерьер · концепт отделки</span>
+<span class="scene-room-heading">3D-экскурсия по интерьеру · 360°</span>
 <div class="scene-room-options">
 <button type="button" data-room="hall">Прихожая</button>
 <button type="button" data-room="living" aria-pressed="true">Гостиная</button>
@@ -150,8 +150,14 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <button type="button" data-room="bath">Санузел</button>
 </div><small>Отделка для примера. Планировка уточняется отдельно.</small>
 </div>
-<button class="scene-request-button" id="sceneRequestButton" type="button" aria-label="Оформить заявку на выбранную конфигурацию">Заявка</button>
-<button class="scene-overview-button" id="sceneOverviewButton" type="button" aria-label="Показать весь участок">Весь участок</button>
+<button class="scene-request-button" id="sceneRequestButton" type="button" aria-expanded="false" aria-controls="sceneRequestMenu" aria-label="Создать заявку по выбранному дому">Создать заявку</button>
+<div class="scene-request-menu" id="sceneRequestMenu" hidden aria-label="Действия с выбранным вариантом дома">
+ <strong>Ваш вариант дома</strong>
+ <button type="button" id="sceneRequestDownload">Скачать конфигурацию</button>
+ <button type="button" id="sceneRequestShare">Поделиться с телефона</button>
+ <button type="button" id="sceneRequestSend">Отправить в КАСКАД</button>
+ <small id="sceneRequestStatus" role="status" aria-live="polite">Размеры и все выбранные материалы включены.</small>
+</div>
 <button class="secondary" id="autoRotate" type="button" aria-pressed="false" hidden aria-hidden="true" tabindex="-1">↻ Автообзор</button>
 </div>
 <div class="scene-toolbar" aria-label="Управление осмотром дома">
@@ -237,8 +243,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=17" defer></script>
-<script src="builder-v25-experience.js?v=14" defer></script>
-<script type="module" src="house-3d.bundle.js?v=25"></script>
+<script src="builder-gallery.js?v=18" defer></script>
+<script src="builder-v25-experience.js?v=15" defer></script>
+<script type="module" src="house-3d.bundle.js?v=26"></script>
 </body>
 </html>

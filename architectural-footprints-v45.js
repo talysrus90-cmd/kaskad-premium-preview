@@ -1,8 +1,11 @@
-/* КАСКАД · three original, visibly different residential footprints.
+﻿/* КАСКАД · independent single and two-storey residential volumes.
    Geometry is schematic 3D architecture, not working drawings.
    We build only the selected type, preserve the site's material selectors,
    and never copy external companies' plans or photographs. */
-export const DISTINCT_PLANS=new Set(['courtyardL','atriumU','crossGableT']);
+export const DISTINCT_PLANS=new Set([
+   'courtyardL','atriumU','crossGableT',
+   'krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo'
+ ]);
 
 export function createDistinctFootprints(THREE,root,{
   brick,foundation,trim,windowFrame,glass,door,roofSystem
@@ -12,6 +15,7 @@ export function createDistinctFootprints(THREE,root,{
  const stone=new THREE.MeshStandardMaterial({color:'#6b6660',roughness:.89});
  const stepStone=new THREE.MeshStandardMaterial({color:'#968e81',roughness:.79});
  const dark=new THREE.MeshStandardMaterial({color:'#4a4e4b',roughness:.55,metalness:.14});
+ const wood=new THREE.MeshStandardMaterial({color:'#85644b',roughness:.80});
  const clear=new THREE.MeshStandardMaterial({color:'#a5c2c5',roughness:.25,metalness:.10});
  const box=(g,w,h,d,x,y,z,mat,cast=true)=>{
   const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
@@ -30,6 +34,44 @@ export function createDistinctFootprints(THREE,root,{
   m.castShadow=true;m.receiveShadow=true;g.add(m);
  };
  const plans={
+  // Краснодар/Кубань: two-storey family house with a lower connected garage.
+  krasnodarTwo:{
+   floors:2,
+   blocks:[[-1.6,0,9.2,9.0,2],[4.65,-1.22,3.50,6.30,1]],
+   windows:[[-4.25,4.64,0],[-2.20,4.64,0],[1.32,4.64,0],
+      [-6.34,-2.0,-Math.PI/2],[-6.34,1.6,-Math.PI/2],
+      [2.96,-4.63,Math.PI]],
+   door:[.15,4.66],garage:[4.65,1.97],roof:'gable'
+  },
+  // Southern manor / neoclassical: a high central body with two low wings.
+  southernVillaTwo:{
+   floors:2,
+   blocks:[[0,0,8.5,9.0,2],[-5.27,-1.55,2.25,5.95,1],[5.27,-1.55,2.25,5.95,1]],
+   windows:[[-3.11,4.64,0],[3.11,4.64,0],
+      [-4.35,-2.32,-Math.PI/2],[4.35,-2.32,Math.PI/2],
+      [-5.40,1.49,0],[5.40,1.49,0]],
+   door:[0,4.66],balcony:true,roof:'hip'
+  },
+  // Caucasian regional approach: stone-worthy L-shaped two-storey plan,
+  // a sheltered side gallery, and connected wings rather than paint changes.
+  caucasusGalleryTwo:{
+   floors:2,
+   blocks:[[-2.62,0,7.45,9.0,2],[3.65,-2.16,5.15,4.75,2]],
+   windows:[[-4.55,4.64,0],[-2.95,4.64,0],
+      [-6.43,-1.7,-Math.PI/2],
+      [6.27,-2.42,Math.PI/2],[2.55,-4.63,Math.PI]],
+   door:[-.6,4.66],gallery:true,roof:'hip'
+  },
+  // International contemporary practice: two offset volumes and a recessed
+  // entrance; one real asymmetrical floorplate, not a recoloured standard box.
+  modernOffsetTwo:{
+   floors:2,
+   blocks:[[-2.30,.80,7.65,7.50,2],[3.60,-1.85,5.35,5.30,2]],
+   windows:[[-4.1,4.68,0],[-1.3,4.68,0],
+      [-6.17,1.70,-Math.PI/2],
+      [6.38,-1.65,Math.PI/2],[4.0,-4.62,Math.PI]],
+   door:[-.20,4.68],modern:true,roof:'flat'
+  },
   // Narrow full-depth west wing and a recessed east garden wing.
   courtyardL:{
    blocks:[[-2.73,0,7.34,9.00],[3.65,-2.28,5.40,4.44]],
@@ -56,8 +98,10 @@ export function createDistinctFootprints(THREE,root,{
    door:[0,4.65],roof:'gable',entrance:'center'
   }
  };
- function windowsOn(g,x,z,angle=0,width=1.35){
-  const w=new THREE.Group();w.position.set(x,2.0,z);w.rotation.y=angle;g.add(w);
+ function windowsOn(g,x,z,angle=0,width=1.35,height=2.0){
+  const w=new THREE.Group();w.position.set(x,height,z);w.rotation.y=angle;g.add(w);
+  w.userData.architectureWindow=true;
+  w.userData.sideWall=Math.abs(Math.sin(angle))>.5;
   box(w,width+.22,1.52,.13,0,0,0,trim);
   box(w,width+.09,1.36,.15,0,0,.075,windowFrame);
   box(w,width-.10,1.21,.055,0,0,.165,glass,false);
@@ -66,26 +110,51 @@ export function createDistinctFootprints(THREE,root,{
   box(w,width+.29,.065,.13,0,.78,.15,trim);
   return w;
  }
- function entrance(g,x,z,direction=1){
-  const e=new THREE.Group();e.position.set(x,0,z);g.add(e);
+ function entrance(g,x,z,direction=1,kind='simple'){
+  const e=new THREE.Group();e.name='Вход · '+kind;e.position.set(x,0,z);g.add(e);
+  e.userData.architectureEntrance=true;
   const face=direction>0?1:-1;
+  const width=kind==='columns'?5.3:kind==='modern'?4.90:4.20;
   box(e,1.56,2.27,.15,0,1.69,face*.08,door);
   for(const dx of [-.87,.87])box(e,.11,2.44,.19,dx,1.70,face*.16,trim);
   box(e,1.83,.12,.23,0,2.90,face*.13,trim);
-  box(e,3.50,.22,2.05,0,.45,face*1.00,stepStone);
-  box(e,3.76,.15,.60,0,.23,face*2.0,stone);
-  for(const dx of [-1.50,1.50]){
-   box(e,.18,2.38,.18,dx,1.75,face*1.83,trim);
-   box(e,.32,.12,.32,dx,.55,face*1.83,stone);
+  box(e,width,.22,2.25,0,.45,face*1.06,stepStone);
+  box(e,width+.18,.15,.68,0,.23,face*2.05,stepStone);
+  const edge=kind==='columns'?2.05:kind==='modern'?2.04:1.63;
+  const columnMaterial=kind==='timber'?wood:kind==='modern'?dark:trim;
+  for(const dx of [-edge,edge]){
+    const height=kind==='columns'?2.58:2.43;
+    if(kind==='columns'){
+      const c=new THREE.Mesh(new THREE.CylinderGeometry(.22,.24,height,16),stone);
+      c.position.set(dx,.59+height/2,face*1.86);c.castShadow=true;e.add(c);
+    }else{
+      const size=kind==='timber'?.23:kind==='modern'?.20:.16;
+      box(e,size,height,size,dx,.59+height/2,face*1.86,columnMaterial);
+    }
+    box(e,kind==='columns'?.49:.36,.15,kind==='columns'?.49:.36,
+      dx,.59,face*1.86,stone);
+    box(e,kind==='columns'?.47:.35,.14,kind==='columns'?.47:.35,
+      dx,3.05,face*1.86,stone);
   }
-  box(e,3.82,.20,2.24,0,3.09,face*1.05,dark);
-  box(e,3.82,.085,2.28,0,3.23,face*1.05,trim);
+  const canopy=kind==='columns'?5.0:kind==='modern'?4.62:4.0;
+  const canopyMat=kind==='timber'?wood:kind==='modern'?dark:stone;
+  box(e,canopy,.20,2.16,0,3.13,face*1.08,canopyMat);
+  box(e,canopy+.10,.075,2.23,0,3.26,face*1.08,kind==='modern'?dark:trim);
+  if(kind==='timber'){
+    for(let dx=-1.75;dx<=1.76;dx+=.50)
+      box(e,.10,.13,2.18,dx,3.38,face*1.08,wood);
+  }
+  if(kind==='modern'){
+    for(const dx of [-1.65,1.65])
+      box(e,.12,.40,.16,dx,2.92,face*1.08,dark);
+  }
+  return e;
  }
  function roofForSegment(g,segment,shape){
-  const [cx,cz,width,depth]=segment;
+  const [cx,cz,width,depth,floors=1]=segment;
   const x0=cx-width/2-.30,x1=cx+width/2+.30;
   const z0=cz-depth/2-.31,z1=cz+depth/2+.31;
-  const y=roofEave;
+  const y=roofEave+(floors-1)*wallH;
   const ridgeY=y+Math.min(2.25,.73*Math.min(width,depth));
   if(shape==='flat'){
    roofFace(g,[[x0,y+.25,z0],[x1,y+.25,z0],[x1,y+.25,z1],[x0,y+.25,z1]]);
@@ -149,14 +218,69 @@ export function createDistinctFootprints(THREE,root,{
   root.add(g);groups.set(id,g);
   const walls=new THREE.Group();walls.name='Стены и основания';g.add(walls);
   for(const segment of plan.blocks){
-   const [x,z,w,d]=segment;
+   const [x,z,w,d,floors=1]=segment;
+   const height=wallH*floors;
    box(walls,w+.10,.38,d+.10,x,.34,z,foundation);
-   box(walls,w,wallH,d,x,facadeFloor+wallH/2,z,brick);
-   box(walls,w+.13,.16,d+.13,x,3.67,z,trim);
+   box(walls,w,height,d,x,facadeFloor+height/2,z,brick);
+   box(walls,w+.13,.16,d+.13,x,3.67+(floors-1)*wallH,z,trim);
+   if(floors===2){
+     // Actual storey line, matching corners of the volume.
+     box(walls,w+.08,.10,d+.08,x,3.74,z,trim);
+   }
   }
-  for(const [x,z,angle] of plan.windows)windowsOn(walls,x,z,angle);
+  for(const [x,z,angle] of plan.windows){
+   windowsOn(walls,x,z,angle);
+   // Ground and upper floors each have independent correctly sized windows
+   // only on the two-storey volume's outer walls, never on a lower garage.
+   if(plan.floors===2&&plan.blocks.some(([bx,bz,bw,bd,floors=1])=>
+       floors===2&&Math.abs(x-bx)<=bw/2+.60&&Math.abs(z-bz)<=bd/2+.60))
+     windowsOn(walls,x,z,angle,1.35,5.10);
+  }
   const [doorX,doorZ]=plan.door;
-  entrance(walls,doorX,doorZ,plan.entrance==='court'?1:1);
+  const entrances=new Map();
+  for(const kind of ['simple','columns','timber','modern']){
+    const variant=entrance(walls,doorX,doorZ,1,kind);
+    variant.visible=kind==='simple';entrances.set(kind,variant);
+  }
+  g.userData.entrances=entrances;
+  if(id==='krasnodarTwo'){
+    // Integrated vehicle entrance belongs to the lower wing, not a fake door
+    // painted on the two-storey facade.
+    const [gx,gz]=plan.garage;
+    box(walls,3.24,2.34,.20,gx,1.63,gz,dark);
+    for(const h of [.65,1.28,1.92,2.51])
+      box(walls,3.04,.045,.08,gx,h,gz+.13,trim,false);
+    box(walls,3.45,.20,.29,gx,2.90,gz,trim);
+  }else if(id==='southernVillaTwo'){
+    // Supported first-floor balcony and symmetrical four-post approach.
+    box(g,5.85,.24,1.74,0,3.53,5.48,stone);
+    for(const x of [-2.55,2.55]){
+      box(g,.29,2.90,.29,x,2.02,6.13,trim);
+      box(g,.53,.18,.53,x,.64,6.13,stone);
+      box(g,.50,.18,.50,x,3.42,6.13,stone);
+    }
+    for(let x=-2.56;x<=2.56;x+=.36)
+      box(g,.075,.85,.075,x,4.09,6.29,dark,false);
+    box(g,5.28,.13,.13,0,4.58,6.29,dark,false);
+  }else if(id==='caucasusGalleryTwo'){
+    // Gallery between the two wings, supported at grade by stone pier feet.
+    box(g,4.15,.24,2.55,3.72,.42,2.15,stone);
+    for(const x of [1.80,5.54]){
+      box(g,.30,2.49,.30,x,1.77,3.18,trim);
+      box(g,.52,.17,.52,x,.62,3.18,stone);
+    }
+    box(g,4.22,.16,2.6,3.71,3.18,2.16,dark);
+    for(let z=-3.7;z<-.5;z+=.88)box(g,.12,2.95,.14,6.28,1.95,z,stone);
+  }else if(id==='modernOffsetTwo'){
+    // Horizontal joint, covered terrace and deliberately staggered storeys.
+    box(g,6.9,.21,2.0,-2.30,3.36,5.42,dark);
+    for(const x of [-4.98,.35]){
+      box(g,.18,2.56,.19,x,1.85,6.21,dark);
+      box(g,.35,.15,.31,x,.61,6.21,stone);
+    }
+    box(g,5.7,.18,1.55,3.58,3.54,1.15,dark);
+    box(g,1.18,2.33,.12,-5.77,1.76,1.0,glass,false);
+  }
   if(id==='atriumU'){
    // Central courtyard is paved only where the wings leave an opening.
    box(g,5.10,.075,5.60,0,.16,1.48,stepStone,false);
@@ -184,13 +308,36 @@ export function createDistinctFootprints(THREE,root,{
   g.visible=false;
   return g;
  }
- let selected=null,activeRoof='hip';
+ let selected=null,activeRoof='hip',activeEntrance='simple';
+ function setEntrance(kind){
+  activeEntrance=['simple','columns','timber','modern'].includes(kind)?kind:'simple';
+  for(const group of groups.values()){
+    for(const [key,variant] of group.userData.entrances||[])
+      variant.visible=key===activeEntrance;
+  }
+ }
  function setStyle(id){
   selected=DISTINCT_PLANS.has(id)?id:null;
   for(const [key,g] of groups)g.visible=key===selected;
   if(selected&&!groups.has(selected))build(selected).visible=true;
-  if(selected)setRoof(activeRoof,roofSystem.getMaterial());
+  if(selected){
+    setEntrance(activeEntrance);
+    setRoof(activeRoof,roofSystem.getMaterial());
+  }
   return Boolean(selected);
+ }
+ function setDimensions(width,length){
+  // The architecture volume changes with the width/length sliders, while
+  // door and window openings retain usable real-world dimensions.
+  const sx=Math.max(5,Number(width)||10)/12.8;
+  const sz=Math.max(8,Number(length)||10)/9.0;
+  for(const group of groups.values())group.traverse(object=>{
+    if(object.userData.architectureEntrance){
+      object.scale.x=1/sx;object.scale.z=1/sz;
+    }else if(object.userData.architectureWindow){
+      object.scale.x=1/(object.userData.sideWall?sz:sx);
+    }
+  });
  }
  function setPlinth(kind){
    const colors={
@@ -215,5 +362,5 @@ export function createDistinctFootprints(THREE,root,{
   }
   return true;
  }
- return {isDistinct:id=>DISTINCT_PLANS.has(id),setStyle,setRoof,setPlinth,ids:[...DISTINCT_PLANS]};
+ return {isDistinct:id=>DISTINCT_PLANS.has(id),setStyle,setRoof,setPlinth,setEntrance,setDimensions,ids:[...DISTINCT_PLANS]};
 }

@@ -43,8 +43,10 @@ export function createFenceSystem(THREE,scene,options){
       mesh(group,L+.08,.135,.41,copingStone,0,1.91,0);
       mesh(group,L,.26,.35,gardenStone,0,.15,0);
     }else if(kind==='stone'){
-      mesh(group,L,.98,.27,gardenStone,0,.54,0);
-      mesh(group,L+.1,.105,.42,copingStone,0,1.08,0);
+      // Solid stone fence must be close to post height, not knee-height
+      // panels between 2 m posts. A restrained 16 cm top reveal remains.
+      mesh(group,L,1.84,.29,gardenStone,0,.97,0);
+      mesh(group,L+.10,.12,.42,copingStone,0,1.95,0);
     }else if(kind==='wood'||kind==='ranch'||kind==='louvers'){
       if(kind==='wood'){for(let y=.30;y<=1.65;y+=.19)mesh(group,L,.14,.105,woodDark,0,y,0,false);}
       if(kind==='ranch'){for(let y=.38;y<=1.80;y+=.33)mesh(group,L,.25,.09,sheet,0,y,0,false);}

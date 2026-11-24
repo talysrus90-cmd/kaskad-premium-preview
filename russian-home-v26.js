@@ -254,10 +254,11 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   }
   roofType=kind;
  }
- function setEntrance(style){legacyEntry.visible=false;entryVariants.setStyle(style)}
+ function setEntrance(style){legacyEntry.visible=false;entryVariants.setStyle(style);architecturalFootprints.setEntrance(style)}
  function setStyle(style){
   currentStyle=style;
-  root.visible=HOME_VARIANTS.some(item=>item.id===style&&item.group!=='Двухэтажные');
+  root.visible=HOME_VARIANTS.some(item=>item.id===style&&
+    (item.group!=='Двухэтажные'||DISTINCT_PLANS.has(style)));
   const independentlyDesigned=architecturalFootprints.setStyle(style);
   main.visible=!independentlyDesigned;
   addons.root.visible=!independentlyDesigned;
@@ -302,6 +303,7 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
    }
   }
   addons.setDimensions(w,l);
+  architecturalFootprints.setDimensions(w,l);
   root.userData.footprint={width:w,length:l};
  }
  function setSize(size,aspect=1.35,inhabitedAttic=false){
@@ -313,5 +315,6 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  }
  const setPlinth=(kind)=>{addons.setPlinth(kind);architecturalFootprints.setPlinth(kind)};
  return {root,setStyle,setSize,setDimensions,setRoof,setEntrance,
-  setPlinth,setTerrace:addons.setTerrace,getShape:()=>activeShape,getRoof:()=>roofType};
+  setPlinth,setTerrace:addons.setTerrace,isDistinctStyle:architecturalFootprints.isDistinct,
+  getShape:()=>activeShape,getRoof:()=>roofType};
 }

@@ -1,6 +1,10 @@
 /* КАСКАД v27 — конструктивно различающиеся архитектурные решения
    для малоэтажного дома. Все объёмы являются авторскими концептами. */
 export const HOME_VARIANTS=[
+ {id:'krasnodarTwo',name:'Кубанский семейный с гаражным крылом',group:'Двухэтажные',shape:'gable',area:230,facade:'brick'},
+ {id:'southernVillaTwo',name:'Южная усадьба с балконом',group:'Двухэтажные',shape:'hip',area:260,facade:'stone'},
+ {id:'caucasusGalleryTwo',name:'Кавказский коттедж с крытой галереей',group:'Двухэтажные',shape:'hip',area:250,facade:'stone'},
+ {id:'modernOffsetTwo',name:'Современный дом со смещёнными крыльями',group:'Двухэтажные',shape:'flat',area:220,facade:'plaster'},
  {id:'courtyardL',name:'Г-образный дом с садовым двориком',group:'Одноэтажные',shape:'gable',area:150,facade:'plaster'},
  {id:'atriumU',name:'Дом с П-образным двором',group:'Одноэтажные',shape:'hip',area:180,facade:'stone'},
  {id:'crossGableT',name:'Дом с поперечным крылом',group:'Одноэтажные',shape:'gable',area:150,facade:'brick'},

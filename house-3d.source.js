@@ -441,7 +441,7 @@ try {
   });
   const applyHouseStyle=()=>{
     const style=houseStyleSelect?.value||'classic';
-    houseRoot.visible=!oneStoreyStyles.has(style);
+    houseRoot.visible=!oneStoreyStyles.has(style)&&!russianHome.isDistinctStyle(style);
     russianHome.setStyle(style);
     const arch={twoClassic:'classic',twoBrick:'practical',twoColumns:'classic',
       twoModern:'modern',twoBalcony:'classic',twoTerrace:'classic',
@@ -579,7 +579,7 @@ const veranda=createVeranda(THREE,scene);
     el?.addEventListener('change',applyHouseSize);
   const applyRoofShape=()=>{
     let shape=roofShapeSelect?.value||'hip';
-    const modern=['modernOne','minimal','coastal','twoModern'].includes(houseStyleSelect?.value);
+    const modern=['modernOne','minimal','coastal','twoModern','modernOffsetTwo'].includes(houseStyleSelect?.value);
     if(shape==='flat'&&!modern){
       shape='hip';
       if(roofShapeSelect)roofShapeSelect.value=shape;
@@ -840,9 +840,9 @@ const veranda=createVeranda(THREE,scene);
   // One-time capture of existing EXTERIOR scene objects, excluding the lights
   // created later. Do not delete or rebuild a configured house when entering.
   const exteriorSceneObjects=scene.children.filter(object=>object.isMesh||object.isGroup||object.isInstancedMesh);
-  // Most visitors choose exterior materials, so do not build five 3D rooms
-  // or load their floor textures during the first visible exterior frame.
-  // Photo examples remain available immediately when entering the house.
+  // Lazily create authentic interactive 3D room geometry only when requested.
+  // A photograph must NOT cover WebGL and mislead a visitor into thinking
+  // a flat image can be rotated in 360 degrees.
   let interiorTour=null;
   const interiorRoomNames={
     hall:'Прихожая',living:'Гостиная',kitchen:'Кухня',
@@ -853,53 +853,42 @@ const veranda=createVeranda(THREE,scene);
   const roomPicker=document.getElementById('sceneRoomPicker');
   document.getElementById('builderQuickTabs')?.after(roomPicker);
   roomPicker.classList.add('builder-room-panel');
+  roomPicker.querySelector('small').textContent='Настоящий 3D-обзор: проведите пальцем, осмотрите комнату на 360°. Отделка и расстановка мебели — демонстрационные, не проект дома.';
   const overviewButton=document.getElementById('sceneOverviewButton');
   const sceneDimensions=document.querySelector('.scene-metric-badge');
-  const interiorPhoto=document.createElement('img');
-  interiorPhoto.className='scene-interior-photo';interiorPhoto.hidden=true;
-  interiorPhoto.alt='Фотография примера интерьера, не планировка выбранного дома';
-  container.append(interiorPhoto);
-  const photoCredit=document.createElement('span');
-  photoCredit.className='scene-interior-photo-caption';
-  photoCredit.textContent='Фото-пример отделки';photoCredit.hidden=true;
-  container.append(photoCredit);
-  const realRooms={
-    hall:'room-13.jpg',living:'room-07.jpg',kitchen:'room-11.jpg',
-    bedroom:'room-08.jpg',bath:'room-06.jpg'
-  };
-  let showRealPhotos=true;
-  const photoToggle=document.createElement('button');photoToggle.type='button';
-  photoToggle.className='scene-photo-toggle';
-  photoToggle.textContent='Посмотреть 3D-эскиз';
-  roomPicker.append(photoToggle);
-  const updatePhoto=()=>{
-    // No meshes or interior photo requests until a visitor enters.
-    if(isInteriorMode&&!showRealPhotos&&!interiorTour){
-      interiorTour=createInteriorTour(THREE,scene);
-      interiorTour.setRoom(currentInteriorRoom);
-    }
-    if(interiorTour)interiorTour.root.visible=isInteriorMode&&!showRealPhotos;
-    interiorPhoto.hidden=!isInteriorMode||!showRealPhotos;
-    photoCredit.hidden=interiorPhoto.hidden;
-    photoToggle.textContent=showRealPhotos?'Посмотреть 3D-эскиз':'Вернуться к фото';
-  };
-  photoToggle.addEventListener('click',()=>{showRealPhotos=!showRealPhotos;updatePhoto()});
   let exteriorVisibility=new Map(),exteriorCamera=null,exteriorTarget=null;
   let exteriorNear=controls.minDistance,exteriorFar=controls.maxDistance,
-      exteriorPolar=controls.maxPolarAngle;
+      exteriorPolar=controls.maxPolarAngle,exteriorMinPolar=controls.minPolarAngle,
+      exteriorZoom=controls.enableZoom;
   const roomButtons=[...document.querySelectorAll('#sceneRoomPicker [data-room]')];
+  const roomViews={
+    hall:[-.2,1.65,1.12],living:[0,1.67,1.38],
+    kitchen:[0,1.66,1.40],bedroom:[.4,1.67,1.40],bath:[0,1.65,1.33]
+  };
   const showRoom=id=>{
-    currentInteriorRoom=realRooms[id]?id:'living';
-    if(interiorTour)interiorTour.setRoom(currentInteriorRoom);
-    interiorPhoto.src=new URL('assets/ideas/'+realRooms[currentInteriorRoom],document.baseURI).href;
-    updatePhoto();
+    currentInteriorRoom=Object.hasOwn(interiorRoomNames,id)?id:'living';
+    if(!interiorTour)interiorTour=createInteriorTour(THREE,scene);
+    interiorTour.setRoom(currentInteriorRoom);
+    interiorTour.root.visible=true;
     roomButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.room===currentInteriorRoom)));
-    roomPicker.querySelector('.scene-room-heading').textContent='Интерьер · '+interiorRoomNames[currentInteriorRoom];
-    camera.position.set(1.05,1.92,2.62);
-    controls.target.set(0,1.12,-.55);
+    roomPicker.querySelector('.scene-room-heading').textContent='3D · '+interiorRoomNames[currentInteriorRoom]+' · обзор 360°';
+    // OrbitControls rotates the view about a tiny circle around the viewer's
+    // head instead of orbiting the camera through furniture and walls.
+    const [x,y,z]=roomViews[currentInteriorRoom];
+    controls.target.set(x,y,z);
+    camera.position.set(x,y,z+.032);
     controls.update();focusTransition=null;
   };
-  const toggleInterior=()=>{
+  const notifyInterior=(open)=>{
+    if(window.parent!==window){
+      window.parent.postMessage({type:open?'kaskad-interior-enter':'kaskad-interior-leave',version:1},location.origin);
+    }else if(open){
+      try{history.pushState({...history.state,kaskadInteriorOpen:true},'',location.href)}catch{}
+    }else if(history.state?.kaskadInteriorOpen){
+      history.back();
+    }
+  };
+  const toggleInterior=(drivenByHistory=false)=>{
     isInteriorMode=!isInteriorMode;
     document.body.classList.toggle('kaskad-interior-active',isInteriorMode);
     if(isInteriorMode){
@@ -907,33 +896,46 @@ const veranda=createVeranda(THREE,scene);
       for(const object of exteriorSceneObjects)object.visible=false;
       exteriorCamera=camera.position.clone();exteriorTarget=controls.target.clone();
       exteriorNear=controls.minDistance;exteriorFar=controls.maxDistance;
-      exteriorPolar=controls.maxPolarAngle;
-      controls.minDistance=.95;controls.maxDistance=3.55;
-      controls.maxPolarAngle=Math.PI*.72;controls.autoRotate=false;
-      if(interiorTour)interiorTour.root.visible=!showRealPhotos;
+      exteriorPolar=controls.maxPolarAngle;exteriorMinPolar=controls.minPolarAngle;
+      exteriorZoom=controls.enableZoom;
+      controls.minDistance=.018;controls.maxDistance=.055;
+      controls.minPolarAngle=.40;controls.maxPolarAngle=Math.PI-.40;
+      controls.enableZoom=false;controls.autoRotate=false;
       roomPicker.hidden=false;
-      overviewButton.hidden=true;sceneDimensions.hidden=true;
+      if(overviewButton)overviewButton.hidden=true;sceneDimensions.hidden=true;
       if(gestureTip)gestureTip.classList.add('is-used');
-      interiorButton.textContent='← Снаружи';
+      interiorButton.textContent='← Вернуться к дому';
       interiorButton.setAttribute('aria-pressed','true');
       showRoom('living');
     }else{
       if(interiorTour)interiorTour.root.visible=false;
-      interiorPhoto.hidden=true;photoCredit.hidden=true;
       for(const [object,visible] of exteriorVisibility)object.visible=visible;
       controls.minDistance=exteriorNear;controls.maxDistance=exteriorFar;
-      controls.maxPolarAngle=exteriorPolar;
-      camera.position.copy(exteriorCamera);controls.target.copy(exteriorTarget);
+      controls.minPolarAngle=exteriorMinPolar;controls.maxPolarAngle=exteriorPolar;
+      controls.enableZoom=exteriorZoom;
+      if(exteriorCamera&&exteriorTarget){
+        camera.position.copy(exteriorCamera);controls.target.copy(exteriorTarget);
+      }
       controls.update();focusTransition=null;
-      roomPicker.hidden=true;overviewButton.hidden=false;sceneDimensions.hidden=false;
+      roomPicker.hidden=true;if(overviewButton)overviewButton.hidden=false;sceneDimensions.hidden=false;
       interiorButton.textContent='Войти в дом';
       interiorButton.setAttribute('aria-pressed','false');
       if(isSitePreview)refreshSitePreview();
       else updateLandscape();
     }
+    if(!drivenByHistory)notifyInterior(isInteriorMode);
   };
-  interiorButton?.addEventListener('click',toggleInterior);
+  interiorButton?.addEventListener('click',()=>toggleInterior(false));
   roomButtons.forEach(button=>button.addEventListener('click',()=>showRoom(button.dataset.room)));
+  window.addEventListener('message',event=>{
+    if(event.source!==window.parent||event.origin!==location.origin)return;
+    if(event.data?.type==='kaskad-interior-exit'&&isInteriorMode)toggleInterior(true);
+  });
+  if(window.parent===window){
+    window.addEventListener('popstate',event=>{
+      if(isInteriorMode&&!event.state?.kaskadInteriorOpen)toggleInterior(true);
+    });
+  }
 
 
   // Color swatches reference common RAL-like palettes, with no claims of exact screen color.

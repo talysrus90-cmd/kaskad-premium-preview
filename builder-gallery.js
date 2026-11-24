@@ -37,14 +37,21 @@
  // catalog. Colour-only doubles belong in the Facade tab, not in Styles.
  // An architecture card must change more than the facade or roof colour.
  // The three courtyard/wing plans below are separate modelled floorplates.
- const visibleArchitecture=new Set([
-   'family','farmhouseOne','chalet','estateOne','kavkaz','bungalow',
-   'courtyardL','atriumU','crossGableT',
-   'mansardBrick','gableAttic',
-   'twoBrick','twoColumns','twoModern','twoBalcony','twoMansardColumns'
- ]);
+ const cardPriority=[
+   // User preference: lead with genuinely different two-storey designs.
+   'southernVillaTwo','krasnodarTwo','caucasusGalleryTwo','modernOffsetTwo',
+   'twoColumns','twoBrick','twoModern','twoBalcony','twoMansardColumns',
+   // Different one-storey, regional, and inhabited-attic houses follow.
+   'estateOne','kavkaz','chalet','farmhouseOne','family',
+   'mansardBrick','gableAttic','bungalow'
+ ];
+ const visibleArchitecture=new Set(cardPriority);
  const data={
   presets:[
+    {value:"southernVillaTwo",title:"Южная усадьба · колонны и балкон",sub:"2 этажа · парадный вход и боковые крылья",image:"preset_southernVillaTwo_v46",category:"Двухэтажные",set:{houseStyle:"southernVillaTwo",roofShape:"hip"}},
+    {value:"krasnodarTwo",title:"Кубанский семейный · гаражное крыло",sub:"2 этажа · гараж в одноэтажной пристройке",image:"preset_krasnodarTwo_v46",category:"Двухэтажные",set:{houseStyle:"krasnodarTwo",roofShape:"gable"}},
+    {value:"caucasusGalleryTwo",title:"Кавказский коттедж · угловая галерея",sub:"2 этажа · Г-образный дом и крытая галерея",image:"preset_caucasusGalleryTwo_v46",category:"Двухэтажные",set:{houseStyle:"caucasusGalleryTwo",roofShape:"hip"}},
+    {value:"modernOffsetTwo",title:"Современный коттедж · два смещённых крыла",sub:"2 этажа · асимметричные объёмы и плоская кровля",image:"preset_modernOffsetTwo_v46",category:"Двухэтажные",set:{houseStyle:"modernOffsetTwo",roofShape:"flat"}},
     {value:"courtyardL",title:"Г-образный дом с внутренним двориком",sub:"1 этаж · два крыла · защищённая терраса",image:"preset_courtyardL_v45",category:"Одноэтажные",set:{houseStyle:"courtyardL",roofShape:"gable"}},
     {value:"atriumU",title:"Дом с П-образным двором",sub:"1 этаж · три крыла · приватный двор",image:"preset_atriumU_v45",category:"Одноэтажные",set:{houseStyle:"atriumU",roofShape:"hip"}},
     {value:"crossGableT",title:"Дом с поперечным крылом",sub:"1 этаж · Т-образный план · поперечная кровля",image:"preset_crossGableT_v45",category:"Одноэтажные",set:{houseStyle:"crossGableT",roofShape:"gable"}},
@@ -128,7 +135,9 @@
  };
  // Display only genuinely distinct 3D architecture. Keep roof/facade colours
  // in their own tabs, and never expose duplicate cards through the select.
- data.presets=data.presets.filter(item=>visibleArchitecture.has(item.value));
+ data.presets=data.presets
+   .filter(item=>visibleArchitecture.has(item.value))
+   .sort((a,b)=>cardPriority.indexOf(a.value)-cardPriority.indexOf(b.value));
  const removedPlanken=fields.facade.querySelector('option[value="planken"]');
  if(removedPlanken)removedPlanken.remove();
  if(!fields.facade.value)fields.facade.value='plaster';
