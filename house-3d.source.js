@@ -12,6 +12,7 @@ import {createFrontYard} from './front-yard-v27.js';
 import {HOME_VARIANTS} from './house-variants-v27.js';
 import {createFacadeMaterials} from './facade-presets-v28.js';
 import {createEntranceVariants} from './entrance-v28.js';
+import {createExteriorAddons} from './exterior-addons-v30.js';
 
 const container=document.getElementById('sceneContainer');
 const fallback=document.getElementById('modelFallback');
@@ -27,12 +28,17 @@ const fenceColorSelect=document.getElementById('fenceColorSelect');
 const houseStyleSelect=document.getElementById('houseStyleSelect');
 const roofShapeSelect=document.getElementById('roofShapeSelect');
 const houseSizeSelect=document.getElementById('houseSizeSelect');
+const houseWidthInput=document.getElementById('houseWidthInput');
+const houseLengthInput=document.getElementById('houseLengthInput');
+const houseFloorsSelect=document.getElementById('houseFloorsSelect');
 const frameColorSelect=document.getElementById('frameColorSelect');
 const doorColorSelect=document.getElementById('doorColorSelect');
 const glassTintSelect=document.getElementById('glassTintSelect');
 const landscapeSelect=document.getElementById('landscapeSelect');
 const poolToggle=document.getElementById('poolToggle');
 const entranceStyleSelect=document.getElementById('entranceStyleSelect');
+const plinthSelect=document.getElementById('plinthSelect');
+const terraceToggle=document.getElementById('terraceToggle');
 const yardStyleSelect=document.getElementById('yardStyleSelect');
 const parkingToggle=document.getElementById('parkingToggle');
 const gazeboToggle=document.getElementById('gazeboToggle');
@@ -180,8 +186,8 @@ try {
     back:{camera:[12,8,-28],target:[0,2.7,0]},
     top:{camera:[8,49,12],target:[0,1.0,3]},
     yard:{camera:[20,14.5,36],target:[2.4,1.5,9]},
-    facade:{camera:[17.5,12.8,24],target:[0,3.8,2.0]},
-    roof:{camera:[17.7,16.8,22],target:[0,4.5,1.7]},
+    facade:mobileView?{camera:[9.7,6.4,16.3],target:[0,2.45,2.4]}:{camera:[12.5,7.2,20],target:[0,2.5,2.7]},
+    roof:mobileView?{camera:[10.2,10.0,17],target:[0,3.8,1.7]}:{camera:[14.3,12.1,20],target:[0,4.0,1.7]},
     fence:{camera:[23,16.5,33],target:[0,3.05,5]},
     presets:mobileView?{camera:[13.9,7.8,19.0],target:[0,2.75,1.8]}:{camera:[16.1,8.8,23.3],target:[0,2.75,1.8]}
   };
@@ -195,15 +201,15 @@ try {
     };
   });
   controls.addEventListener('start',()=>{focusTransition=null});
-  const viewpointButtons=[...document.querySelectorAll('[data-kaskad-view]')];
+  const viewpointSelect=document.getElementById('sceneViewSelect');
   function setView(key){
     const cfg=focusViews[key]||focusViews.front;
     focusTransition={camera:new THREE.Vector3(...cfg.camera),target:new THREE.Vector3(...cfg.target)};
     controls.autoRotate=false;
     autoButton.setAttribute('aria-pressed','false');autoButton.textContent='↻ Автообзор';
-    viewpointButtons.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.kaskadView===key)));
+    if(viewpointSelect)viewpointSelect.value=key in focusViews?key:'front';
   }
-  viewpointButtons.forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.kaskadView)));
+  viewpointSelect?.addEventListener('change',()=>setView(viewpointSelect.value));
   setView('front');
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
@@ -432,6 +438,14 @@ try {
   });
   const oneStoreyStyles=new Set(HOME_VARIANTS.filter(item=>item.id!=='classic').map(item=>item.id));
   const woodAccent=M('#806447',.81);
+  const twoStoryAddons=createExteriorAddons(THREE,houseRoot,{stone:limestone,brick,wood:woodAccent,metal:roofMat});
+  const updateExteriorDetails=()=>{
+    const plinth=plinthSelect?.value||'stone';const terrace=terraceToggle?.checked===true;
+    twoStoryAddons.setPlinth(plinth);twoStoryAddons.setTerrace(terrace);
+    russianHome.setPlinth(plinth);russianHome.setTerrace(terrace);
+  };
+  [plinthSelect,terraceToggle].forEach(el=>el?.addEventListener('change',updateExteriorDetails));
+  updateExteriorDetails();
   const twoStoryEntrance=createEntranceVariants(THREE,houseRoot,{
     stone:limestone,trim:quartz,wood:woodAccent,metal:roofMat
   });
@@ -448,27 +462,56 @@ try {
   const originalFacadeUvs=Float32Array.from(facadeBodyGeo.getAttribute('uv').array);
   const originalGableUvs=Float32Array.from(gableG.getAttribute('uv').array);
   const applyHouseSize=()=>{
-    const size=Number(houseSizeSelect?.value||220);
-    const aspect=styleAspects[houseStyleSelect?.value]||1.42;
-    const footprint=size/2;  // Two illustrative floors; not a floor plan.
-    const width=Math.sqrt(footprint*aspect),depth=Math.sqrt(footprint/aspect);
-    const scaleX=width/12.8,scaleZ=depth/9;
-    houseRoot.scale.set(scaleX,1,scaleZ);
-    // Real-world material scale: brick stays one brick size when changing
-    // building width/depth; UVs are not stretched with the whole building.
+    const width=Math.max(5,Math.min(14,Number(houseWidthInput?.value)||10));
+    const length=Math.max(8,Math.min(18,Number(houseLengthInput?.value)||10));
+    const sx=width/12.8,sz=length/9;
+    houseRoot.scale.set(sx,1,sz);
+    houseRoot.position.z=4.58*(1-sz);
+    // Keep doors and window openings a believable physical size while
+    // changing the facade width / house depth (not only a number label).
+    for(const entry of twoStoryEntrance.styles.values()){
+      entry.scale.x=1/sx;entry.scale.z=1/sz;
+      entry.position.z=4.58*(sz-1)/sz;
+    }
+    const layout=width<8.5?2:4;
+    for(const view of windowGroups){
+      const {group,x,z,rot}=view;
+      const side=Math.abs(x)>6.0;
+      const front=!side&&z>0,back=!side&&z<0;
+      const atCorner=Math.abs(x)>4;
+      group.visible=!(width<8.5&&!side&&!atCorner);
+      // Preserve windows' real physical width even if building is narrower.
+      group.scale.x=side?1/sz:1/sx;
+      group.scale.z=side?1/sx:1/sz;
+      if(side){
+        group.position.x=Math.sign(x)*(width/2-.10)/sx;
+        group.position.z=(z===0?0:Math.sign(z)*Math.max(1.5,length/2-1.4))/sz;
+      }else if(front||back){
+        const distance=atCorner?width/2-1.05:width/2-2.87;
+        group.position.x=Math.sign(x)*Math.max(.87,distance)/sx;
+      }
+      // The central upper window is not shown through neighbouring windows
+      // on the 5 m conceptual narrow house.
+      if(width<8&&Math.abs(x)<.1&&front)group.visible=false;
+    }
+    // Preserve approximate brick size when stretching a house volume.
     const bodyUV=facadeBodyGeo.getAttribute('uv');
     for(let i=0;i<bodyUV.count;i++){
-      const multiplier=i<8?scaleZ:i>=16?scaleX:1;
+      const multiplier=i<8?sz:i>=16?sx:1;
       bodyUV.setXY(i,originalFacadeUvs[i*2]*multiplier,originalFacadeUvs[i*2+1]);
     }
     bodyUV.needsUpdate=true;
     const gableUV=gableG.getAttribute('uv');
-    for(let i=0;i<gableUV.count;i++)gableUV.setXY(i,originalGableUvs[i*2]*scaleX,originalGableUvs[i*2+1]);
+    for(let i=0;i<gableUV.count;i++)gableUV.setXY(i,originalGableUvs[i*2]*sx,originalGableUvs[i*2+1]);
     gableUV.needsUpdate=true;
-    houseRoot.userData.illustrativeArea=size;
-    houseRoot.userData.footprint={width,depth,floors:2};
-    russianHome.setSize(size,aspect,houseStyleSelect?.value==='mansardHome');
+    const floors=houseFloorsSelect?.value||'one';
+    houseRoot.userData.footprint={width,length,floors};
+    russianHome.setDimensions(width,length);
+    twoStoryAddons.setDimensions(width,length);
   };
+  window.addEventListener('kaskad:dimensions-changed',()=>applyHouseSize());
+  for(const el of [houseWidthInput,houseLengthInput,houseFloorsSelect])
+    el?.addEventListener('change',applyHouseSize);
   const applyRoofShape=()=>{
     const shape=roofShapeSelect?.value||'hip';
     roofForms.setShape(shape);

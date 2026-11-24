@@ -272,3 +272,90 @@
    font:800 12px/1.4 Manrope,system-ui,sans-serif}
  .scene-step-switch select:focus-visible{outline:3px solid #c17653;outline-offset:2px}
 }
+
+/* КАСКАД v30 — реальные длина/ширина, главная навигация по компонентам,
+   а ракурс остаётся вспомогательной компактной настройкой. */
+.builder-geometry-strip{display:block!important;margin:0 0 12px!important;min-width:0}
+.builder-geometry-strip[hidden]{display:none!important}
+.builder-geometry-strip>h3{font:850 14px/1.35 Manrope,system-ui,sans-serif;
+ color:#294d36;margin:0 0 8px}
+.builder-size-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:5px 0 13px}
+.builder-size-presets button{min-height:43px;padding:7px 4px;border:1px solid #cfd9d1;
+ border-radius:8px;background:#fffdf7;color:#385841;font:800 12px/1.25 Manrope,system-ui,sans-serif;cursor:pointer}
+.builder-size-presets button[aria-pressed=true]{background:#315c43;color:#fff;border-color:#315c43}
+.builder-dimension-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.builder-dimension-fields label{display:flex;flex-direction:column;gap:6px;
+ font:750 12px/1.35 Manrope,system-ui,sans-serif;color:#3e5949}
+.builder-dimension-fields input{width:100%;min-width:0;min-height:46px;box-sizing:border-box;
+ border:1px solid #bfd1c2;border-radius:8px;padding:9px 11px;
+ background:#fff;color:#2c4f39;font:800 17px/1.2 Manrope,system-ui,sans-serif}
+.builder-dimension-fields input:invalid{border-color:#c26a58}
+.builder-floor-panel{margin:0 0 11px}
+.builder-floor-panel h4{font:800 12px/1.35 Manrope,system-ui,sans-serif;
+ margin:0 0 7px;color:#385540}
+.builder-floor-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.builder-floor-choices button{min-height:48px;padding:7px 4px;border:1px solid #c7d7cb;
+ border-radius:8px;background:#f9f9f4;color:#365640;cursor:pointer;
+ font:800 11px/1.25 Manrope,system-ui,sans-serif}
+.builder-floor-choices button[aria-pressed=true]{background:#315b43;color:#fff;border-color:#315b43}
+.builder-size-result{display:block;margin:8px 0 6px;padding:10px;border-radius:8px;
+ background:#e9f1e8;color:#2a543a;font:850 12px/1.5 Manrope,system-ui,sans-serif}
+.builder-size-caution{margin:4px 0 12px;color:#708073;
+ font:500 11px/1.48 Manrope,system-ui,sans-serif}
+.builder-size-presets button:focus-visible,.builder-floor-choices button:focus-visible,
+.builder-dimension-fields input:focus-visible,.scene-component-tabs button:focus-visible{
+ outline:3px solid #c27753;outline-offset:2px}
+.scene-camera-field{display:flex;align-items:center;gap:7px;min-width:0;
+ font:800 11px/1.3 Manrope,system-ui,sans-serif;color:#4a6251}
+.scene-camera-field select{width:min(180px,42vw);min-height:38px;border:1px solid #cbd9ce;
+ border-radius:9px;background:#fffdf9;color:#315540;padding:7px 10px;
+ font:800 12px/1.2 Manrope,system-ui,sans-serif}
+.scene-toolbar .scene-hint{flex:1 1 auto;color:#748477;
+ font:600 10px/1.25 Manrope,system-ui,sans-serif;text-align:center}
+.scene-step-switch{display:none}
+@media(max-width:730px){
+ .scene-toolbar{min-height:42px!important;padding:4px 7px!important}
+ .scene-camera-field{flex:1 1 auto;gap:5px;font-size:10px}
+ .scene-camera-field select{width:min(173px,55vw);min-height:36px}
+ .scene-toolbar .scene-hint{display:none}
+ .scene-toolbar .scene-hd{min-height:36px!important;flex-basis:41px!important}
+ .scene-step-switch{flex:0 0 auto;display:flex!important;align-items:stretch;flex-direction:column;
+  padding:7px 6px!important;gap:4px;min-height:0!important;
+  background:#f6f7f2;border-bottom:1px solid #cfdbd1}
+ .scene-step-title{font:800 10px/1.2 Manrope,system-ui,sans-serif;color:#56705b;
+  padding:0 2px}
+ .scene-component-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+ .scene-component-tabs button{display:flex;align-items:center;justify-content:center;min-width:0;
+  min-height:41px;border:1px solid #cbd8ca;border-radius:7px;padding:5px 2px;
+  background:#fffdf8;color:#3c5c46;font:800 10px/1.14 Manrope,system-ui,sans-serif;
+  white-space:normal;text-align:center;cursor:pointer}
+ .scene-component-tabs button[aria-selected=true]{background:#315e43;color:#fff;border-color:#315e43}
+ .scene-visually-hidden,#builderQuickStep{position:absolute!important;width:1px!important;
+  height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+ .builder-v25-step-tabs{display:none!important}
+ .builder-geometry-strip{padding:4px 0!important}
+ .builder-dimension-fields input{font-size:16px;min-height:48px}
+ .builder-size-presets button{font-size:11px}
+}
+@media(min-width:731px){
+ .scene-step-switch{display:none!important}
+ .scene-camera-field select{min-height:38px}
+}
+
+/* v30: Mobile iframe owns TWO non-overlapping regions:
+   the 3D scene/navigation and its own independently scrolling options.
+   This prevents the sticky scene or outer site dock from intercepting buttons. */
+@media(max-width:730px){
+ html,body{height:100%!important;min-height:0!important;overflow:hidden!important}
+ .embed{height:100%!important;min-height:0!important;overflow:hidden!important}
+ .workspace{height:100%!important;min-height:0!important;max-height:100%!important;
+  display:flex!important;flex-direction:column!important;overflow:hidden!important}
+ .viewer-col{position:relative!important;top:auto!important;flex:0 0 auto!important;z-index:2!important}
+ .controls{flex:1 1 0!important;min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain;scrollbar-width:thin;padding:9px 11px 44px!important}
+ .builder-v25-scroll{flex:none!important;min-height:0!important;overflow:visible!important;padding:0 0 8px!important}
+ .builder-v25-panel{scroll-margin-top:8px}
+ .builder-v25-actions{flex:0 0 auto;position:relative;z-index:1}
+}

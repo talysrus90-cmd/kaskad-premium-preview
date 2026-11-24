@@ -142,6 +142,8 @@
      // Architectural styles deliberately NEVER modify the separately selected
      // fence or its color. Otherwise Styles duplicates the Fence controls.
      for(const [key,value] of Object.entries(item.set)){
+       // User-supplied metric dimensions are independent from the style card.
+       if(key==='houseSize')continue;
        const input=fields[key];
        if(input&&input.value!==value){input.value=value;touched.push(input)}
      }
@@ -195,18 +197,25 @@
      button.setAttribute('aria-label',item.title+'. '+item.sub+'. Выбрать');
      const img=document.createElement('img');img.src=src+item.image+'.webp';img.alt='';img.loading='lazy';img.decoding='async';
      const title=document.createElement('strong');title.textContent=item.title;
-     const caption=document.createElement('span');caption.textContent=item.sub;
+     const caption=document.createElement('span');
+     caption.textContent=activeTab==='presets'?item.category+' · размеры изменяются отдельно':item.sub;
      button.append(img,title,caption);
      button.addEventListener('click',()=>choose(item));
      cardList.append(button);
    }
    if(keepScroll)cardList.scrollLeft=scroll;
    palette();
-   summary.textContent='≈ '+fields.houseSize.value+' м² · '+({gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'}[fields.roofShape.value]||'Крыша')+' · '+findName('presets',fields.houseStyle.value)+' · '+findName('facade',fields.facade.value)+' · '+
+   const width=Number(document.getElementById('houseWidthInput')?.value)||10;
+   const length=Number(document.getElementById('houseLengthInput')?.value)||10;
+   const floors=document.getElementById('houseFloorsSelect')?.value||'one';
+   summary.textContent=width+' × '+length+' м · '+({one:'1 этаж',mansard:'1 + мансарда',two:'2 этажа'}[floors])+' · '+({gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'}[fields.roofShape.value]||'Крыша')+' · '+findName('presets',fields.houseStyle.value)+' · '+findName('facade',fields.facade.value)+' · '+
      findName('roof',fields.roof.value)+' ('+colorName(fields.roofColor.value)+') · '+
      findName('fence',fields.fence.value)+' ('+colorName(fields.fenceColor.value)+')';
  }
  for(const input of Object.values(fields))input.addEventListener('change',()=>render(true));
+ for(const id of ['houseWidthInput','houseLengthInput','houseFloorsSelect']){
+  document.getElementById(id)?.addEventListener('change',()=>render(true));
+ }
  render();
  // Embedded mobile: keep every row reachable rather than clipping within iframe.
  if(window.parent!==window&&'ResizeObserver' in window){

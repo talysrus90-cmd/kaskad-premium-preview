@@ -7,20 +7,26 @@
  const scroll=document.getElementById('builderV25Scroll');
  if(!root||!nav||!controls||!scroll)return;
  const stages=[
-  {id:'presets',title:'Стиль дома',brief:'Выберите исходный архитектурный образ'},
-  {id:'geometry',title:'Габариты',brief:'Площадь и форма крыши'},
-  {id:'roof',title:'Кровля',brief:'Профиль металлочерепицы и цвет'},
-  {id:'facade',title:'Фасад',brief:'Кирпич, камень или штукатурка'},
-  {id:'openings',title:'Окна и двери',brief:'Цвет рам, стекла и входной двери'},
-  {id:'site',title:'Участок',brief:'Забор, озеленение и бассейн'},
-  {id:'summary',title:'Ваш вариант',brief:'Сохранение и обсуждение проекта'}
+  {id:'presets',title:'Стиль',brief:'Выберите архитектуру, которую хотите изменить'},
+  {id:'geometry',title:'Размер',brief:'Укажите ширину, длину и этажность дома'},
+  {id:'facade',title:'Фасад',brief:'Облицовочный кирпич, штукатурка, камень или дерево'},
+  {id:'roof',title:'Кровля',brief:'Форма крыши, металлочерепица, профиль и цвет'},
+  {id:'openings',title:'Окна и вход',brief:'Окна, двери, колонны и главный вход'},
+  {id:'fence',title:'Забор',brief:'Ограждение, ворота и цвет'},
+  {id:'site',title:'Участок',brief:'Дорожка, парковка, клумбы и бассейн'},
+  {id:'summary',title:'Итог',brief:'Сохраните или обсудите ваш вариант'}
  ];
  const fieldIds=['houseStyleSelect','houseSizeSelect','roofShapeSelect','facadeSelect',
   'roofSelect','roofColorSelect','fenceSelect','fenceColorSelect','frameColorSelect',
   'doorColorSelect','glassTintSelect','landscapeSelect','poolToggle',
-  'yardStyleSelect','parkingToggle','gazeboToggle','entranceStyleSelect'];
+  'yardStyleSelect','parkingToggle','gazeboToggle','terraceToggle','entranceStyleSelect','plinthSelect',
+  'houseWidthInput','houseLengthInput','houseFloorsSelect'];
  const fields={};
  const geom=document.querySelector('.builder-geometry-strip');
+ // On a phone, floor type must be immediately visible, not hidden after
+ // two rows of size presets and numeric inputs.
+ const floorPanel=geom.querySelector('.builder-floor-panel');
+ if(floorPanel)geom.querySelector('.builder-size-presets')?.before(floorPanel);
  const advanced=document.getElementById('builderAdvanced');
  const note=document.querySelector('.controls>.builder-v25-scroll>.note');
  const group=document.createElement('div');
@@ -80,6 +86,7 @@
     </select>
    </label>
    <label class="builder-v25-checkbox"><input id="parkingToggle" type="checkbox" checked> Парковка с отдельными воротами</label>
+   <label class="builder-v25-checkbox"><input id="terraceToggle" type="checkbox"> Терраса у дома со стороны сада</label>
    <label class="builder-v25-checkbox"><input id="gazeboToggle" type="checkbox"> Пергола / зона отдыха</label>
    <label class="builder-v25-checkbox"><input id="poolToggle" type="checkbox"> Бассейн на участке</label>
    <p>Главная дорожка соединяет калитку и вход. Парковка — справа, со своим въездом.</p>
@@ -96,7 +103,7 @@
  // Controls belong in the panel, never cover the 3D image.
  const facadeHelp=document.createElement('section');
  facadeHelp.className='builder-material-explainer';facadeHelp.hidden=true;
- facadeHelp.innerHTML='<h3>Материал и цвет фасада</h3><p>Выберите фактуру на карточке ниже. Дом изменится сразу. Листайте карточки влево или вправо.</p>';
+ facadeHelp.innerHTML='<h3>Материал и цвет фасада</h3><p>Выберите фактуру на карточке ниже. Дом изменится сразу.</p><label class="builder-v25-control">Отделка цоколя<select id="plinthSelect"><option value="stone">Светлый камень</option><option value="graphite">Тёмный графит</option><option value="light">Светлая штукатурка</option><option value="brick">Кирпичная облицовка</option><option value="none">Без декоративной облицовки</option></select></label>';
  root.before(facadeHelp);
  const roofShapes=document.createElement('section');
  roofShapes.className='builder-v28-roof-forms';roofShapes.hidden=true;
@@ -135,19 +142,114 @@
  for(const id of fieldIds)fields[id]=document.getElementById(id);
  const stepButtons=[];
  const quickStep=document.getElementById('builderQuickStep');
+ const quickTabs=document.getElementById('builderQuickTabs');
+ const widthInput=document.getElementById('houseWidthInput');
+ const lengthInput=document.getElementById('houseLengthInput');
+ const floorsSelect=document.getElementById('houseFloorsSelect');
+ const sizeText=document.getElementById('builderSizeResult');
+ const sizeButtons=[...document.querySelectorAll('[data-home-size]')];
+ const floorButtons=[...document.querySelectorAll('[data-home-floors]')];
  let step=0;
+ const sizeClamp=(v,min,max)=>Math.max(min,Math.min(max,Math.round(Number(v)*2)/2));
+ const sizeValues=()=>({
+   width:sizeClamp(widthInput.value||10,5,14),
+   length:sizeClamp(lengthInput.value||10,8,18),
+   floors:floorsSelect.value
+ });
+ function syncDimensions(){
+  const {width,length,floors}=sizeValues();
+  const footprint=Math.round(width*length*100)/100;
+  const floorLabel={one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
+  const info=width+' × '+length+' м · пятно '+footprint+' м² · '+floorLabel;
+  sizeText.textContent=info+(floors==='two'?' · суммарно до '+footprint*2+' м² (до вычета стен и лестниц)':'');
+  sizeButtons.forEach(b=>b.setAttribute('aria-pressed',
+   String(b.dataset.homeSize===String(width)+'x'+String(length))));
+  floorButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeFloors===floors)));
+  const area=Math.round(footprint*(floors==='two'?2:1));
+  const old=document.getElementById('houseSizeSelect');
+  if(old){
+   if(![...old.options].some(o=>o.value===String(area))){
+    const option=new Option('≈ '+area+' м²',String(area));option.dataset.dynamicSize='true';
+    old.querySelectorAll('option[data-dynamic-size]').forEach(el=>el.remove());
+    old.append(option);
+   }
+   old.value=String(area);
+   old.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  window.dispatchEvent(new CustomEvent('kaskad:dimensions-changed',
+   {detail:{width,length,floors,footprint}}));
+ }
+ for(const btn of sizeButtons)btn.addEventListener('click',()=>{
+  const [w,l]=btn.dataset.homeSize.split('x').map(Number);
+  widthInput.value=String(w);lengthInput.value=String(l);
+  syncDimensions();summary();
+ });
+ for(const btn of floorButtons)btn.addEventListener('click',()=>{
+  floorsSelect.value=btn.dataset.homeFloors;
+  floorsSelect.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ for(const el of [widthInput,lengthInput]){
+  el.addEventListener('input',()=>{
+   const n=Number(el.value);
+   if(Number.isFinite(n)&&n>=Number(el.min)&&n<=Number(el.max)){syncDimensions();summary();}
+  });
+  el.addEventListener('change',()=>{
+   el.value=String(sizeClamp(el.value||el.defaultValue,Number(el.min),Number(el.max)));
+   syncDimensions();summary();
+  });
+ }
+ floorsSelect.addEventListener('change',()=>{
+  const floor=floorsSelect.value,style=document.getElementById('houseStyleSelect'),
+   roof=document.getElementById('roofShapeSelect');
+  const compatible=floor==='two'?['classic']:
+    floor==='mansard'?['mansardHome','gableAttic']:null;
+  const nextStyle=floor==='two'?'classic':floor==='mansard'?'mansardHome':'family';
+  if(compatible?!compatible.includes(style.value):['classic','mansardHome','gableAttic'].includes(style.value)){
+   style.value=nextStyle;style.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  if(floor==='mansard'&&roof.value!=='mansard'){
+    roof.value='mansard';roof.dispatchEvent(new Event('change',{bubbles:true}));
+  }else if(floor!=='mansard'&&roof.value==='mansard'){
+    roof.value='hip';roof.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  syncDimensions();summary();
+ });
+ document.getElementById('houseStyleSelect')?.addEventListener('change',()=>{
+  const style=document.getElementById('houseStyleSelect').value;
+  const inferred=style==='classic'?'two':
+   ['mansardHome','gableAttic'].includes(style)?'mansard':'one';
+  if(floorsSelect.value!==inferred){floorsSelect.value=inferred;syncDimensions();summary()}
+ });
+ function renderQuickStages(){
+  quickStep.replaceChildren();
+  quickTabs?.replaceChildren();
+  stages.forEach((item,i)=>{
+   const option=new Option((i+1)+' · '+item.title,String(i));quickStep.append(option);
+   if(!quickTabs)return;
+   const b=document.createElement('button');b.type='button';
+   b.dataset.builderStep=String(i);b.textContent=item.title;
+   b.setAttribute('aria-selected',String(i===step));
+   b.addEventListener('click',()=>show(i));
+   quickTabs.append(b);
+  });
+ }
+ renderQuickStages();
  function name(id){const el=fields[id];return el?.selectedOptions?.[0]?.textContent?.trim()||
    (el?.checked?'Да':'Нет')||'—';}
  function summary(){
   const result=document.getElementById('builderFinalSummary');
   if(!result)return;
+  const dims=sizeValues();
   const rows=[
    ['Архитектура',name('houseStyleSelect')],
-   ['Площадь',name('houseSizeSelect')],
+   ['Размеры',dims.width+' × '+dims.length+' м'],
+   ['Пятно застройки',(dims.width*dims.length)+' м²'],
+   ['Этажность',({one:'1 этаж',mansard:'1 + мансарда',two:'2 этажа'})[dims.floors]],
    ['Форма крыши',name('roofShapeSelect')],
    ['Покрытие',name('roofSelect')],
    ['Цвет крыши',name('roofColorSelect')],
    ['Фасад',name('facadeSelect')],
+   ['Цоколь',name('plinthSelect')],
    ['Оконные рамы',name('frameColorSelect')],
    ['Стекло',name('glassTintSelect')],
    ['Дверь',name('doorColorSelect')],
@@ -158,6 +260,7 @@
    ['Парадный двор',name('yardStyleSelect')],
    ['Парковка',fields.parkingToggle?.checked?'Есть':'Нет'],
    ['Беседка',fields.gazeboToggle?.checked?'Есть':'Нет'],
+   ['Терраса',fields.terraceToggle?.checked?'Есть':'Нет'],
    ['Бассейн',fields.poolToggle?.checked?'Есть':'Без бассейна']
   ];
   result.replaceChildren(...rows.map(([label,value])=>{
@@ -171,10 +274,13 @@
   step=Math.max(0,Math.min(stages.length-1,i));
   const id=stages[step].id;
   if(quickStep)quickStep.value=String(step);
+  quickTabs?.querySelectorAll('[data-builder-step]').forEach(b=>{
+   b.setAttribute('aria-selected',String(Number(b.dataset.builderStep)===step));
+  });
   stepButtons.forEach((b,n)=>{b.setAttribute('aria-current',n===step?'step':'false');
    b.setAttribute('aria-selected',String(n===step));});
   geom.hidden=id!=='geometry';
-  const catalog=({presets:'presets',roof:'roof',facade:'facade',site:'fence'})[id];
+  const catalog=({presets:'presets',roof:'roof',facade:'facade',fence:'fence'})[id];
   root.hidden=!catalog;
   facadeHelp.hidden=id!=='facade';
   roofShapes.hidden=id!=='roof';
@@ -192,20 +298,20 @@
   document.getElementById('builderProgress').style.width=((step+1)*100/stages.length)+'%';
   const intro=document.querySelector('.builder-v25-intro p');
   if(intro)intro.textContent=stages[step].brief+'. Изменения сразу видны на модели.';
-  if(!keepScroll)scroll.scrollTo({top:0,behavior:'instant'});
+  if(!keepScroll){scroll.scrollTo({top:0,behavior:'instant'});controls.scrollTo({top:0,behavior:'instant'});}
   // On phones the 3D viewer is sticky and the page footer has a dock.
   // Reveal the actual choices when a step is tapped instead of leaving
   // the selected materials below the visible part of the iframe.
-  if(step>0&&window.matchMedia('(max-width:730px)').matches){
-   const target=({geometry:geom,roof:roofShapes,facade:facadeHelp,
+  if(window.matchMedia('(max-width:730px)').matches){
+   const target=({presets:root.querySelector('.builder-category-filter'),geometry:geom,roof:roofShapes,facade:facadeHelp,
+     fence:root.querySelector('.builder-material-card'),
      openings:document.getElementById('builderOpenings'),
      site:document.getElementById('builderGarden'),
      summary:document.getElementById('builderFinal')})[id];
    requestAnimationFrame(()=>{
     if(!target||target.hidden)return;
-    const sticky=document.querySelector('.viewer-col');
-    const top=target.getBoundingClientRect().top+window.scrollY-(sticky?.getBoundingClientRect().height||0)-7;
-    if(top>window.scrollY+14)window.scrollTo({top:Math.max(0,top),behavior:'instant'});
+    const top=target.getBoundingClientRect().top-controls.getBoundingClientRect().top+controls.scrollTop-7;
+    controls.scrollTo({top:Math.max(0,top),behavior:'instant'});
    });
   }
   summary();
@@ -220,25 +326,31 @@
   nav.append(b);stepButtons.push(b);
  });
  const defaults={
-  houseStyleSelect:'family',houseSizeSelect:'150',roofShapeSelect:'hip',
+  houseStyleSelect:'family',houseSizeSelect:'100',roofShapeSelect:'hip',
+  houseWidthInput:'10',houseLengthInput:'10',houseFloorsSelect:'one',
   facadeSelect:'gray',roofSelect:'metalGraphite',roofColorSelect:'graphite',
   fenceSelect:'iron',fenceColorSelect:'graphite',frameColorSelect:'bronze',
   doorColorSelect:'walnut',glassTintSelect:'clear',landscapeSelect:'lush',poolToggle:false,
   entranceStyleSelect:'simple',
-  yardStyleSelect:'family',parkingToggle:true,gazeboToggle:false
+  yardStyleSelect:'family',parkingToggle:true,gazeboToggle:false,
+  terraceToggle:false,plinthSelect:'stone'
  };
- const storageKey='kaskad-v28-visual-selection';
+ const storageKey='kaskad-v30-exterior-selection';
  function apply(state){
   if(!state||typeof state!=='object')return;
   for(const [id,value] of Object.entries(defaults)){
    const el=fields[id];
    if(!el)continue;
    if(el.type==='checkbox'){el.checked=typeof state[id]==='boolean'?state[id]:value}
+   else if(el.type==='number'){
+    const raw=Number(state[id]);
+    el.value=String(Number.isFinite(raw)?sizeClamp(raw,Number(el.min),Number(el.max)):Number(value));
+   }
    else if([...el.options].some(o=>o.value===state[id]))el.value=state[id];
    else el.value=value;
    el.dispatchEvent(new Event('change',{bubbles:true}));
   }
-  summary();
+  syncDimensions();summary();
  }
  quickStep?.addEventListener('change',()=>show(Number(quickStep.value)));
  // Trusted opener from parent: the mobile bottom button must reveal actual
@@ -254,14 +366,13 @@
    const target=nextStage===0?
      root.querySelector('.builder-category-filter')||root.querySelector('.builder-material-card'):
      ({geometry:geom,roof:roofShapes,facade:facadeHelp,
+       fence:root.querySelector('.builder-material-card'),
        openings:document.getElementById('builderOpenings'),
        site:document.getElementById('builderGarden'),
        summary:document.getElementById('builderFinal')})[stages[nextStage].id];
    if(target&&!target.hidden){
-    const fixed=document.querySelector('.viewer-col');
-    const fixedHeight=fixed?.getBoundingClientRect().height||0;
-    const offset=target.getBoundingClientRect().top+window.scrollY-fixedHeight+8;
-    window.scrollTo({top:Math.max(0,offset),behavior:'instant'});
+    const offset=target.getBoundingClientRect().top-controls.getBoundingClientRect().top+controls.scrollTop-7;
+    controls.scrollTo({top:Math.max(0,offset),behavior:'instant'});
    }
    window.parent.postMessage({type:'kaskad-builder-opened',version:1,
       stage:nextStage,choices:root.querySelectorAll('.builder-material-card').length},location.origin);
@@ -274,13 +385,16 @@
    fence:fields.fenceSelect.value,roofColor:fields.roofColorSelect.value,
    fenceColor:fields.fenceColorSelect.value,
    houseStyle:fields.houseStyleSelect.value,houseSize:fields.houseSizeSelect.value,
+   houseWidth:fields.houseWidthInput.value,houseLength:fields.houseLengthInput.value,
+   houseFloors:fields.houseFloorsSelect.value,
    roofShape:fields.roofShapeSelect.value,
    frameColor:fields.frameColorSelect.value,doorColor:fields.doorColorSelect.value,
    glassTint:fields.glassTintSelect.value,landscape:fields.landscapeSelect.value,
    entrance:fields.entranceStyleSelect.value,
    pool:fields.poolToggle.checked,
    yardStyle:fields.yardStyleSelect.value,parking:fields.parkingToggle.checked,
-   gazebo:fields.gazeboToggle.checked};
+   gazebo:fields.gazeboToggle.checked,terrace:fields.terraceToggle.checked,
+   plinth:fields.plinthSelect.value};
   if(window.parent!==window){
    window.parent.postMessage({type:'kaskad-design-inquiry',version:1,config},location.origin);
   }else{
@@ -308,5 +422,6 @@
   const previous=JSON.parse(localStorage.getItem(storageKey)||'null');
   if(previous)apply(previous);
  }catch{}
+ syncDimensions();
  show(0);
 })();

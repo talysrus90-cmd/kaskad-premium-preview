@@ -26,7 +26,8 @@
   glassTint:{clear:'Прозрачное',smoke:'Тонированное',blue:'Холодное голубое'},
   landscape:{lush:'Сад с деревьями',modern:'Современное озеленение',open:'Открытый газон'},
   yardStyle:{family:'Семейный двор',classic:'Симметричные цветники',modern:'Современный двор',garden:'Загородный сад'},
-  entrance:{simple:'Лаконичный навес',columns:'Классический портик с колоннами',timber:'Деревянный навес',modern:'Современный вход'}
+  entrance:{simple:'Лаконичный навес',columns:'Классический портик с колоннами',timber:'Деревянный навес',modern:'Современный вход'},
+  plinth:{stone:'Цоколь — светлый камень',graphite:'Цоколь — графит',light:'Цоколь — светлый',brick:'Цоколь — кирпич',none:'Без декоративного цоколя'}
  };
  function intake(raw){
    if(!raw||typeof raw!=='object')return;
@@ -40,12 +41,22 @@
    service.value='Строительство дома, коттеджа или виллы';
    service.dispatchEvent(new Event('change',{bubbles:true}));
    const prior=comment.value.split('\n').filter(line=>!line.startsWith('3D-концепция КАСКАД:'));
-   const extra=Object.entries(optional).filter(([key,values])=>
+   const extra=[];
+   const width=Number(cfg.houseWidth),length=Number(cfg.houseLength);
+   if(Number.isFinite(width)&&Number.isFinite(length)&&width>=5&&width<=14&&length>=8&&length<=18){
+    extra.push('Размеры наружного контура — '+width+' × '+length+' м');
+    extra.push('Пятно застройки — '+Number((width*length).toFixed(1))+' м²');
+   }
+   const floorNames={one:'один этаж',mansard:'один этаж и мансарда',two:'два этажа'};
+   if(typeof cfg.houseFloors==='string'&&Object.hasOwn(floorNames,cfg.houseFloors))
+     extra.push('Этажность — '+floorNames[cfg.houseFloors]);
+   extra.push(...Object.entries(optional).filter(([key,values])=>
      typeof cfg[key]==='string'&&Object.hasOwn(values,cfg[key]))
-     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок',yardStyle:'Благоустройство',entrance:'Парадный вход'}[key]+' — '+values[cfg[key]]));
+     .map(([key,values])=>({houseStyle:'Стиль',houseSize:'Площадь условная',roofShape:'Форма крыши',frameColor:'Рамы',doorColor:'Дверь',glassTint:'Стекло',landscape:'Участок',yardStyle:'Благоустройство',entrance:'Парадный вход',plinth:'Отделка цоколя'}[key]+' — '+values[cfg[key]])));
    if(typeof cfg.pool==='boolean')extra.push('Бассейн — '+(cfg.pool?'есть':'нет'));
    if(typeof cfg.parking==='boolean')extra.push('Парковка — '+(cfg.parking?'есть':'нет'));
    if(typeof cfg.gazebo==='boolean')extra.push('Пергола — '+(cfg.gazebo?'есть':'нет'));
+   if(typeof cfg.terrace==='boolean')extra.push('Терраса — '+(cfg.terrace?'есть':'нет'));
    const text='3D-концепция КАСКАД: фасад — '+valid.facade[cfg.facade]+
      '; кровля — '+valid.roof[cfg.roof]+', цвет — '+valid.roofColor[cfg.roofColor]+
      '; забор — '+valid.fence[cfg.fence]+', цвет металлических деталей — '+valid.fenceColor[cfg.fenceColor]+

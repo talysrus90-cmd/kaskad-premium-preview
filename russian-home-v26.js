@@ -6,6 +6,7 @@
 import {METAL_PROFILES,makeStampedSurface} from './roof-relief-v25.js';
 import {HOME_VARIANTS,createHouseVariations} from './house-variants-v27.js';
 import {createEntranceVariants} from './entrance-v28.js';
+import {createExteriorAddons} from './exterior-addons-v30.js';
 
 export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSystem,windowFrameMetal,glassMat,doorMat}){
  const root=new THREE.Group();root.name='КАСКАД · малоэтажный семейный дом';scene.add(root);
@@ -41,16 +42,21 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
  };
  const main=new THREE.Group();main.name='Дом · первый этаж';root.add(main);
  const variants=createHouseVariations(THREE,root,{stone:limestone,trim:frameTrim,windowFrame:windowFrameMetal,glass:glassMat,wood:timber,dark:darkMetal});
+ const addons=createExteriorAddons(THREE,root,{stone:limestone,brick,wood:timber,metal:darkMetal});
  // Real front door and external opening reveals; porch only in front of entrance,
  // never over the first/attic floor windows.
  box(main,13.28,.36,9.46,0,.27,0,limestone);
  const wall=box(main,12.8,3.18,9.0,0,1.98,0,brick);
  box(main,13.03,.13,9.24,0,.53,0,frameTrim);
  box(main,13.05,.16,9.26,0,3.62,0,frameTrim);
+ const frontDoorStart=main.children.length;
  const frontDoor=box(main,1.58,2.29,.15,0,1.7,4.64,doorMat);
  box(main,1.74,.13,.25,0,2.87,4.72,frameTrim);
  for(const xx of [-.9,.9])box(main,.14,2.5,.18,xx,1.65,4.73,frameTrim);
  box(main,.1,.13,.16,.58,1.77,4.76,darkMetal);
+ const entranceDoor=new THREE.Group();entranceDoor.name='Входная дверь · физический размер';
+ for(const part of main.children.slice(frontDoorStart))entranceDoor.add(part);
+ main.add(entranceDoor);
  // The original canopy is grouped for backwards compatibility; v28 uses
  // one selectable complete supported entrance at a time.
  const legacyEntryStart=main.children.length;
@@ -213,6 +219,43 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   variants.setStyle(style);
   if(attics.has('gable'))attics.get('gable').visible=style==='gableAttic';
  }
+ function setDimensions(width,length){
+  const w=Math.max(5,Math.min(14,Number(width)||10));
+  const l=Math.max(8,Math.min(18,Number(length)||10));
+  const sx=w/12.8,sz=l/9;
+  root.scale.set(sx,1,sz);
+  // Keep the entry facade at the same physical line of the plot.
+  // The stone path and porch then continue to meet at the public approach.
+  root.position.z=4.63*(1-sz);
+  // Doors are standard-sized objects; reducing the house to 5 m does not
+  // shrink a doorway to a few centimetres.
+  entranceDoor.scale.x=1/sx;
+  for(const group of entryVariants.styles.values()){
+   group.scale.x=1/sx;group.scale.z=1/sz;
+   group.position.z=4.63*(sz-1)/sz;
+  }
+  const frontSlots=w<8.5?2:4;
+  for(const group of windows){
+   const x=group.userData.baseX??group.position.x;
+   const z=group.userData.baseZ??group.position.z;
+   group.userData.baseX=x;group.userData.baseZ=z;
+   const side=Math.abs(x)>6.2;
+   group.scale.x=side?1/sz:1/sx;
+   group.scale.z=side?1/sx:1/sz;
+   if(side){
+    group.position.x=Math.sign(x)*Math.max(.2,(w/2-.11))/sx;
+    const desired=z===0?0:Math.sign(z)*Math.max(1.4,l/2-1.35);
+    group.position.z=desired/sz;
+   }else{
+    const outer=Math.abs(x)>4.0;
+    group.visible=frontSlots===4||outer;
+    const desired=Math.sign(x)*(outer?Math.max(1.25,w/2-1.04):Math.max(.86,w/2-2.87));
+    group.position.x=desired/sx;
+   }
+  }
+  addons.setDimensions(w,l);
+  root.userData.footprint={width:w,length:l};
+ }
  function setSize(size,aspect=1.35,inhabitedAttic=false){
   const floors=inhabitedAttic?1.6:1;
   const footprint=Math.max(65,(Number(size)||150)/floors); // area indicative, not engineering GFA
@@ -220,5 +263,6 @@ export function createRussianHouse(THREE,scene,{brick,limestone,quartz,roofSyste
   root.scale.set(w/12.8,1,depth/9);
   root.userData.footprint={width:w,depth,floors};
  }
- return {root,setStyle,setSize,setRoof,setEntrance,getShape:()=>activeShape,getRoof:()=>roofType};
+ return {root,setStyle,setSize,setDimensions,setRoof,setEntrance,
+  setPlinth:addons.setPlinth,setTerrace:addons.setTerrace,getShape:()=>activeShape,getRoof:()=>roofType};
 }

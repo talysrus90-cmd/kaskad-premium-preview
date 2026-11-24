@@ -44,3 +44,12 @@
  .kaskad-open-builder-cta{display:flex;width:100%;margin:11px 0 0;
  padding:10px 12px;min-height:44px}
 }
+
+/* v30: the iframe must end ABOVE the fixed mobile «Конструктор / Заявка»
+   dock. Otherwise a visible checkbox near the bottom cannot be tapped. */
+@media(max-width:730px){
+ .kaskad-3d-feature iframe{
+  height:clamp(440px,calc(100dvh - 190px),720px)!important;
+  max-height:calc(100dvh - 160px)!important;
+ }
+}

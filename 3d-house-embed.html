@@ -123,7 +123,7 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 .builder-geometry-strip select{border:1px solid #cdd7ce;background:#fbfcf6;color:#334d3e;min-height:33px;font:700 11px/1.3 Manrope,system-ui,sans-serif;padding:4px 5px;border-radius:6px;max-width:100%;width:100%}
 @media(max-width:730px){.builder-geometry-strip{gap:5px;margin:2px 0 3px}.builder-geometry-strip label{gap:2px;font-size:9px}.builder-geometry-strip select{min-height:30px;font-size:10px}}
 </style>
-<link rel="stylesheet" href="builder-v25-layout.css?v=3">
+<link rel="stylesheet" href="builder-v25-layout.css?v=4">
 </head>
 <body>
 <main class="embed">
@@ -138,27 +138,23 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 
 <button class="secondary" id="autoRotate" type="button" aria-pressed="false" hidden aria-hidden="true" tabindex="-1">↻ Автообзор</button>
 </div>
-<div class="scene-toolbar" aria-label="Ракурс дома — управление вне 3D-изображения">
- <span class="scene-toolbar-caption">Ракурс:</span>
- <div class="scene-views" role="group" aria-label="Выберите ракурс 3D-дома">
-  <button type="button" data-kaskad-view="front" aria-pressed="true">Фасад</button>
-  <button type="button" data-kaskad-view="side" aria-pressed="false">Сбоку</button>
-  <button type="button" data-kaskad-view="back" aria-pressed="false">Сзади</button>
-  <button type="button" data-kaskad-view="top" aria-pressed="false">Сверху</button>
- </div>
- <button class="scene-hd" id="highDetailButton" type="button" aria-pressed="false" title="HD — дополнительные детали и чёткость">HD</button>
+<div class="scene-toolbar" aria-label="Управление осмотром дома">
+ <label class="scene-camera-field" for="sceneViewSelect">Ракурс
+  <select id="sceneViewSelect" aria-label="Ракурс 3D-модели">
+   <option value="front">Главный фасад</option>
+   <option value="side">Сбоку</option>
+   <option value="back">Сзади</option>
+   <option value="top">Сверху</option>
+  </select>
+ </label>
+ <span class="scene-hint">Поверните дом пальцем или мышью</span>
+ <button class="scene-hd" id="highDetailButton" type="button" aria-pressed="false" title="Улучшить качество 3D">HD</button>
 </div>
-<div class="scene-step-switch">
- <label for="builderQuickStep">Настраиваем</label>
- <select id="builderQuickStep" aria-label="Быстрый выбор раздела конструктора">
-  <option value="0">1 · Стиль дома</option>
-  <option value="1">2 · Габариты</option>
-  <option value="2">3 · Кровля</option>
-  <option value="3">4 · Фасад</option>
-  <option value="4">5 · Окна, двери и вход</option>
-  <option value="5">6 · Участок</option>
-  <option value="6">7 · Ваш вариант</option>
- </select>
+<div class="scene-step-switch" aria-label="Что хотите изменить в доме">
+ <span class="scene-step-title">Что настроим?</span>
+ <nav class="scene-component-tabs" id="builderQuickTabs" aria-label="Части дома"></nav>
+ <label class="scene-visually-hidden" for="builderQuickStep">Раздел конструктора</label>
+ <select id="builderQuickStep" aria-label="Быстрый выбор раздела"></select>
 </div>
 <div class="footbar"><span>Дом и участок</span><span id="modelFPS">Загрузка</span></div>
 </div>
@@ -166,7 +162,48 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 <div class="builder-v25-scroll" id="builderV25Scroll">
 <header class="builder-v25-intro"><span class="eyebrow">КАСКАД · КОНСТРУКТОР</span><h2>Ваш будущий дом</h2><p>Выберите архитектуру и отделку. Изображение обновляется при выборе.</p></header>
 <nav id="builderStepNav" class="builder-v25-step-tabs" aria-label="Этапы настройки дома"></nav>
-<div class="builder-geometry-strip" aria-label="Размеры и форма дома"><label for="roofShapeSelect">Форма крыши<select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip" selected>Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select></label><label for="houseSizeSelect">Площадь дома<select id="houseSizeSelect"><option value="150" selected>≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220">≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select></label></div>
+<div class="builder-geometry-strip" aria-label="Реальные размеры и этажность дома">
+ <h3>Габариты вашего дома</h3>
+ <div class="builder-size-presets" id="builderSizePresets" role="group" aria-label="Быстрый выбор размеров">
+  <button type="button" data-home-size="5x8">5 × 8 м</button>
+  <button type="button" data-home-size="8x10">8 × 10 м</button>
+  <button type="button" data-home-size="10x10">10 × 10 м</button>
+  <button type="button" data-home-size="10x12">10 × 12 м</button>
+  <button type="button" data-home-size="12x12">12 × 12 м</button>
+  <button type="button" data-home-size="12x14">12 × 14 м</button>
+ </div>
+ <div class="builder-dimension-fields">
+  <label for="houseWidthInput">Ширина фасада, м
+   <input type="number" id="houseWidthInput" min="5" max="14" step="0.5" value="10" inputmode="decimal" aria-label="Ширина дома по главному фасаду в метрах">
+  </label>
+  <label for="houseLengthInput">Длина в глубину, м
+   <input type="number" id="houseLengthInput" min="8" max="18" step="0.5" value="10" inputmode="decimal" aria-label="Длина дома от фасада к задней стене в метрах">
+  </label>
+ </div>
+ <div class="builder-floor-panel">
+  <h4>Этажность</h4>
+  <div class="builder-floor-choices" id="builderFloorChoices" role="group" aria-label="Сколько этажей">
+   <button type="button" data-home-floors="one" aria-pressed="true">1 этаж</button>
+   <button type="button" data-home-floors="mansard" aria-pressed="false">1 + мансарда</button>
+   <button type="button" data-home-floors="two" aria-pressed="false">2 этажа</button>
+  </div>
+  <select id="houseFloorsSelect" aria-label="Этажность" hidden>
+   <option value="one" selected>1 этаж</option>
+   <option value="mansard">1 этаж + мансарда</option>
+   <option value="two">2 этажа</option>
+  </select>
+ </div>
+ <output class="builder-size-result" id="builderSizeResult" aria-live="polite">10 × 10 м · пятно застройки 100 м² · 1 этаж</output>
+ <p class="builder-size-caution">Эскизные размеры наружного контура; площадь мансарды, планировка и строительные конструкции уточняются в проекте.</p>
+ <div class="builder-legacy-geometry" hidden>
+  <label for="roofShapeSelect">Форма крыши
+   <select id="roofShapeSelect"><option value="gable">Двухскатная</option><option value="hip" selected>Четырёхскатная</option><option value="flat">Плоская</option><option value="mansard">Мансардная</option></select>
+  </label>
+  <label for="houseSizeSelect">Расчётная площадь
+   <select id="houseSizeSelect"><option value="100" selected>≈ 100 м²</option><option value="150">≈ 150 м²</option><option value="180">≈ 180 м²</option><option value="220">≈ 220 м²</option><option value="260">≈ 260 м²</option><option value="300">≈ 300 м²</option><option value="350">≈ 350 м²</option></select>
+  </label>
+ </div>
+</div>
 <div id="builderGallery" class="builder-gallery" aria-label="Галерея вариантов фасада, кровли и забора">
   <p class="builder-gallery-fallback">Выберите коллекцию и материал — дом обновится сразу.</p>
 </div>
@@ -202,8 +239,8 @@ html{scroll-behavior:auto}body{background:#e9e7df;overflow:hidden}
 </aside>
 </div>
 </main>
-<script src="builder-gallery.js?v=10" defer></script>
-<script src="builder-v25-experience.js?v=5" defer></script>
-<script type="module" src="house-3d.bundle.js?v=14"></script>
+<script src="builder-gallery.js?v=11" defer></script>
+<script src="builder-v25-experience.js?v=6" defer></script>
+<script type="module" src="house-3d.bundle.js?v=15"></script>
 </body>
 </html>
