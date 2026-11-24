@@ -1,0 +1,32 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><title>КАСКАД v30 · QA</title><style>body{margin:0;background:#fff;font:14px system-ui}.info{position:fixed;z-index:10;bottom:0;left:0;background:#fff;padding:8px;border:1px solid #aaa}iframe{border:0;width:100%;height:calc(100vh - 38px);display:block}</style><iframe id="stage" src="../3d-house-embed.html" title="3D Конструктор"></iframe><output id="result" class="info">Загрузка теста...</output><script>
+const frame=document.getElementById('stage'),out=document.getElementById('result');
+const caseName=new URLSearchParams(location.search).get('case')||'pool';
+const states={
+pool:{houseStyleSelect:'family',houseWidthInput:'10',houseLengthInput:'12',poolToggle:true,gazeboToggle:true,parkingToggle:true,landscapeSelect:'lush',verandaSelect:'covered',blindAreaType:'tile',entranceStyleSelect:'columns',sceneViewSelect:'top'},
+columns:{houseStyleSelect:'twoColumns',houseWidthInput:'5',houseLengthInput:'8',poolToggle:false,gazeboToggle:false,verandaSelect:'none',entranceStyleSelect:'columns',sceneViewSelect:'front'},
+balcony:{houseStyleSelect:'twoBalcony',houseWidthInput:'12',houseLengthInput:'14',poolToggle:true,verandaSelect:'covered',entranceStyleSelect:'modern',sceneViewSelect:'back'},
+modern:{houseStyleSelect:'twoModern',houseWidthInput:'14',houseLengthInput:'18',verandaSelect:'modern',poolToggle:true,roofShapeSelect:'flat',sceneViewSelect:'top'}
+};
+frame.addEventListener('load',()=>{
+ const doc=frame.contentDocument,win=frame.contentWindow,errors=[];
+ win.addEventListener('error',e=>errors.push(e.message));
+ const set=(id,v)=>{const el=doc.getElementById(id);if(!el){errors.push('Missing #'+id);return}if(el.type==='checkbox')el.checked=v;else el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}))};
+ const data=states[caseName]||states.pool;
+ setTimeout(()=>{
+  for(const [k,v]of Object.entries(data)){if(k!=='sceneViewSelect')set(k,v)}
+  set('sceneViewSelect',data.sceneViewSelect);
+  setTimeout(()=>{
+   const model=doc.getElementById('modelFPS')?.textContent||'';
+   const opts=[...doc.querySelectorAll('#builderStepNav>button')].length;
+   const styles=doc.getElementById('houseStyleSelect')?.options.length||0;
+   const vera=doc.getElementById('verandaSelect')?.value;
+   if(caseName==='balcony'&&vera!=='none')errors.push('Балкон не отключил веранду');
+   if(opts!==8)errors.push('Не 8 разделов');
+   if(styles<27)errors.push('Не 27 стилей');
+   if(!model.includes('3D готов'))errors.push('3D не загрузился');
+   out.textContent=(errors.length?'FAIL: '+errors.join('; '):'PASS')+' | '+caseName+' | '+model+' | 8 этапов='+opts+' | стилей='+styles+' | веранда='+vera;
+   document.title=out.textContent;
+  },2800)
+ },1300)
+});
+</script></html>

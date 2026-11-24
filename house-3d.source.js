@@ -179,7 +179,7 @@ try {
   controls.dampingFactor=.085;
   controls.enablePan=false;
   controls.minDistance=13;
-  controls.maxDistance=57;
+  controls.maxDistance=75; // Whole-plot view on narrow phones
   controls.minPolarAngle=.18;
   controls.maxPolarAngle=Math.PI*.475;
   controls.autoRotate=false;
@@ -192,7 +192,9 @@ try {
     front:mobileView?{camera:[11.8,7.3,21.8],target:[0,2.68,2.4]}:{camera:[15.1,8.2,26],target:[0,2.72,2.6]},
     side:{camera:[31,9,2.5],target:[0,2.8,0]},
     back:{camera:[12,8,-28],target:[0,2.7,0]},
-    top:{camera:[8,49,12],target:[0,1.0,3]},
+    // Plot-wide top view centers the house and the reserved pool zone together,
+    // including on narrow phone screens where the pool used to be cropped.
+    top:mobileView?{camera:[17,62,15],target:[8,1.0,3]}:{camera:[13,49,12],target:[5,1.0,3]},
     yard:{camera:[20,14.5,36],target:[2.4,1.5,9]},
     facade:mobileView?{camera:[9.7,6.4,16.3],target:[0,2.45,2.4]}:{camera:[12.5,7.2,20],target:[0,2.5,2.7]},
     roof:mobileView?{camera:[10.2,10.0,17],target:[0,3.8,1.7]}:{camera:[14.3,12.1,20],target:[0,4.0,1.7]},
@@ -636,6 +638,9 @@ const veranda=createVeranda(THREE,scene);
   };
   [frameColorSelect,doorColorSelect].forEach(el=>el?.addEventListener('change',updateOpenings));
   [landscapeSelect,poolToggle,yardStyleSelect,parkingToggle,gazeboToggle].forEach(el=>el?.addEventListener('change',updateLandscape));
+  // Revealing the pool also reveals its actual location, without forcing users
+  // to drag the camera across the plot on a narrow phone.
+  poolToggle?.addEventListener('change',()=>{if(poolToggle.checked)setView('top')});
   updateOpenings();updateLandscape();
 
   // Color swatches reference common RAL-like palettes, with no claims of exact screen color.
