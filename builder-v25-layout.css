@@ -527,3 +527,25 @@
  .scene .scene-metric-badge output{font-size:12px!important}
  .scene .scene-metric-badge small{font-size:9px!important}
 }
+
+
+/* Intuitive full-site view: no new toolbar, just a quiet reset and gesture hint. */
+.scene .scene-gesture-tip{
+ position:absolute;z-index:6;bottom:8px;left:9px;max-width:64%;
+ font:700 10px/1.35 Manrope,system-ui,sans-serif;color:#284738;
+ padding:6px 8px;border-radius:8px;background:#fafbf0dc;
+ text-shadow:0 1px 1px #fff;pointer-events:none;
+ transition:opacity .18s ease}
+.scene .scene-gesture-tip.is-used{opacity:0;visibility:hidden}
+.scene .scene-overview-button{
+ position:absolute;z-index:8;right:9px;bottom:8px;
+ display:inline-flex;align-items:center;justify-content:center;
+ margin:0;padding:7px 10px;min-height:33px;border-radius:8px;
+ background:#f7fbf4e9;border:1px solid #b9cec1;color:#28523d;
+ font:800 11px/1.2 Manrope,system-ui,sans-serif;
+ box-shadow:0 2px 10px #1b3c2733;cursor:pointer}
+.scene .scene-overview-button:focus-visible{outline:3px solid #cc8d55;outline-offset:2px}
+@media(max-width:390px){
+ .scene .scene-gesture-tip{font-size:9px;max-width:58%;left:7px;bottom:7px}
+ .scene .scene-overview-button{font-size:10px;right:7px;bottom:7px;padding:6px 8px}
+}

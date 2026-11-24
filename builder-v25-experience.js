@@ -207,6 +207,23 @@
  for(const id of fieldIds)fields[id]=document.getElementById(id);
  const stepButtons=[];
  const quickStep=document.getElementById('builderQuickStep');
+ // Users often scroll directly to the embedded configurator without using
+ // the site CTA. Announce real interactions so Android Back has a safe
+ // same-page history entry even in that case. Do not record each slider tick.
+ let engagementAnnounced=false;
+ const announceEngagement=()=>{
+  if(engagementAnnounced||window.parent===window)return;
+  engagementAnnounced=true;
+  window.parent.postMessage({type:'kaskad-builder-engaged',version:1},location.origin);
+ };
+ document.addEventListener('click',event=>{
+  if(!event.isTrusted)return;
+  if(event.target.closest('button,input,select,label,.builder-material-card'))announceEngagement();
+ },{capture:true});
+ document.addEventListener('pointerdown',event=>{
+  if(!event.isTrusted)return;
+  if(event.target.matches('canvas,input[type=range]'))announceEngagement();
+ },{capture:true,passive:true});
  const quickTabs=document.getElementById('builderQuickTabs');
  const widthInput=document.getElementById('houseWidthInput');
  const lengthInput=document.getElementById('houseLengthInput');
@@ -228,7 +245,7 @@
   if(widthSlider){widthSlider.value=String(width);document.getElementById('houseWidthValue').textContent=width+' м'}
   if(lengthSlider){lengthSlider.value=String(length);document.getElementById('houseLengthValue').textContent=length+' м'}
   const sceneHouse=document.getElementById('sceneHouseDimensions');
-  if(sceneHouse)sceneHouse.textContent='Ш: '+width+' м · Д: '+length+' м';
+  if(sceneHouse)sceneHouse.textContent='Дом '+width+' × '+length+' м';
   const footprint=Math.round(width*length*100)/100;
   const mansardAboveTwo=(document.getElementById('houseStyleSelect')?.value||'').startsWith('twoMansard');
   const floorLabel=mansardAboveTwo?'2 этажа + мансарда':{one:'1 этаж',mansard:'1 этаж + мансарда',two:'2 этажа'}[floors];
@@ -346,7 +363,7 @@
   document.getElementById('plotWidthValue').textContent=width+' м';
   document.getElementById('plotLengthValue').textContent=depth+' м';
   const scenePlot=document.getElementById('scenePlotDimensions');
-  if(scenePlot)scenePlot.textContent='Участок · Ш: '+width+' м · Д: '+depth+' м';
+  if(scenePlot)scenePlot.textContent='Участок '+width+' × '+depth+' м';
   document.getElementById('plotDimensions').textContent='Участок '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+area.toFixed(0)+' м²';
   const coverage=house.width*house.length/area*100;
   const percent=coverage.toFixed(1).replace('.',',');

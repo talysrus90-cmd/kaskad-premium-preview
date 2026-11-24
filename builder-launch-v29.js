@@ -8,7 +8,22 @@
  if(!section||!iframe)return;
  const origin=new URL(iframe.src,location.href).origin;
  let openRequest=0;
- let previousSectionScroll=null;
+ let builderHistoryActive=false;
+ const sectionTop=()=>{
+  const header=document.querySelector('header.header');
+  const sticky=header?.getBoundingClientRect().height||70;
+  return Math.max(0,section.getBoundingClientRect().top+window.scrollY-sticky-8);
+ };
+ function markBuilderEntry(){
+  if(history.state?.kaskadBuilderOpened){builderHistoryActive=true;return;}
+  try{
+   history.pushState({...history.state,kaskadBuilderOpened:true,
+     kaskadBuilderFromScroll:Math.round(window.scrollY)},'',
+     location.pathname+location.search+'#interactive-home');
+   builderHistoryActive=true;
+  }catch(e){}
+ }
+
  function closeMobileMenu(){
   const menu=document.getElementById('mobileMenu');
   const toggle=document.getElementById('menuBtn');
@@ -22,16 +37,9 @@
   closeMobileMenu();
   section.classList.add('kaskad-builder-active');
   iframe.setAttribute('loading','eager');
-  const wasAt=window.scrollY;
-  // Preserve section navigation as one normal browser-history step.
-  if(location.hash!=='#interactive-home'){
-   previousSectionScroll=wasAt;
-   try{
-    history.pushState({...history.state,kaskadBuilderOpened:true,
-     kaskadBuilderFromScroll:Math.round(wasAt)},'',
-     location.pathname+location.search+'#interactive-home');
-   }catch{}
-  }
+  // An explicit same-site history step makes Android Back return to the
+  // KASKAD page, including when it had opened directly at #interactive-home.
+  markBuilderEntry();
   const jump=()=>{
    if(seq!==openRequest)return;
    // Position canvas directly below the sticky site header. The 3D frame
@@ -59,10 +67,14 @@
   // A late font/layout shift should not move the editor back below the fold.
   requestAnimationFrame(()=>jump());
  }
- window.addEventListener('popstate',()=>{
-  if(previousSectionScroll===null||location.hash==='#interactive-home')return;
-  const y=previousSectionScroll;previousSectionScroll=null;
-  requestAnimationFrame(()=>window.scrollTo({top:Math.max(0,y),behavior:'instant'}));
+ window.addEventListener('popstate',event=>{
+  if(!builderHistoryActive||event.state?.kaskadBuilderOpened)return;
+  builderHistoryActive=false;
+  section.classList.remove('kaskad-builder-active');
+  // Return exactly to the 3D section in the main page. The visitor can
+  // continue scrolling down rather than being sent back out of the website.
+  const restore=()=>window.scrollTo({top:sectionTop(),behavior:'instant'});
+  requestAnimationFrame(()=>requestAnimationFrame(restore));
  });
  document.querySelectorAll('[data-kaskad-open-builder]').forEach(control=>{
   control.addEventListener('click',openBuilder);
@@ -70,7 +82,11 @@
  // Give visual success feedback only AFTER the embedded configurator confirms.
  window.addEventListener('message',event=>{
   if(event.origin!==origin||event.source!==iframe.contentWindow)return;
-  if(event.data?.type!=='kaskad-builder-opened'||event.data?.version!==1)return;
+  if(event.data?.version!==1)return;
+  if(event.data.type==='kaskad-builder-engaged'){
+   markBuilderEntry();return;
+  }
+  if(event.data.type!=='kaskad-builder-opened')return;
   section.classList.add('kaskad-builder-ready');
   const CTA=section.querySelector('.kaskad-open-builder-cta');
   if(CTA)CTA.textContent='Настройки открыты · выберите вариант ниже ↓';

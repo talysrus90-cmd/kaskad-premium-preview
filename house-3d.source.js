@@ -172,7 +172,7 @@ try {
 
   const camera=new THREE.PerspectiveCamera(48,1,.2,130);
   const mobileView=window.matchMedia('(max-width:730px)').matches;
-  const initialPos=mobileView?new THREE.Vector3(14,8.3,19.5):new THREE.Vector3(18.5,10.2,25);
+  const initialPos=mobileView?new THREE.Vector3(17,13,49.5):new THREE.Vector3(22,14,51);
   camera.position.copy(initialPos);
   const controls=new OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;
@@ -189,7 +189,7 @@ try {
   // Contextual viewpoint: show the house (not just the fence) when selecting
   // architecture, but reveal the whole plot when editing the fence.
   const focusViews={
-    front:mobileView?{camera:[11.8,7.3,21.8],target:[0,2.68,2.4]}:{camera:[15.1,8.2,26],target:[0,2.72,2.6]},
+    front:mobileView?{camera:[17,13,49.5],target:[0,2.25,6.8]}:{camera:[22,14,51],target:[0,2.3,6.5]},
     side:{camera:[31,9,2.5],target:[0,2.8,0]},
     back:{camera:[12,8,-28],target:[0,2.7,0]},
     // Plot-wide top view centers the house and the reserved pool zone together,
@@ -199,7 +199,7 @@ try {
     facade:mobileView?{camera:[9.7,6.4,16.3],target:[0,2.45,2.4]}:{camera:[12.5,7.2,20],target:[0,2.5,2.7]},
     roof:mobileView?{camera:[10.2,10.0,17],target:[0,3.8,1.7]}:{camera:[14.3,12.1,20],target:[0,4.0,1.7]},
     fence:{camera:[23,16.5,33],target:[0,3.05,5]},
-    presets:mobileView?{camera:[13.9,7.8,19.0],target:[0,2.75,1.8]}:{camera:[16.1,8.8,23.3],target:[0,2.75,1.8]}
+    presets:mobileView?{camera:[17,13,49.5],target:[0,2.25,6.8]}:{camera:[22,14,51],target:[0,2.3,6.5]}
   };
   let focusTransition=null;
   window.addEventListener('kaskad:focus-view',event=>{
@@ -221,6 +221,9 @@ try {
     if(viewpointSelect)viewpointSelect.value=key in focusViews?key:'front';
   }
   viewpointSelect?.addEventListener('change',()=>setView(viewpointSelect.value));
+  document.getElementById('sceneOverviewButton')?.addEventListener('click',()=>setView('front'));
+  const gestureTip=document.getElementById('sceneGestureTip');
+  controls.addEventListener('start',()=>{if(gestureTip)gestureTip.classList.add('is-used')},{once:true});
   setView('front');
 
   const M=(color,roughness=.8,extra={})=>new THREE.MeshStandardMaterial({color,roughness,...extra});
@@ -872,7 +875,7 @@ const veranda=createVeranda(THREE,scene);
       tex.colorSpace=THREE.SRGBColorSpace;
       tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
       tex.repeat.set(repeatX,repeatY);
-      tex.anisotropy=4;
+      tex.anisotropy=Math.min(desktopGPU?8:4,renderer.capabilities.getMaxAnisotropy());
       accept(tex);
       if(criticalFacadeFiles.has(file))applyFacade(true);
       finishCritical(file);
@@ -973,7 +976,7 @@ const veranda=createVeranda(THREE,scene);
   const sun=new THREE.DirectionalLight('#fff1d7',2.15);
   sun.position.set(14,17,14);
   sun.castShadow=true;
-  sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.mapSize.set(desktopGPU?1536:1024,desktopGPU?1536:1024);
   sun.shadow.camera.left=-28;sun.shadow.camera.right=28;
   sun.shadow.camera.top=28;sun.shadow.camera.bottom=-28;
   sun.shadow.camera.near=.5;sun.shadow.camera.far=65;
@@ -1055,6 +1058,9 @@ const veranda=createVeranda(THREE,scene);
     highDetailButton.setAttribute('aria-pressed',String(qualitySelect.value==='high'));
     highDetailButton.textContent=qualitySelect.value==='high'?'HD ✓':'HD';
   });
+  // Higher resolution CC0 materials are appropriate on desktop GPUs, without
+  // forcing extra downloads and VRAM use on mobile devices.
+  if(desktopGPU)window.setTimeout(upgradeTextures,1800);
   // Start with the same time of day as the UI. Model loaded only on this separate page.
   updateLighting();
   const resize=()=>{
