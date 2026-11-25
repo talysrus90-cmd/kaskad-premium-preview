@@ -11,6 +11,7 @@ p.add_argument("--catalog", required=True)
 p.add_argument("--out", required=True)
 p.add_argument("--id", default="K100-01")
 p.add_argument("--samples",type=int,default=32)
+p.add_argument("--device",choices=["auto","CUDA","OPTIX","CPU"],default="auto")
 p.add_argument("--width",type=int,default=1000)
 args=p.parse_args(sys.argv[sys.argv.index("--")+1:])
 models=json.loads(Path(args.catalog).read_text(encoding="utf-8-sig"))["models"]
@@ -186,11 +187,25 @@ def build(m):
     cam.data.type="ORTHO";cam.data.ortho_scale=max(maxX,maxY)*1.75+3
     scene.render.engine="CYCLES";scene.cycles.samples=args.samples;scene.cycles.use_denoising=True
     device="CPU"
-    try:
-        prefs=bpy.context.preferences.addons["cycles"].preferences;prefs.compute_device_type="OPTIX";prefs.refresh_devices()
-        for d in prefs.devices:d.use=(d.type=="OPTIX")
-        if any(d.use for d in prefs.devices):scene.cycles.device="GPU";device="OPTIX"
-    except Exception as e:print("OptiX fallback:",e,flush=True)
+    def configure_device(kind):
+        scene.cycles.device="CPU"
+        if kind=="CPU":return "CPU"
+        prefs=bpy.context.preferences.addons["cycles"].preferences
+        prefs.compute_device_type=kind;prefs.refresh_devices()
+        for d in prefs.devices:d.use=(d.type==kind)
+        if not any(d.use for d in prefs.devices):raise RuntimeError("No "+kind+" device")
+        scene.cycles.device="GPU";return kind
+    choices=["OPTIX","CUDA","CPU"] if args.device=="auto" else ([args.device,"CPU"] if args.device!="CPU" else ["CPU"])
+    def render_safe():
+        nonlocal device
+        for kind in choices:
+            try:
+                device=configure_device(kind)
+                bpy.ops.render.render(write_still=True)
+                return
+            except Exception as exc:
+                print("Render fallback",kind,str(exc),flush=True)
+        raise RuntimeError("All render devices failed")
     scene.render.resolution_x=args.width;scene.render.resolution_y=round(args.width*.70);scene.render.resolution_percentage=100
     scene.render.image_settings.file_format="PNG"
     target=(maxX/2,maxY/2,2.6 if full==1 else 3.5)
@@ -198,9 +213,9 @@ def build(m):
     cam.location=(target[0]+radius*.65,target[1]-radius,target[2]+radius*.50);aim(cam,target)
     scene.render.filepath=str(folder/"front.png")
     bpy.ops.wm.save_as_mainfile(filepath=str(folder/"house.blend"))
-    bpy.ops.render.render(write_still=True)
+    render_safe()
     cam.location=(target[0]-radius*.65,target[1]+radius,target[2]+radius*.50);aim(cam,target)
-    scene.render.filepath=str(folder/"rear.png");bpy.ops.render.render(write_still=True)
+    scene.render.filepath=str(folder/"rear.png");render_safe()
     report={"id":m["id"],"device":device,"stage":"exterior draft; not construction documentation","openings":window_schedule,"rectangular_wall_segment_area_m2":round(net_wall,2),"limitations":["Wall segment area excludes gable triangles and includes shared walls","No internal partitions, structure or compliance checks","Procedural materials not product specifications"],"mesh_objects":len(house)}
     (folder/"qa.json").write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding="utf-8")
     print("KASKAD DONE",m["id"],device,flush=True)
