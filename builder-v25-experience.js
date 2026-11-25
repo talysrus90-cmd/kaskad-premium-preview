@@ -73,7 +73,11 @@
   </section>
   <section class="builder-v25-panel builder-v25-garden" id="builderGarden" hidden aria-label="Благоустройство участка">
    <h3>Ваш земельный участок</h3>
-   <p class="builder-plot-lead">Укажите реальные стороны земли, а затем передвиньте дом пальцем.</p>
+   <p class="builder-plot-lead">Выберите площадь участка или укажите реальные стороны земли и передвиньте дом пальцем.</p>
+   <div class="builder-plot-presets" role="group" aria-label="Быстрый выбор площади участка">
+    <button type="button" data-plot-size="400" aria-pressed="false">4 сотки</button>
+    <button type="button" data-plot-size="600" aria-pressed="true">6 соток</button>
+   </div>
    <label class="builder-range-label" for="plotWidthSlider">Ширина участка по улице <output id="plotWidthValue">20 м</output></label>
    <input id="plotWidthSlider" type="range" min="10" max="60" step="0.5" value="20" aria-label="Ширина участка вдоль улицы в метрах">
    <label class="builder-range-label" for="plotLengthSlider">Глубина участка <output id="plotLengthValue">30 м</output></label>
@@ -450,7 +454,8 @@
   document.getElementById('plotWidthValue').textContent=width+' м';
   document.getElementById('plotLengthValue').textContent=depth+' м';
   const scenePlot=document.getElementById('scenePlotDimensions');
-  if(scenePlot)scenePlot.textContent='Участок '+width+' × '+depth+' м';
+  if(scenePlot)scenePlot.textContent='Участок '+width+' × '+depth+' м · '+sotka+' сот.';
+  for(const b of document.querySelectorAll('[data-plot-size]'))b.setAttribute('aria-pressed',String(Math.abs(Number(b.dataset.plotSize)-area)<0.01));
   document.getElementById('plotDimensions').textContent='Участок '+width.toFixed(1)+' × '+depth.toFixed(1)+' м · '+area.toFixed(0)+' м²';
   const coverage=house.width*house.length/area*100;
   const percent=coverage.toFixed(1).replace('.',',');
@@ -461,6 +466,13 @@
    {detail:{width,depth,area,houseX:px,houseZ:pz,houseWidth:house.width,houseLength:house.length,fits}}));
  }
  for(const slider of [plotWidth,plotLength])slider.addEventListener('input',()=>{renderPlot();summary()});
+ document.querySelectorAll('[data-plot-size]').forEach(btn=>btn.addEventListener('click',()=>{
+   const area=Number(btn.dataset.plotSize);
+   if(area===400){plotWidth.value='20';plotLength.value='20';}
+   else if(area===600){plotWidth.value='20';plotLength.value='30';}
+   else return;
+   renderPlot();summary();
+ }));
  window.addEventListener('kaskad:plot-move',event=>{
   const {houseX,houseZ}=event.detail||{};
   const {width,depth}=plotGeometry(),house=sizeValues();
@@ -537,7 +549,7 @@
    b.setAttribute('aria-selected',String(n===step));});
   geom.hidden=id!=='geometry';
   const scenePlotBadge=document.getElementById('scenePlotDimensions');
-  if(scenePlotBadge)scenePlotBadge.hidden=id!=='site';
+  if(scenePlotBadge)scenePlotBadge.hidden=false;
   const catalog=({presets:'presets',roof:'roof',facade:'facade',fence:'fence'})[id];
   root.hidden=!catalog;
   facadeHelp.hidden=id!=='facade';
