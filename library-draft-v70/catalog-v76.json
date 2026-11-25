@@ -1,0 +1,493 @@
+{
+  "version": "V76 pilot",
+  "base": "V75 briefs; V74 generator reused",
+  "areaPolicy": "gross schematic area by external dimensions; attic factor 0.65, not usable area",
+  "models": [
+    {
+      "id": "K75-01",
+      "title": "Скандинавский фронтон",
+      "levels": "1",
+      "main": {
+        "x": 0,
+        "z": 0,
+        "w": 8.2,
+        "d": 13.2,
+        "roof": "gable",
+        "rise": 3.05
+      },
+      "wings": [],
+      "facade": "cream",
+      "roofMat": "dark",
+      "porch": {
+        "w": 3,
+        "d": 1.55
+      },
+      "entryCenter": 1.7,
+      "entry": "timberPortal",
+      "bedrooms": 3,
+      "baths": 1,
+      "openings": {
+        "front": [
+          [
+            0.8,
+            0,
+            1.1,
+            2.2,
+            "door"
+          ],
+          [
+            3.5,
+            0.18,
+            3.8,
+            2.56,
+            "window"
+          ]
+        ],
+        "back": [
+          [
+            0.8,
+            0.8,
+            1.7,
+            1.3,
+            "window"
+          ],
+          [
+            4.3,
+            0,
+            2.8,
+            2.2,
+            "patio"
+          ]
+        ],
+        "left": [
+          [
+            2,
+            0.85,
+            1.6,
+            1.35,
+            "window"
+          ],
+          [
+            6,
+            0.85,
+            1.6,
+            1.35,
+            "window"
+          ],
+          [
+            9.7,
+            1.1,
+            1.15,
+            1.05,
+            "window"
+          ]
+        ],
+        "right": [
+          [
+            1.3,
+            0.3,
+            2.5,
+            2.15,
+            "window"
+          ],
+          [
+            6,
+            0.85,
+            1.6,
+            1.35,
+            "window"
+          ],
+          [
+            10,
+            0.85,
+            1.6,
+            1.35,
+            "window"
+          ]
+        ]
+      },
+      "atticFactor": 0.65,
+      "atticKnee": 0.85,
+      "storeyHeight": 3,
+      "plinth": 0.28,
+      "quantities": {
+        "grossHeatedApprox": 108.2
+      },
+      "referenceIds": [
+        "PL-SKAL",
+        "FI-HUVILA"
+      ],
+      "program": "One main gable with tall living-room end glazing and recessed timber entrance. Not a box plus freestanding canopy.",
+      "stage": "original exterior concept, floor plans not designed yet",
+      "costGuard": "Standard bedroom windows; glazing restricted to living room; no continuous full-height facade."
+    },
+    {
+      "id": "K75-02",
+      "title": "Кирпичный Craftsman",
+      "levels": "1",
+      "main": {
+        "x": 0,
+        "z": 0,
+        "w": 10.4,
+        "d": 10.2,
+        "roof": "gable",
+        "rise": 2.45
+      },
+      "wings": [
+        {
+          "x": 10.4,
+          "z": 1.1,
+          "w": 4.5,
+          "d": 8,
+          "roof": "gable",
+          "rise": 1.55,
+          "use": "living"
+        }
+      ],
+      "facade": "brick",
+      "roofMat": "slate",
+      "porch": {
+        "w": 4.5,
+        "d": 2.1
+      },
+      "entryCenter": 3.8,
+      "entry": "craftsman",
+      "bedrooms": 3,
+      "baths": 2,
+      "openings": {
+        "front": [
+          [
+            0.85,
+            0.78,
+            2.1,
+            1.42,
+            "window"
+          ],
+          [
+            3.25,
+            0,
+            1.2,
+            2.18,
+            "door"
+          ],
+          [
+            6.7,
+            0.75,
+            2.4,
+            1.5,
+            "window"
+          ]
+        ],
+        "back": [
+          [
+            1.1,
+            0.8,
+            1.6,
+            1.3,
+            "window"
+          ],
+          [
+            5.6,
+            0,
+            2.8,
+            2.2,
+            "patio"
+          ]
+        ]
+      },
+      "atticFactor": 0.65,
+      "atticKnee": 0.85,
+      "storeyHeight": 3,
+      "plinth": 0.28,
+      "quantities": {
+        "grossHeatedApprox": 142.1
+      },
+      "referenceIds": [
+        "US-51826",
+        "HOUZZ-26"
+      ],
+      "program": "Two readable volumes, main gable plus offset entry gable, low masonry piers and timber canopy; staggered bedroom and living window sizes.",
+      "stage": "original exterior concept, floor plans not designed yet",
+      "costGuard": "Limit valleys, conventional roof spans, local brick or clinker accents."
+    },
+    {
+      "id": "K75-03",
+      "title": "Садовое бунгало",
+      "levels": "1",
+      "main": {
+        "x": 0,
+        "z": 0,
+        "w": 10,
+        "d": 9.2,
+        "roof": "flat",
+        "rise": 0
+      },
+      "wings": [
+        {
+          "x": 10,
+          "z": 3.1,
+          "w": 4.6,
+          "d": 7.6,
+          "roof": "flat",
+          "rise": 0,
+          "use": "living"
+        }
+      ],
+      "facade": "cream",
+      "roofMat": "dark",
+      "porch": {
+        "w": 3,
+        "d": 1.6
+      },
+      "entryCenter": 3.2,
+      "entry": "modernFrame",
+      "bedrooms": 3,
+      "baths": 2,
+      "openings": {
+        "front": [
+          [
+            0.8,
+            0.85,
+            1.8,
+            1.35,
+            "window"
+          ],
+          [
+            2.65,
+            0,
+            1.1,
+            2.2,
+            "door"
+          ],
+          [
+            5.1,
+            0.16,
+            3.6,
+            2.4,
+            "window"
+          ]
+        ],
+        "back": [
+          [
+            0.9,
+            0.8,
+            1.7,
+            1.3,
+            "window"
+          ],
+          [
+            5.2,
+            0,
+            3,
+            2.2,
+            "patio"
+          ]
+        ]
+      },
+      "atticFactor": 0.65,
+      "atticKnee": 0.85,
+      "storeyHeight": 3,
+      "plinth": 0.28,
+      "quantities": {
+        "grossHeatedApprox": 127
+      },
+      "referenceIds": [
+        "PL-ZX100",
+        "PL-SKAL"
+      ],
+      "program": "L-shaped living and sleeping volumes enclose private shaded terrace; horizontally framed entry niche.",
+      "stage": "original exterior concept, floor plans not designed yet",
+      "costGuard": "No obligatory garage, compact wet core, pitched or flat roof variants separately evaluated."
+    },
+    {
+      "id": "K75-04",
+      "title": "Европейский дом с мансардой",
+      "levels": "1+attic",
+      "main": {
+        "x": 0,
+        "z": 0,
+        "w": 9.4,
+        "d": 9.8,
+        "roof": "gable",
+        "rise": 3.7
+      },
+      "wings": [],
+      "facade": "sand",
+      "roofMat": "dark",
+      "porch": {
+        "w": 3.2,
+        "d": 1.65
+      },
+      "entryCenter": 4.7,
+      "entry": "masonry",
+      "bedrooms": 4,
+      "baths": 2,
+      "openings": {
+        "front": [
+          [
+            0.85,
+            0.8,
+            2.1,
+            1.4,
+            "window"
+          ],
+          [
+            4.1,
+            0,
+            1.2,
+            2.2,
+            "door"
+          ],
+          [
+            6.6,
+            0.85,
+            1.8,
+            1.35,
+            "window"
+          ]
+        ],
+        "back": [
+          [
+            0.8,
+            0.8,
+            1.8,
+            1.35,
+            "window"
+          ],
+          [
+            5.2,
+            0,
+            3,
+            2.2,
+            "patio"
+          ]
+        ]
+      },
+      "atticFactor": 0.65,
+      "atticKnee": 0.85,
+      "storeyHeight": 3,
+      "plinth": 0.28,
+      "quantities": {
+        "grossHeatedApprox": 152
+      },
+      "referenceIds": [
+        "DE-124",
+        "HOUZZ-26"
+      ],
+      "program": "Deep pitched silhouette; one measured dormer or garden gable, bay opening to terrace, varied facade depth.",
+      "stage": "original exterior concept, floor plans not designed yet",
+      "costGuard": "Avoid two expensive dormers by default; attic usable area and stair geometry calculated separately."
+    },
+    {
+      "id": "K75-05",
+      "title": "Современный семейный коттедж",
+      "levels": "2",
+      "main": {
+        "x": 0,
+        "z": 0,
+        "w": 8.8,
+        "d": 9,
+        "roof": "hip",
+        "rise": 2.25
+      },
+      "wings": [
+        {
+          "x": 8.8,
+          "z": 2.6,
+          "w": 4.6,
+          "d": 6,
+          "roof": "flat",
+          "rise": 0,
+          "use": "living"
+        }
+      ],
+      "facade": "cream",
+      "roofMat": "slate",
+      "porch": {
+        "w": 3.5,
+        "d": 1.8
+      },
+      "entryCenter": 2.2,
+      "entry": "modernFrame",
+      "bedrooms": 4,
+      "baths": 2,
+      "openings": {
+        "front": [
+          [
+            1.6,
+            0,
+            1.2,
+            2.18,
+            "door"
+          ],
+          [
+            4.4,
+            0.28,
+            3.2,
+            2.3,
+            "window"
+          ],
+          [
+            0.8,
+            3.72,
+            1.65,
+            1.55,
+            "window"
+          ],
+          [
+            4.4,
+            3.65,
+            3,
+            1.65,
+            "window"
+          ]
+        ],
+        "back": [
+          [
+            0.9,
+            0,
+            2.8,
+            2.2,
+            "patio"
+          ],
+          [
+            5.6,
+            0.8,
+            1.8,
+            1.4,
+            "window"
+          ],
+          [
+            0.9,
+            3.8,
+            1.8,
+            1.4,
+            "window"
+          ],
+          [
+            5.6,
+            3.8,
+            1.8,
+            1.4,
+            "window"
+          ]
+        ]
+      },
+      "atticFactor": 0.65,
+      "atticKnee": 0.85,
+      "storeyHeight": 3,
+      "plinth": 0.28,
+      "quantities": {
+        "grossHeatedApprox": 186
+      },
+      "referenceIds": [
+        "US-56500",
+        "HOUZZ-26",
+        "DE-124"
+      ],
+      "program": "Compact two storeys with stepped entrance and one-storey garden wing; clear hierarchy of volumes; no generic symmetrical cube.",
+      "stage": "original exterior concept, floor plans not designed yet",
+      "costGuard": "Simplify garage to optional separate wing; standard window modules and avoid excessive roof intersections."
+    }
+  ]
+}
