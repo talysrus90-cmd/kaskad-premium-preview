@@ -1,0 +1,77 @@
+newmtl cream
+Ka 0.1 0.1 0.1
+Kd 0.86 0.83 0.75
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl sand
+Ka 0.1 0.1 0.1
+Kd 0.75 0.67 0.54
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl brick
+Ka 0.1 0.1 0.1
+Kd 0.54 0.29 0.21
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl dark
+Ka 0.1 0.1 0.1
+Kd 0.16 0.2 0.22
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl slate
+Ka 0.1 0.1 0.1
+Kd 0.3 0.33 0.35
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl plinth
+Ka 0.1 0.1 0.1
+Kd 0.29 0.3 0.29
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl glass
+Ka 0.1 0.1 0.1
+Kd 0.24 0.39 0.45
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl frame
+Ka 0.1 0.1 0.1
+Kd 0.14 0.15 0.14
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl wood
+Ka 0.1 0.1 0.1
+Kd 0.57 0.37 0.22
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl door
+Ka 0.1 0.1 0.1
+Kd 0.37 0.24 0.16
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl concrete
+Ka 0.1 0.1 0.1
+Kd 0.65 0.63 0.57
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl garage
+Ka 0.1 0.1 0.1
+Kd 0.27 0.28 0.29
+Ks 0.15 0.15 0.15
+Ns 18
+
+newmtl white
+Ka 0.1 0.1 0.1
+Kd 0.93 0.91 0.85
+Ks 0.15 0.15 0.15
+Ns 18
