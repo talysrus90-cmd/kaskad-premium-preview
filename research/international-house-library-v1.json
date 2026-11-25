@@ -1,0 +1,665 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-25",
+  "base": "V69",
+  "purpose": "Research shortlist; NOT published selectable 3D models. All proposals require original geometry or cleared rights and visual QA.",
+  "scope": "Non-Russian sources only",
+  "baseline": {
+    "1": 4,
+    "2": 9,
+    "total": 17,
+    "1+attic": 3,
+    "2+attic": 1,
+    "rule": "Preserve all current approved models; don't resurrect previously rejected geometry. Compare each new model against the existing 17."
+  },
+  "method": {
+    "high": "Commercial demand signal for the family; not a worldwide ranking",
+    "medium": "Supplier shortlist, catalogue/category or engagement signal",
+    "exploratory": "Design opportunity, not verified popularity of this form",
+    "priority": "Wave 1 = proposed build order, adjusted for V69 coverage; not statistically ranked worldwide",
+    "area": "Indicative target m² for our concepts, not copied source dimensions"
+  },
+  "sources": [
+    {
+      "id": "US1",
+      "country": "США/Канада",
+      "name": "Architectural Designs",
+      "url": "https://www.architecturaldesigns.com/house-plans/collections/100-most-popular",
+      "signal": "Рейтинг по покупкам, не общерыночная доля"
+    },
+    {
+      "id": "US2",
+      "country": "США",
+      "name": "Houseplans",
+      "url": "https://www.houseplans.com/blog/the-top-10-house-plan-trends",
+      "signal": "Продажи площадки за 2025: farmhouse 33%, cottage 7%, barndominium 11%"
+    },
+    {
+      "id": "US3",
+      "country": "США",
+      "name": "NAHB",
+      "url": "https://www.nahb.org/news-and-economics/press-releases/2025/02/affordability-headwinds-driving-home-buyers-interest-in-smaller-more-personalized-homes-in-2025",
+      "signal": "Исследование предпочтений: общая гостиная, постирочная, хранение в гараже"
+    },
+    {
+      "id": "US4",
+      "country": "США",
+      "name": "The House Designers",
+      "url": "https://www.thehousedesigners.com/builder-news/issue352-builder-best-sellers-2025/",
+      "signal": "Продажи проектам застройщикам"
+    },
+    {
+      "id": "PL1",
+      "country": "Польша",
+      "name": "Z500",
+      "url": "https://z500.pl/projekt-domu-z-weranda-ktory-kupilo-4874-osob-zobacz-6-hitow",
+      "signal": "Z7 4874 покупателя; Zx100 более 2000 реализаций по данным сайта; 100–140 м² — типичный запрос клиентов"
+    },
+    {
+      "id": "PL2",
+      "country": "Польша",
+      "name": "ARCHON+",
+      "url": "https://www.archon.pl/projekty-domow-z-poddaszem-uzytkowym-pc2678",
+      "signal": "Каталог жилых мансард; заявленные проверенные решения, без сравнимой статистики"
+    },
+    {
+      "id": "DE1",
+      "country": "Германия",
+      "name": "Fertighaus",
+      "url": "https://www.fertighaus.de/fertighaus/die-10-beliebtesten-fertighaeuser-2025/",
+      "signal": "Более половины top-10 — бунгало; также дома 1,5 этажа и Stadtvilla"
+    },
+    {
+      "id": "DE2",
+      "country": "Германия/Польша",
+      "name": "Danwood",
+      "url": "https://www.danwood.de/aktuelles/platz-2-der-beliebtesten-fertighauser-2025",
+      "signal": "Серия Perfect; подтверждение рейтинга изготовителем, не независимый второй рейтинг"
+    },
+    {
+      "id": "CA1",
+      "country": "Канада",
+      "name": "Drummond",
+      "url": "https://blog.drummondhouseplans.com/latest-trends-2/the-10-most-popular-plans-this-year/",
+      "signal": "Список популярных проектов 2026 по данным поставщика"
+    },
+    {
+      "id": "FI1",
+      "country": "Финляндия",
+      "name": "Honka",
+      "url": "https://honka.com/en/our-log-homes/contemporary-log-homes/",
+      "signal": "Популярные модели по данным производителя"
+    },
+    {
+      "id": "FI2",
+      "country": "Финляндия",
+      "name": "Honka classic",
+      "url": "https://honka.com/en/our-log-homes/traditional-log-homes/",
+      "signal": "Популярные традиционные модели по данным производителя"
+    },
+    {
+      "id": "FR1",
+      "country": "Франция",
+      "name": "Maisons Pierre",
+      "url": "https://www.maisons-pierre.com/results-maisons/",
+      "signal": "Ассортимент, не статистика продаж"
+    },
+    {
+      "id": "AU1",
+      "country": "Австралия",
+      "name": "Metricon",
+      "url": "https://www.metricon.com.au/home-truths/our-most-popular-designs-and-facades-for-first-home-buyers",
+      "signal": "Популярные модели по поисковому фрагменту производителя; полная страница вернула 403"
+    },
+    {
+      "id": "AU2",
+      "country": "Австралия",
+      "name": "ProductReview",
+      "url": "https://www.productreview.com.au/listings/metricon",
+      "signal": "Отзывы о планировках и обслуживании, не рейтинг продаж моделей"
+    },
+    {
+      "id": "CN1",
+      "country": "Китай",
+      "name": "Tuzhizhijia",
+      "url": "https://tuzhizhijia.com/ercengbieshu/list-1-f-2_3.html",
+      "signal": "Просмотры проектов — интерес, не продажи"
+    },
+    {
+      "id": "CN2",
+      "country": "Китай",
+      "name": "Tuzhizhijia",
+      "url": "https://tuzhizhijia.com/yicengbieshu/list-7-44-1-f-0_1-2_1.html",
+      "signal": "Одноэтажные проекты, включая двор; просмотры не продажи"
+    },
+    {
+      "id": "JP1",
+      "country": "Япония",
+      "name": "SUUMO",
+      "url": "https://suumo.jp/b/chumon/t/%E5%B9%B3%E5%B1%8B%E3%80%80%E4%BA%BA%E6%B0%97%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0/",
+      "signal": "Подборки реализованных домов; не подтверждённый рейтинг продаж"
+    },
+    {
+      "id": "ES1",
+      "country": "Испания",
+      "name": "inHAUS",
+      "url": "https://casasinhaus.com/",
+      "signal": "Каталог модульных вилл; не продажи"
+    },
+    {
+      "id": "ES2",
+      "country": "Испания",
+      "name": "Modulyhomes",
+      "url": "https://modulyhomes.com/en/prefab-houses/two-storey-prefab-houses",
+      "signal": "Каталог, не продажи"
+    },
+    {
+      "id": "BR1",
+      "country": "Бразилия",
+      "name": "ArchDaily",
+      "url": "https://www.archdaily.com/975574/framing-the-landscape-brazilian-houses-with-stunning-openings",
+      "signal": "Редакционная подборка тропических домов; не спрос"
+    },
+    {
+      "id": "IN1",
+      "country": "Индия",
+      "name": "Kerala House Designs",
+      "url": "https://www.keralahousedesigns.com/",
+      "signal": "Архитектурный блог; не продажи"
+    },
+    {
+      "id": "ZA1",
+      "country": "ЮАР",
+      "name": "Cedric House Plans",
+      "url": "https://www.cedrichouseplans.com/",
+      "signal": "Популярные проекты по заявлению площадки; объёмы не раскрыты"
+    },
+    {
+      "id": "R1",
+      "country": "США/международное",
+      "name": "Reddit Homebuilding",
+      "url": "https://www.reddit.com/r/Homebuilding/comments/1kxjji8/dealing_with_overwhelming_regret_after_new_home/",
+      "signal": "Отдельный отзыв о выборе этажности"
+    },
+    {
+      "id": "R2",
+      "country": "США/международное",
+      "name": "Reddit floorplan",
+      "url": "https://www.reddit.com/r/floorplan/comments/1ph14qb/thoughts/",
+      "signal": "Отдельные отзывы о свете и близости кладовой"
+    },
+    {
+      "id": "R3",
+      "country": "США/международное",
+      "name": "Reddit Homebuilding",
+      "url": "https://www.reddit.com/r/Homebuilding/comments/1pybbdg/floor_plan_feedback/",
+      "signal": "Отдельный совет о зоне хранения у входа из гаража"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "KGL-01",
+      "wave": 1,
+      "storeys": "1",
+      "title": "Компактный европейский",
+      "target_area_m2": "70–100",
+      "design": "Прямоугольник, двускатная крыша, крытый вход; компактная планировка",
+      "source_ids": [
+        "PL1",
+        "DE1"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-02",
+      "wave": 1,
+      "storeys": "1",
+      "title": "Семейное бунгало с садовой террасой",
+      "target_area_m2": "100–145",
+      "design": "Г-образный объём, защищённая терраса, раздельные зоны",
+      "source_ids": [
+        "PL1",
+        "DE1"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-03",
+      "wave": 1,
+      "storeys": "1",
+      "title": "Modern Farmhouse — новый архитектурный вариант",
+      "target_area_m2": "120–180",
+      "design": "Разновысокие фронтоны, широкая веранда; не повторять существующий farmhouseOne",
+      "source_ids": [
+        "US1",
+        "US2",
+        "US4"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-04",
+      "wave": 1,
+      "storeys": "1",
+      "title": "Современный коттедж с каменным фронтоном",
+      "target_area_m2": "85–135",
+      "design": "Крутая двускатная крыша, выступающий вход, камерная планировка",
+      "source_ids": [
+        "US2",
+        "CA1"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-05",
+      "wave": 1,
+      "storeys": "1",
+      "title": "Модернистское бунгало с гаражом",
+      "target_area_m2": "110–165",
+      "design": "Плоская крыша, отдельное гаражное крыло, пергола",
+      "source_ids": [
+        "PL1"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-06",
+      "wave": 1,
+      "storeys": "1",
+      "title": "Скандинавский панорамный дом",
+      "target_area_m2": "95–145",
+      "design": "Деревянная отделка, большая фронтонная светопрозрачная часть, высокий потолок",
+      "source_ids": [
+        "FI1",
+        "DE1"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-07",
+      "wave": 1,
+      "storeys": "1+attic",
+      "title": "Европейский компакт с жилой мансардой",
+      "target_area_m2": "95–140",
+      "design": "Простая крутая крыша, отдельная лестница, окна фронтонов; новая компактная геометрия",
+      "source_ids": [
+        "DE1",
+        "PL2"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-08",
+      "wave": 1,
+      "storeys": "1+attic",
+      "title": "Мансардный коттедж с гаражом-крылом",
+      "target_area_m2": "130–185",
+      "design": "Основной объём и более низкое гаражное крыло, не цветовой вариант",
+      "source_ids": [
+        "PL2",
+        "DE1"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-09",
+      "wave": 1,
+      "storeys": "2",
+      "title": "Современная европейская Stadtvilla",
+      "target_area_m2": "160–240",
+      "design": "Компактный двухэтажный объём, глубокая лоджия и вальмовая крыша; отличить от twoClassic",
+      "source_ids": [
+        "DE1"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-10",
+      "wave": 1,
+      "storeys": "2",
+      "title": "Двухэтажный дом для узкого участка",
+      "target_area_m2": "115–170",
+      "design": "Узкий фронт, вытянутый объём, отдельный вход, задняя терраса",
+      "source_ids": [
+        "AU1",
+        "CN1",
+        "FR1"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-11",
+      "wave": 1,
+      "storeys": "2",
+      "title": "Американский Craftsman",
+      "target_area_m2": "150–230",
+      "design": "Выступающие фронтоны, низкое крыльцо с массивными опорами, отдельное крыло",
+      "source_ids": [
+        "US1",
+        "US2"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-12",
+      "wave": 1,
+      "storeys": "2",
+      "title": "Китайский современный семейный",
+      "target_area_m2": "145–220",
+      "design": "Два жилых уровня, крытая входная галерея, приватная зона старших на первом этаже",
+      "source_ids": [
+        "CN1"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-13",
+      "wave": 2,
+      "storeys": "1",
+      "title": "Барнхаус с отдельным хозяйственным блоком",
+      "target_area_m2": "110–180",
+      "design": "Высокий главный объём, сервисное крыло; двускатная версия",
+      "source_ids": [
+        "US2",
+        "PL1"
+      ],
+      "evidence": "high",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-14",
+      "wave": 2,
+      "storeys": "1",
+      "title": "Японский дом с внутренним садом",
+      "target_area_m2": "85–140",
+      "design": "Невысокий объём, двор, защищённый переход, приватность",
+      "source_ids": [
+        "JP1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-15",
+      "wave": 2,
+      "storeys": "1",
+      "title": "Средиземноморское патио",
+      "target_area_m2": "130–200",
+      "design": "П-образный двор, затенённая аркада, черепица",
+      "source_ids": [
+        "ES1",
+        "BR1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-16",
+      "wave": 2,
+      "storeys": "1",
+      "title": "Французский компактный семейный",
+      "target_area_m2": "65–105",
+      "design": "Два спальных крыла вокруг общей зоны, небольшое пятно застройки",
+      "source_ids": [
+        "FR1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-17",
+      "wave": 2,
+      "storeys": "1",
+      "title": "Китайский одноэтажный дом с двором",
+      "target_area_m2": "100–190",
+      "design": "Три крыла, открытый двор и крытые переходы; проверять климат",
+      "source_ids": [
+        "CN2"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-18",
+      "wave": 2,
+      "storeys": "1",
+      "title": "Южная вилла с теневой галереей",
+      "target_area_m2": "150–230",
+      "design": "Широкие свесы, поперечная вентиляция, крупная терраса",
+      "source_ids": [
+        "BR1",
+        "IN1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-19",
+      "wave": 2,
+      "storeys": "1+attic",
+      "title": "Скандинавский коттедж с антресолью",
+      "target_area_m2": "85–135",
+      "design": "Неполный верхний уровень, двойной свет только по выбору",
+      "source_ids": [
+        "FI2",
+        "JP1"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-20",
+      "wave": 2,
+      "storeys": "1+attic",
+      "title": "Французский загородный мансардный",
+      "target_area_m2": "90–150",
+      "design": "Крутая кровля, две небольшие люкарны, утопленный вход",
+      "source_ids": [
+        "FR1",
+        "PL2"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-21",
+      "wave": 2,
+      "storeys": "1+attic",
+      "title": "Дом с жилой мансардой под вальмовой крышей",
+      "target_area_m2": "130–190",
+      "design": "Вальмовая крыша, окна мансарды и боковой гараж",
+      "source_ids": [
+        "PL2"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-22",
+      "wave": 2,
+      "storeys": "2",
+      "title": "Австралийский семейный с альфреско",
+      "target_area_m2": "160–245",
+      "design": "Два жилых этажа, крытая обеденная терраса, гараж с входом в дом",
+      "source_ids": [
+        "AU1",
+        "AU2"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-23",
+      "wave": 2,
+      "storeys": "2",
+      "title": "Современная испанская вилла",
+      "target_area_m2": "160–260",
+      "design": "Сдвинутые объёмы, глубокая тень, терраса второго уровня",
+      "source_ids": [
+        "ES1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-24",
+      "wave": 2,
+      "storeys": "2",
+      "title": "Двухэтажный дом для двух поколений",
+      "target_area_m2": "160–245",
+      "design": "Спальня с санузлом на первом, независимые зоны приватности",
+      "source_ids": [
+        "US3",
+        "CN1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-25",
+      "wave": 2,
+      "storeys": "2+attic",
+      "title": "Классический семейный дом с жилым чердаком",
+      "target_area_m2": "190–280",
+      "design": "Два полноценных этажа и полезное подкровельное пространство; не дублировать twoMansardBrick",
+      "source_ids": [
+        "PL2",
+        "DE1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-26",
+      "wave": 2,
+      "storeys": "2+attic",
+      "title": "Загородная резиденция с мансардой и гаражным крылом",
+      "target_area_m2": "230–330",
+      "design": "Различные объёмы и кровля, жилые мансардные помещения",
+      "source_ids": [
+        "US1",
+        "PL2"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-27",
+      "wave": 3,
+      "storeys": "2+attic",
+      "title": "Городской узкий дом с жилым верхним уровнем",
+      "target_area_m2": "150–230",
+      "design": "Малое пятно, 2 этажа и мансарда, компактная лестница",
+      "source_ids": [
+        "FR1",
+        "PL2"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-28",
+      "wave": 3,
+      "storeys": "other",
+      "title": "Модульный компакт",
+      "target_area_m2": "35–70",
+      "design": "Небольшой расширяемый объём, не сезонная палатка",
+      "source_ids": [
+        "DE1",
+        "ES2"
+      ],
+      "evidence": "medium",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-29",
+      "wave": 3,
+      "storeys": "other",
+      "title": "A-frame с антресолью",
+      "target_area_m2": "45–100",
+      "design": "Крутые скаты до земли, отдельная категория, проверка полезной площади",
+      "source_ids": [
+        "ES2"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    },
+    {
+      "id": "KGL-30",
+      "wave": 3,
+      "storeys": "other",
+      "title": "Дом на две семьи",
+      "target_area_m2": "180–280",
+      "design": "Два автономных входа и самостоятельные квартиры; проверка границ и инженерии",
+      "source_ids": [
+        "PL2",
+        "US1"
+      ],
+      "evidence": "exploratory",
+      "rights": "original design from general principles only; no copying protected renders or geometry; external assets require cleared rights",
+      "status": "research_candidate"
+    }
+  ],
+  "feedback": [
+    "Separate sleep and common zones",
+    "Pantry next to kitchen, useful storage and laundry",
+    "Accessible main-floor bedroom option",
+    "Covered terrace and practical garage entry",
+    "Don't assume double-height foyer is universally desired; validate"
+  ],
+  "rights_sources": [
+    "https://www.architecturaldesigns.com/copyright",
+    "https://polyhaven.com/license",
+    "https://sketchfab.com/developers/download-api/guidelines"
+  ],
+  "acceptance": [
+    "Distinct geometry, not only a different facade",
+    "Original preview generated from the actual 3D model",
+    "All four exterior views, windows/doors/roof editable, no gaps or floating pieces",
+    "Compatible dimensions, plot, camera, V69 gestures",
+    "Verify room layout and geometry before describing as a plan",
+    "GLB or parametric mesh loaded on demand; use appropriate licensed textures",
+    "No publication until visually approved"
+  ]
+}
