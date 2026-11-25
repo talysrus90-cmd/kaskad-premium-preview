@@ -174,8 +174,6 @@
  fields.houseStyle.replaceChildren(...data.presets.map(v=>new Option(v.title,v.value)));
  fields.houseStyle.value=data.presets.some(x=>x.value===chosen)?chosen:'twoBrick';
  const colorArea=document.createElement('div');colorArea.className='builder-colors';root.append(colorArea);
- const summary=document.createElement('p');summary.className='builder-choice-summary';summary.id='builderChoiceSummary';
- summary.setAttribute('aria-live','polite');root.append(summary);
  for(const t of tabs){
    const button=document.createElement('button');
    button.type='button';button.textContent=t.label;button.dataset.builderTab=t.key;
@@ -298,12 +296,7 @@
        swatch.setAttribute('aria-pressed',String(fields[colorKey].value===swatch.dataset.color));
      }
    }
-   const width=Number(document.getElementById('houseWidthInput')?.value)||10;
-   const length=Number(document.getElementById('houseLengthInput')?.value)||10;
-   const floors=document.getElementById('houseFloorsSelect')?.value||'one';
-   summary.textContent=width+' × '+length+' м · '+({one:'1 этаж',mansard:'1 + мансарда',two:'2 этажа'}[floors])+' · '+({gable:'Двухскатная',hip:'Четырёхскатная',flat:'Плоская',mansard:'Мансардная'}[fields.roofShape.value]||'Крыша')+' · '+findName('presets',fields.houseStyle.value)+' · '+findName('facade',fields.facade.value)+' · '+
-     findName('roof',fields.roof.value)+' ('+colorName(fields.roofColor.value)+') · '+
-     findName('fence',fields.fence.value)+' ('+colorName(fields.fenceColor.value)+')';
+
  }
  for(const input of Object.values(fields))input.addEventListener('change',syncSelection);
  for(const id of ['houseWidthInput','houseLengthInput','houseFloorsSelect']){
