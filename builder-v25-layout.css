@@ -1034,3 +1034,13 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
  touch-action:pan-x!important;
 }
 #builderGallery .builder-choice-summary{display:none!important}
+
+/* V69: prevent browser gesture cancellation only where the custom router is active. */
+#builderGallery.style-gesture-v69[data-active-material="presets"],
+#builderGallery.style-gesture-v69[data-active-material="presets"] *{
+ touch-action:none!important;
+ -webkit-user-select:none;user-select:none;
+}
+#builderGallery.style-gesture-v69 .style-dragging-v69{
+ scroll-snap-type:none!important;scroll-behavior:auto!important;
+}
