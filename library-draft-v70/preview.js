@@ -82,7 +82,7 @@ function quantities(m,faces){
 }
 
 const $=id=>document.getElementById(id);
-const canvas=$("view"),ctx=canvas.getContext("2d");let active=MODELS[0],angle=0.65,elevation=.36,drag=null,mesh=[];
+const canvas=$("view"),ctx=canvas.getContext("2d");let base=MODELS[0],active=base,angle=0.65,elevation=.36,drag=null,mesh=[];
 function draw(c=canvas,model=active,a=angle,e=elevation,scaleOverride=null){
  const g=c.getContext("2d"),W=c.width,H=c.height,fs=model===active?mesh:geometry(model);
  const all=fs.flatMap(f=>f.pts);const minX=Math.min(...all.map(p=>p[0])),maxX=Math.max(...all.map(p=>p[0])),minZ=Math.min(...all.map(p=>p[2])),maxZ=Math.max(...all.map(p=>p[2])),maxY=Math.max(...all.map(p=>p[1]));
@@ -97,10 +97,52 @@ function draw(c=canvas,model=active,a=angle,e=elevation,scaleOverride=null){
  // Exterior faces first; visual opening panels are drawn in a separate pass
  // after the shell so that depth sorting by centroid cannot bury a window.
  const paint=f=>{const light=.72+.28*Math.max(0,f.nn[0]*-.45+f.nn[1]*.72+f.nn[2]*-.45);const rgb=PALETTE[f.mat].map(v=>Math.round(v*255*light));g.fillStyle="rgb("+rgb.join(",")+")";g.beginPath();f.q.forEach((p,i)=>{const x=p[0]*s+ox,y=p[1]*s+oy;i?g.lineTo(x,y):g.moveTo(x,y)});g.closePath();g.fill();};
- // Depth sorting all polygons preserves the relative position of roof and porch.
- visible.forEach(paint);
+ // Group visual panels with their supporting wall so a large wall face
+ // cannot cover its own windows when the house is viewed obliquely.
+ const groups=visible.filter(f=>f.role==="wall-shell"||f.role==="gable-wall").map(f=>({wall:f,panels:[]}));
+ const rest=[];
+ for(const f of visible){
+  if(f.role==="wall-shell"||f.role==="gable-wall")continue;
+  const isPanel=f.role==="detail"&&["frame","glass","door","garage"].includes(f.mat)&&Math.abs(f.nn[1])<.01;
+  const candidate=isPanel&&groups.find(g=>{
+   const w=g.wall;if(w.nn.reduce((s,n,i)=>s+n*f.nn[i],0)<.99)return false;
+   const delta=f.pts[0].reduce((s,v,i)=>s+(v-w.pts[0][i])*w.nn[i],0);
+   if(delta<-.002||delta>.12)return false;
+   return f.pts.every(p=>p.every((v,i)=>Math.abs(w.nn[i])>.9||
+    (v>=Math.min(...w.pts.map(t=>t[i]))-.01&&v<=Math.max(...w.pts.map(t=>t[i]))+.01)));
+  });
+  if(candidate)candidate.panels.push(f);else rest.push({wall:f,panels:[]});
+ }
+ const depth=f=>f.q.reduce((s,p)=>s+p[2],0)/f.q.length;
+ const offset=(f,w)=>f.pts[0].reduce((s,v,i)=>s+(v-w.pts[0][i])*w.nn[i],0);
+ [...groups,...rest].sort((a,b)=>depth(a.wall)-depth(b.wall)).forEach(g=>{
+   paint(g.wall);g.panels.sort((a,b)=>offset(a,g.wall)-offset(b,g.wall)).forEach(paint);
+ });
 }
-function show(id){active=MODELS.find(m=>m.id===id)||MODELS[0];mesh=geometry(active);const q=active.quantities;$("name").textContent=active.title;$("meta").textContent=active.id+" · "+active.levels.replace("+attic"," + мансарда")+" · "+active.country;$("program").textContent=active.program;$("area").textContent=q.grossHeatedApprox+" м²";$("footprint").textContent=q.footprintGross+" м²";$("roof").textContent=q.roofGeometric+" м²";$("garage").textContent=q.garageGross+" м²";$("porch").textContent=q.porchArea+" м²";$("ref").textContent=active.reference;$("obj").href=active.mesh.path;document.querySelectorAll("[data-id]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id===active.id)));draw();}
+function scaledModel(m,factor){
+ const scale=b=>({...b,x:b.x*factor,z:b.z*factor,w:b.w*factor,d:b.d*factor});
+ const result={...m,main:scale(m.main),wings:m.wings.map(scale),porch:{w:m.porch.w*factor,d:m.porch.d*factor}};
+ result.quantities=quantities(result,geometry(result));return result;
+}
+function updateModel(){
+ const factor=Number($("scale").value)/100;
+ active=scaledModel(base,factor);mesh=geometry(active);const q=active.quantities;
+ $("name").textContent=active.title;$("meta").textContent=active.id+" · "+active.levels.replace("+attic"," + мансарда")+" · "+active.country;
+ $("program").textContent=active.program;$("area").textContent=q.grossHeatedApprox+" м²";
+ $("footprint").textContent=q.footprintGross+" м²";$("roof").textContent=q.roofGeometric+" м²";
+ $("garage").textContent=q.garageGross+" м²";$("porch").textContent=q.porchArea+" м²";
+ $("ref").textContent=active.reference;$("obj").href=base.mesh.path;
+ $("scaleValue").textContent=Math.round(factor*100)+" % · "+active.main.w.toFixed(1)+" × "+active.main.d.toFixed(1)+" м (основной объём)";
+ document.querySelectorAll("[data-id]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id===active.id)));draw();
+}
+function show(id){base=MODELS.find(m=>m.id===id)||MODELS[0];$("scale").value=100;updateModel();}
+$("scale").addEventListener("input",updateModel);
+$("export").onclick=()=>{
+ let n=1,content="# KASKAD schematic exterior, metres, Y up\nmtllib kaskad.mtl\n";
+ for(const f of mesh){content+="usemtl "+f.mat+"\n"+f.pts.map(p=>"v "+p.map(v=>v.toFixed(4)).join(" ")).join("\n")+"\nf "+f.pts.map(()=>n++).join(" ")+"\n";}
+ const a=document.createElement("a"),url=URL.createObjectURL(new Blob([content],{type:"text/plain"}));
+ a.href=url;a.download=active.id+"-"+$("scale").value+".obj";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+};
 function renderCatalog(){const group=$("filter").value;const list=$("cards");list.replaceChildren();for(const m of MODELS.filter(m=>group==="all"||m.id.startsWith(group))){const b=document.createElement("button");b.className="model";b.dataset.id=m.id;b.setAttribute("aria-pressed",String(active.id===m.id));const c=document.createElement("canvas");c.width=320;c.height=195;b.append(c);const t=document.createElement("strong");t.textContent=m.title;b.append(t);const cap=document.createElement("small");cap.textContent=m.quantities.grossHeatedApprox+" м² · "+m.id;b.append(cap);b.onclick=()=>show(m.id);list.append(b);draw(c,m,.65,.36);}}
 $("filter").onchange=renderCatalog;
 $("front").onclick=()=>{angle=0;elevation=.15;draw()};$("side").onclick=()=>{angle=Math.PI/2;draw()};$("back").onclick=()=>{angle=Math.PI;draw()};$("perspective").onclick=()=>{angle=.65;elevation=.36;draw()};$("top").onclick=()=>{elevation=1.54;draw()};
