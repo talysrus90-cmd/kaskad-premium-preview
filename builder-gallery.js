@@ -37,17 +37,19 @@
  // catalog. Colour-only doubles belong in the Facade tab, not in Styles.
  // An architecture card must change more than the facade or roof colour.
  // The three courtyard/wing plans below are separate modelled floorplates.
+ // v65: screenshot-reviewed curation. Exclude nine visually rejected
+ // architectural presets from every selector and category without touching
+ // the 3D renderer, user sizing or gesture controls.
  const cardPriority=[
-   // Featured: user's chosen red brick two-storey model.
-   'twoBrick','twoClassic','twoColumns','twoModern','twoBalcony','twoTerrace',
+   // Quality-first: proven, restrained brick / classic family homes.
+   'twoBrick','twoClassic','brickOne','farmhouseOne','twoFamily',
+   // More traditional and contemporary two-storey options.
+   'twoColumns','twoModern','twoBalcony','twoTerrace',
    'krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo',
-   // Distinct one-storey floorplans, roofs, porches and additions.
-   'brickOne','farmhouseOne','gardenOne','courtyardL','atriumU','crossGableT',
-   'modernOne','chalet','bungalow','estateOne','kavkaz',
-   // One full floor plus an attic.
-   'mansardBrick','mansardEstate','mansardHome','gableAttic',
-   // Two full floors plus an attic.
-   'twoMansardBrick','twoMansardColumns','twoMansard'
+   // Distinct single-storey footprints and entrance treatments.
+   'gardenOne','bungalow',
+   // Attic and roof alternatives kept for further visual review.
+   'mansardBrick','mansardHome','gableAttic','twoMansardBrick','twoMansardColumns'
  ];
  const visibleArchitecture=new Set(cardPriority);
  const data={
@@ -56,15 +58,10 @@
     {value:"krasnodarTwo",title:"Кубанский семейный · гаражное крыло",sub:"2 этажа · гараж в одноэтажной пристройке",image:"preset_krasnodarTwo_v46",category:"Двухэтажные",set:{houseStyle:"krasnodarTwo",roofShape:"gable"}},
     {value:"caucasusGalleryTwo",title:"Кавказский коттедж · угловая галерея",sub:"2 этажа · Г-образный дом и крытая галерея",image:"preset_caucasusGalleryTwo_v46",category:"Двухэтажные",set:{houseStyle:"caucasusGalleryTwo",roofShape:"hip"}},
     {value:"modernOffsetTwo",title:"Современный коттедж · два смещённых крыла",sub:"2 этажа · асимметричные объёмы и плоская кровля",image:"preset_modernOffsetTwo_v46",category:"Двухэтажные",set:{houseStyle:"modernOffsetTwo",roofShape:"flat"}},
-    {value:"courtyardL",title:"Г-образный дом с внутренним двориком",sub:"1 этаж · два крыла · защищённая терраса",image:"preset_courtyardL_v45",category:"Одноэтажные",set:{houseStyle:"courtyardL",roofShape:"gable"}},
-    {value:"atriumU",title:"Дом с П-образным двором",sub:"1 этаж · три крыла · приватный двор",image:"preset_atriumU_v45",category:"Одноэтажные",set:{houseStyle:"atriumU",roofShape:"hip"}},
-    {value:"crossGableT",title:"Дом с поперечным крылом",sub:"1 этаж · Т-образный план · поперечная кровля",image:"preset_crossGableT_v45",category:"Одноэтажные",set:{houseStyle:"crossGableT",roofShape:"gable"}},
     {value:"farmhouseOne",title:"Семейный с широким крыльцом",sub:"1 этаж",image:"preset_farmhouseOne_v32",category:"Одноэтажные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"farmhouseOne",houseSize:"150",roofShape:"gable"}},
     {value:"brickOne",title:"Кирпичный с парадным входом",sub:"1 этаж",image:"preset_brickOne_v32",category:"Одноэтажные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"brickOne",houseSize:"150",roofShape:"hip"}},
     {value:"gardenOne",title:"Загородный с деревянными элементами",sub:"1 этаж",image:"preset_gardenOne_v32",category:"Одноэтажные",set:{facade:"stone",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"gardenOne",houseSize:"150",roofShape:"gable"}},
     {value:"mansardBrick",title:"Мансарда · кирпич и фронтон",sub:"1 этаж + мансарда",image:"preset_mansardBrick_v32",category:"Одноэтажные с мансардой",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"mansardBrick",houseSize:"180",roofShape:"mansard"}},
-    {value:"mansardEstate",title:"Мансарда · загородная усадьба",sub:"1 этаж + мансарда",image:"preset_mansardEstate_v32",category:"Одноэтажные с мансардой",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"mansardEstate",houseSize:"180",roofShape:"mansard"}},
-    {value:"twoMansard",title:"Двухэтажный с жилой мансардой",sub:"2 этажа + мансарда",image:"preset_twoMansard_v32",category:"Двухэтажные с мансардой",set:{facade:"gray",roof:"metalGraphite",roofColor:"graphite",houseStyle:"twoMansard",houseSize:"300",roofShape:"mansard"}},
     {value:"twoMansardBrick",title:"Кирпичный двухэтажный с мансардой",sub:"2 этажа + мансарда",image:"preset_twoMansardBrick_v32",category:"Двухэтажные с мансардой",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"twoMansardBrick",houseSize:"320",roofShape:"mansard"}},
     {value:"twoMansardColumns",title:"Двухэтажный с колоннами и мансардой",sub:"2 этажа + мансарда",image:"preset_twoMansardColumns_v32",category:"Двухэтажные с мансардой",set:{facade:"stone",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"twoMansardColumns",houseSize:"350",roofShape:"mansard"}},
     {value:"family",title:"Семейный · один этаж",sub:"1 этаж · 150 м²",image:"preset_family_v27",category:"Одноэтажные",set:{facade:"gray",roof:"metalGraphite",roofColor:"graphite",houseStyle:"family",houseSize:"150",roofShape:"hip"}},
@@ -73,12 +70,8 @@
     {value:"cottage",title:"Кирпичный коттедж",sub:"1 этаж · 150 м²",image:"preset_cottage_v27",category:"Одноэтажные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"cottage",houseSize:"150",roofShape:"gable"}},
     {value:"country",title:"Светлый загородный",sub:"1 этаж · 180 м²",image:"preset_country_v27",category:"Одноэтажные",set:{facade:"stone",roof:"metalGraphite",roofColor:"graphite",houseStyle:"country",houseSize:"180",roofShape:"hip"}},
     {value:"nordic",title:"Скандинавский дом",sub:"Одноэтажный дом · 150 м²",image:"preset_nordic_v27",category:"Одноэтажные",set:{facade:"plaster",roof:"metal3d",roofColor:"graphite",houseStyle:"nordic",houseSize:"150",roofShape:"gable"}},
-    {value:"chalet",title:"Шале с террасой",sub:"Загородный дом · 180 м²",image:"preset_chalet_v27",category:"Одноэтажные",set:{facade:"stone",roof:"metal3d",roofColor:"chocolate",houseStyle:"chalet",houseSize:"180",roofShape:"gable"}},
     {value:"barnhouse",title:"Барнхаус",sub:"Одноэтажный дом · 150 м²",image:"preset_barnhouse_v27",category:"Одноэтажные",set:{facade:"gray",roof:"metal3d",roofColor:"graphite",houseStyle:"barnhouse",houseSize:"150",roofShape:"gable"}},
-    {value:"modernOne",title:"Современный с панорамными окнами",sub:"Одноэтажный дом · 180 м²",image:"preset_modernOne_v27",category:"Одноэтажные",set:{facade:"plaster",roof:"standingSeam",roofColor:"graphite",houseStyle:"modernOne",houseSize:"180",roofShape:"flat"}},
     {value:"minimal",title:"Светлый минимализм",sub:"Одноэтажный дом · 150 м²",image:"preset_minimal_v27",category:"Одноэтажные",set:{facade:"plaster",roof:"standingSeam",roofColor:"graphite",houseStyle:"minimal",houseSize:"150",roofShape:"flat"}},
-    {value:"estateOne",title:"Классическая усадьба",sub:"Загородный дом · 220 м²",image:"preset_estateOne_v27",category:"Одноэтажные",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"estateOne",houseSize:"220",roofShape:"hip"}},
-    {value:"kavkaz",title:"Кавказский стиль",sub:"Загородный дом · 220 м²",image:"preset_kavkaz_v27",category:"Одноэтажные",set:{facade:"stone",roof:"metalGraphite",roofColor:"graphite",houseStyle:"kavkaz",houseSize:"220",roofShape:"hip"}},
     {value:"terrace",title:"Дом с садовой террасой",sub:"1 этаж · 180 м²",image:"preset_terrace_v27",category:"Одноэтажные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"graphite",houseStyle:"terrace",houseSize:"180",roofShape:"hip"}},
     {value:"bungalow",title:"Семейный с навесом для авто",sub:"1 этаж · 180 м²",image:"preset_bungalow_v27",category:"Одноэтажные",set:{facade:"gray",roof:"metalGraphite",roofColor:"graphite",houseStyle:"bungalow",houseSize:"180",roofShape:"hip"}},
     {value:"italian",title:"Итальянский дворик",sub:"Загородный дом · 220 м²",image:"preset_italian_v27",category:"Одноэтажные",set:{facade:"tuscan",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"italian",houseSize:"220",roofShape:"hip"}},
