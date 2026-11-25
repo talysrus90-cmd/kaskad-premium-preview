@@ -1,0 +1,144 @@
+{
+  "version": "V78 user reference collection",
+  "base": "V75 architecture reset",
+  "scope": "Interpret the four screenshots supplied by the user as visual direction. No source image uploaded or copied. Exact plans and dimensions cannot be determined from exterior images.",
+  "designPolicy": "Warm European residential architecture, practical 100–200 m² approximate target, mid-market design goal subject to costing. Keep one-storey and other approved categories. Do not remove V69 or prior laboratory work.",
+  "families": [
+    {
+      "id": "K78-01",
+      "priority": 1,
+      "title": "Немецкий кирпичный дом с поперечным фронтоном",
+      "target_m2": [
+        115,
+        145
+      ],
+      "levels": "1+attic",
+      "reference": "Screenshot 3 main house; screenshot 2 top left",
+      "features": [
+        "high dark tile gable roof",
+        "prominent cross gable above entrance with paired upper windows",
+        "warm variegated brick, dark green or charcoal joinery",
+        "ground-level entry, restrained symmetrical composition"
+      ],
+      "budget": "Limit to one functional cross gable; no balcony by default."
+    },
+    {
+      "id": "K78-02",
+      "priority": 2,
+      "title": "Светлый европейский дом с двумя люкарнами",
+      "target_m2": [
+        120,
+        155
+      ],
+      "levels": "1+attic",
+      "reference": "Screenshot 4 main house",
+      "features": [
+        "cream render, brown tile roof",
+        "two compact pitched dormers on garden roof slope",
+        "tall garden doors, shaded terrace",
+        "optional supported bay and balcony"
+      ],
+      "budget": "Balcony and bay optional; check daylight and usable attic area."
+    },
+    {
+      "id": "K78-03",
+      "priority": 3,
+      "title": "Классический коттедж с эркером",
+      "target_m2": [
+        155,
+        195
+      ],
+      "levels": "1+attic or 2",
+      "reference": "Screenshot 1 main image, labeled 48-02",
+      "features": [
+        "dominant street gable, secondary pitched roof volume",
+        "faceted bay on ground level, supported balcony above",
+        "beige brick, white eaves and window surrounds",
+        "covered entry, optional side carport"
+      ],
+      "budget": "Keep roof intersections few; bay, balcony and carport individually priced."
+    },
+    {
+      "id": "K78-04",
+      "priority": 4,
+      "title": "Голландский семейный коттедж",
+      "target_m2": [
+        135,
+        175
+      ],
+      "levels": "1+attic",
+      "reference": "Screenshot 2 upper right",
+      "features": [
+        "broad street elevation",
+        "three aligned dormers",
+        "dark tiled roof and muted brick",
+        "rhythm of white framed windows, centered entry"
+      ],
+      "budget": "Two dormer alternative; simplify roof geometry."
+    },
+    {
+      "id": "K78-05",
+      "priority": 5,
+      "title": "Современный европейский дом с садовым эркером",
+      "target_m2": [
+        145,
+        185
+      ],
+      "levels": "2 or 1+attic",
+      "reference": "Screenshots 2 and 3 Oslo example",
+      "features": [
+        "simple pitched primary roof",
+        "lower glazed garden volume with flat canopy",
+        "warm render and contrasting stone accents",
+        "warm interior lighting and sheltered patio"
+      ],
+      "budget": "Avoid full-height glazing on every elevation; resolve roof drainage."
+    },
+    {
+      "id": "K78-06",
+      "priority": 6,
+      "title": "Альпийский семейный коттедж",
+      "target_m2": [
+        140,
+        190
+      ],
+      "levels": "1+attic",
+      "reference": "Screenshot 1 lower previews",
+      "features": [
+        "deep eaves, timber gable details",
+        "recessed covered balcony supported within main volume",
+        "natural stone base, rendered walls",
+        "protected porch and garden terrace"
+      ],
+      "budget": "Use modest overhangs and optional balcony; verify snow and wind design."
+    },
+    {
+      "id": "K78-07",
+      "priority": 7,
+      "title": "Одноэтажный европейский кирпичный дом",
+      "target_m2": [
+        100,
+        140
+      ],
+      "levels": "1",
+      "reference": "Screenshot 2 lower right; adapt style to one-storey",
+      "features": [
+        "dark hip or gable roof",
+        "warm brick facade with shallow entrance projection",
+        "white window frames, covered entrance",
+        "terrace at rear"
+      ],
+      "budget": "Simple envelope; no unnecessary upper windows or false habitable level."
+    }
+  ],
+  "qualityGate": [
+    "Each family needs original geometry and real window/door openings",
+    "Model roof tiles, dormers and actual roof intersections; no decorative geometry covering roof without an opening if described as habitable",
+    "Balconies supported, drainage considered, carports optional",
+    "Interior layouts coordinate with dormers, windows and stair; area derived from geometry",
+    "Professional architectural render of same mesh, realistic vegetation, materials, reflections, eye-level framing",
+    "No claim of mid-market cost until checked in regional estimate",
+    "Reference imagery not reused publicly without rights; screenshot labels are not verified source identity or project area"
+  ],
+  "status": "Design brief only. No new 3D models generated by this commit."
+}
