@@ -45,25 +45,21 @@
    'twoBrick','twoClassic','brickOne','farmhouseOne','twoFamily',
    // More traditional and contemporary two-storey options.
    'twoColumns','twoModern','twoBalcony','twoTerrace',
-   'krasnodarTwo','southernVillaTwo','caucasusGalleryTwo','modernOffsetTwo',
+   'krasnodarTwo','caucasusGalleryTwo',
    // Distinct single-storey footprints and entrance treatments.
    'gardenOne','bungalow',
    // Attic and roof alternatives kept for further visual review.
-   'mansardBrick','mansardHome','gableAttic','twoMansardBrick','twoMansardColumns'
- ];
+   'mansardBrick','mansardHome','gableAttic','twoMansardBrick' ];
  const visibleArchitecture=new Set(cardPriority);
  const data={
   presets:[
-    {value:"southernVillaTwo",title:"Южная усадьба · колонны и балкон",sub:"2 этажа · парадный вход и боковые крылья",image:"preset_southernVillaTwo_v46",category:"Двухэтажные",set:{houseStyle:"southernVillaTwo",roofShape:"hip"}},
     {value:"krasnodarTwo",title:"Кубанский семейный · гаражное крыло",sub:"2 этажа · гараж в одноэтажной пристройке",image:"preset_krasnodarTwo_v46",category:"Двухэтажные",set:{houseStyle:"krasnodarTwo",roofShape:"gable"}},
     {value:"caucasusGalleryTwo",title:"Кавказский коттедж · угловая галерея",sub:"2 этажа · Г-образный дом и крытая галерея",image:"preset_caucasusGalleryTwo_v46",category:"Двухэтажные",set:{houseStyle:"caucasusGalleryTwo",roofShape:"hip"}},
-    {value:"modernOffsetTwo",title:"Современный коттедж · два смещённых крыла",sub:"2 этажа · асимметричные объёмы и плоская кровля",image:"preset_modernOffsetTwo_v46",category:"Двухэтажные",set:{houseStyle:"modernOffsetTwo",roofShape:"flat"}},
     {value:"farmhouseOne",title:"Семейный с широким крыльцом",sub:"1 этаж",image:"preset_farmhouseOne_v32",category:"Одноэтажные",set:{facade:"plaster",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"farmhouseOne",houseSize:"150",roofShape:"gable"}},
     {value:"brickOne",title:"Кирпичный с парадным входом",sub:"1 этаж",image:"preset_brickOne_v32",category:"Одноэтажные",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"brickOne",houseSize:"150",roofShape:"hip"}},
     {value:"gardenOne",title:"Загородный с деревянными элементами",sub:"1 этаж",image:"preset_gardenOne_v32",category:"Одноэтажные",set:{facade:"stone",roof:"metalGraphite",roofColor:"chocolate",houseStyle:"gardenOne",houseSize:"150",roofShape:"gable"}},
     {value:"mansardBrick",title:"Мансарда · кирпич и фронтон",sub:"1 этаж + мансарда",image:"preset_mansardBrick_v32",category:"Одноэтажные с мансардой",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"mansardBrick",houseSize:"180",roofShape:"mansard"}},
     {value:"twoMansardBrick",title:"Кирпичный двухэтажный с мансардой",sub:"2 этажа + мансарда",image:"preset_twoMansardBrick_v32",category:"Двухэтажные с мансардой",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"twoMansardBrick",houseSize:"320",roofShape:"mansard"}},
-    {value:"twoMansardColumns",title:"Двухэтажный с колоннами и мансардой",sub:"2 этажа + мансарда",image:"preset_twoMansardColumns_v32",category:"Двухэтажные с мансардой",set:{facade:"stone",roof:"metalGraphite",roofColor:"terracotta",houseStyle:"twoMansardColumns",houseSize:"350",roofShape:"mansard"}},
     {value:"family",title:"Семейный · один этаж",sub:"1 этаж · 150 м²",image:"preset_family_v27",category:"Одноэтажные",set:{facade:"gray",roof:"metalGraphite",roofColor:"graphite",houseStyle:"family",houseSize:"150",roofShape:"hip"}},
     {value:"mansardHome",title:"Мансарда с фасадными люкарнами",sub:"1 этаж + мансарда · 180 м²",image:"preset_mansardHome_v27",category:"Одноэтажные с мансардой",set:{facade:"plaster",roof:"metalGraphite",roofColor:"graphite",houseStyle:"mansardHome",houseSize:"180",roofShape:"mansard"}},
     {value:"gableAttic",title:"Мансарда с окнами во фронтоне",sub:"1 этаж + мансарда · 180 м²",image:"preset_gableAttic_v27",category:"Одноэтажные с мансардой",set:{facade:"brick",roof:"metal3d",roofColor:"graphite",houseStyle:"gableAttic",houseSize:"180",roofShape:"gable"}},
