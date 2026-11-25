@@ -1,0 +1,95 @@
+{
+  "version": "V80 reference-first",
+  "date": "2026-11-25",
+  "userFeedback": {
+    "K78_01": "conditionally liked; visual quality still insufficient",
+    "excludedFromPromotion": [
+      "K75-01",
+      "K75-02",
+      "K75-03",
+      "K75-04",
+      "K75-05"
+    ],
+    "preservePreviousFiles": true
+  },
+  "strategy": "Select real built or catalogue references first; use licensed CAD/3D assets where available; otherwise original adapted geometry after studying dimensions, plans and elevations. No direct public reuse of images or protected plans without permission. Do not infer missing measurements.",
+  "entries": [
+    {
+      "id": "DE-F01",
+      "name": "ScanHaus SH 140 FS",
+      "area": "139,83 м² (120,74 м² по WoFlV)",
+      "page": "https://www.scanhaus.de/fertighaeuser/15-geschosser/sh-140-fs",
+      "image": "https://www.scanhaus.de/assets/images/5/einfamilienhaus-sh-140-frontspiess-e55f08a3.webp",
+      "note": "Поперечный фронтон, клинкер, 5–6 комнат, гостиная-кухня 33 м²; планы обоих уровней на странице."
+    },
+    {
+      "id": "DE-F02",
+      "name": "Team Massivhaus Friesenhaus 145",
+      "area": "123,28 м² жилой площади",
+      "page": "https://www.musterhaus.net/haus/team-massivhaus-friesenhaus-145",
+      "image": "https://images.musterhaus.net/images/house/5291/team-massivhaus-friesenhaus145-hauptansicht-1080.jpg",
+      "note": "Выступающий кирпичный фронтон, черепица, 4 комнаты; раздел планировок."
+    },
+    {
+      "id": "DE-F03",
+      "name": "Bien-Zenker — светлый кирпичный Friesenhaus",
+      "area": null,
+      "page": "https://www.bien-zenker.de/haeuser/friesenhaus.html",
+      "image": "https://www.bien-zenker.de/fileadmin/_processed_/e/4/csm_Bien-Zenker-Friesenhaus-Evolution-122-V7_14e12e47f8.jpg",
+      "note": "Оригинальное изображение производителя: высокий фронтон, светлый клинкер, терраса; площадь именно этого изображения не проверена."
+    },
+    {
+      "id": "DE-F04",
+      "name": "Bien-Zenker — Friesenhaus с двумя люкарнами",
+      "area": null,
+      "page": "https://www.bien-zenker.de/haeuser/friesenhaus.html",
+      "image": "https://www.bien-zenker.de/fileadmin/_processed_/3/0/csm_Bien-Zenker-Friesenhaus-Solution-130-V2-Klinker_6b0e109843.jpg",
+      "note": "Изображение производителя, две треугольные люкарны, балкон, садовое остекление; площадь не проверена."
+    },
+    {
+      "id": "DE-F05",
+      "name": "Elbe-Haus — Friesenhaus",
+      "area": null,
+      "page": "https://elbe-haus.de/haus-impressionen/hausimpressionen-details/friesenhaus.html",
+      "image": "https://elbe-haus.de/assets/images/9/Elbe-Haus-Friesenhaus-Verblend-Zuweg-Daemmerung-fbt3a0zxc20gg36.jpg",
+      "note": "Фотографический ориентир производителя, вечерний вид; точная площадь и план не подтверждены."
+    },
+    {
+      "id": "DE-F06",
+      "name": "MARE Friese 144",
+      "area": null,
+      "page": "https://marehaus.de/haeuser/mare-friese-144",
+      "image": "https://marehaus.de/media/images/w-1200/v-637227238483570000/mare-friese-144-t1-32285.jpg",
+      "note": "Красный клинкер, белые свесы, пять дверей на террасу, три комнаты наверху; два плана на странице."
+    },
+    {
+      "id": "DE-F07",
+      "name": "Kagebau Friesenhaus 135",
+      "area": "134,73 м²",
+      "page": "https://www.kagebau.de/haus-bauen-mit-kagebau/friesenhaus/",
+      "note": "9,10 × 9,65 м, четыре комнаты. Планы и скачиваемые экспозе на странице."
+    },
+    {
+      "id": "DE-F08",
+      "name": "KALOBAU FREIRAUM",
+      "area": "137,89 м² WoFlV",
+      "page": "https://www.kalobau.de/haustypen/friesenhaus-140-qm-freiraum.html",
+      "note": "45° кровля, 1 м коленная стена, три спальни наверху, рабочая комната внизу."
+    },
+    {
+      "id": "DE-F09",
+      "name": "KLINKER HAUS — четыре Friesenhaus",
+      "area": "110,16–около 150 м² WoFlV",
+      "page": "https://www.klinkerhaus.de/friesenhaus/",
+      "note": "Börnicke 1 и 2, Lindow, Rüdnitz; габариты и типы кровель на странице."
+    },
+    {
+      "id": "PL-F01",
+      "name": "Studio Atrium Victoria II",
+      "area": "132,60 м² + гараж 19,35 м²",
+      "page": "https://www.studioatrium.pl/projekty-domow/Victoria-ii,559.html",
+      "note": "13,55 × 10,80 м, кровля 40°, 219,4 м² кровли, планы и разрез; данные для исследования, не готовая российская смета."
+    }
+  ],
+  "status": "reference selection; no new Kaskad 3D models yet"
+}
