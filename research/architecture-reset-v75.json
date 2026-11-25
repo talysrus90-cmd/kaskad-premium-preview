@@ -1,0 +1,277 @@
+{
+  "version": "V75 architecture reset",
+  "date": "2026-11-25",
+  "base": "V74",
+  "decision": "Prioritize architectural massing before visual polish. Five practical mid-budget concepts plus five optional. Preserve V69 and all V70–V74 lab assets. Do not use model color variations as distinct architecture.",
+  "areaCaveat": "Source areas use different conventions. Target areas are design goals, not verified floor areas.",
+  "evidenceClasses": [
+    "commercial purchases or supplier-reported realizations",
+    "portal popularity or recommended catalogue",
+    "saved exterior photos",
+    "reader-awarded projects",
+    "juried architecture",
+    "individual user feedback"
+  ],
+  "references": [
+    {
+      "id": "PL-ZX100",
+      "name": "Z500 Zx100",
+      "country": "Poland",
+      "area": 116,
+      "evidence": "Z500 article 24 May 2025 reports over 2000 realizations; self-reported, not independently audited. User comment describes choosing wood-look panels and plaster.",
+      "source": "https://z500.pl/projekt-domu-z-weranda-ktory-kupilo-4874-osob-zobacz-6-hitow",
+      "project": "https://z500.com/projects/zx100/"
+    },
+    {
+      "id": "PL-SKAL",
+      "name": "ARCHON+ Dom w skalnicach",
+      "country": "Poland",
+      "area": 118.81,
+      "evidence": "2026 publisher's recommended collection; four private rooms, living/dining >34 m², two bathrooms; not sales rank. Boiler room additional 5.18 m².",
+      "source": "https://www.archon.pl/przeglad-najlepszych-projektow-domow-parterowych-do-120-m2-z-dachem-dwuspadowym-bez-garazu-art-10924",
+      "project": "https://www.archon.pl/projekty-domow/projekt-dom-w-skalnicach-m91a28365299b4"
+    },
+    {
+      "id": "US-51826",
+      "name": "Architectural Designs 51826HZ",
+      "country": "USA",
+      "area": 141.3,
+      "evidence": "1521 sq ft; appears in purchase-popularity-sorted catalogue, 3 bedrooms, 2 baths, one storey, 2-car garage; exact global rank not claimed.",
+      "source": "https://www.architecturaldesigns.com/house-plans/search?sort=mp&tla_max=2000&tla_min=1400&utf8=%E2%9C%93",
+      "project": "https://www.architecturaldesigns.com/house-plans/modest-sized-three-bed-farmhouse-plan-1521-sq-ft-51826hz"
+    },
+    {
+      "id": "US-56500",
+      "name": "Architectural Designs 56500SM",
+      "country": "USA",
+      "area": 168.8,
+      "evidence": "1817 sq ft; appears in purchase-popularity-sorted catalogue, 3 bedrooms, 2 bathrooms, one storey; office.",
+      "source": "https://www.architecturaldesigns.com/house-plans/search?sort=mp&tla_max=2000&tla_min=1400&utf8=%E2%9C%93",
+      "project": "https://www.architecturaldesigns.com/house-plans/3-bed-modern-farmhouse-plan-with-just-over-1-800-square-feet-of-living-space-and-a-home-office-56500sm"
+    },
+    {
+      "id": "DE-124",
+      "name": "Living Haus SOLUTION 124 V3",
+      "country": "Germany",
+      "area": 120,
+      "evidence": "No. 8 in Fertighaus.de's 2025 top 10 (portal popularity, not verified purchases).",
+      "source": "https://www.fertighaus.de/fertighaus/die-10-beliebtesten-fertighaeuser-2025/",
+      "project": "https://www.fertighaus.de/haeuser/solution-124-v3/"
+    },
+    {
+      "id": "FI-HUVILA",
+      "name": "Huvila House / Jenni Reuter",
+      "country": "Finland",
+      "area": 160,
+      "evidence": "Built project curated on ArchDaily; candidate for 2025 reader award, not a winner.",
+      "source": "https://boty.archdaily.com/us/2025/candidates/174156/huvila-house-slash-jenni-reuter",
+      "project": "https://www.archdaily.com/1013583/huvila-house-jenni-reuter"
+    },
+    {
+      "id": "BR-MOM",
+      "name": "Mom's House / Estúdio Zé",
+      "country": "Brazil",
+      "area": 165,
+      "evidence": "ArchDaily Building of the Year 2026 houses category winner, reader vote; renovation, not direct cost or new-build analogue.",
+      "source": "https://www.archdaily.com/1038873/meet-the-15-winning-projects-of-the-2026-archdaily-building-of-the-year-awards",
+      "project": "https://www.archdaily.com/1036811/moms-house-studio-ze"
+    },
+    {
+      "id": "UK-RIBA",
+      "name": "Caochan na Creige / Izat Arundell",
+      "country": "UK",
+      "area": null,
+      "evidence": "RIBA House of the Year 2025 winner, unanimous jury according to RIBA Journal; professional reference, not mid-market sales signal.",
+      "source": "https://www.riba.org/explore/awards/uk-awards/house-of-the-year-award/2025/",
+      "project": "https://www.ribaj.com/buildings/house-of-the-year-2025-winner-caochan-na-creige/"
+    },
+    {
+      "id": "HOUZZ-26",
+      "name": "Most-saved exteriors June–September 2026",
+      "country": "US platform",
+      "area": null,
+      "evidence": "Houzz most-saved photos, Oct 18 2026; visual engagement, not sales. Contrast, entries, mixed materials, landscaped setting.",
+      "source": "https://www.houzz.com/magazine/the-top-10-new-exteriors-right-now-stsetivw-vs~185802799"
+    },
+    {
+      "id": "AIA-25",
+      "name": "AIA Housing Award 2025",
+      "country": "US",
+      "area": null,
+      "evidence": "Juried professional design examples incl Longbranch; not sales or cost.",
+      "source": "https://www.aia.org/design-excellence/award-winners/housing-award-2025"
+    },
+    {
+      "id": "USER-01",
+      "name": "Floorplan discussion Nov 2026",
+      "country": "International forum",
+      "area": null,
+      "evidence": "Anecdotal comment suggests expanding shared living area instead of oversizing secondary service rooms.",
+      "source": "https://www.reddit.com/r/floorplan/comments/1xuahcm/thoughts_on_my_floor_plan/"
+    }
+  ],
+  "briefs": [
+    {
+      "id": "K75-01",
+      "group": "core",
+      "title": "Скандинавский фронтон",
+      "targetArea": 108,
+      "levels": "1",
+      "referenceIds": [
+        "PL-SKAL",
+        "FI-HUVILA"
+      ],
+      "architecture": "One main gable with tall living-room end glazing and recessed timber entrance. Not a box plus freestanding canopy.",
+      "costGuard": "Standard bedroom windows; glazing restricted to living room; no continuous full-height facade.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-02",
+      "group": "core",
+      "title": "Кирпичный Craftsman",
+      "targetArea": 142,
+      "levels": "1",
+      "referenceIds": [
+        "US-51826",
+        "HOUZZ-26"
+      ],
+      "architecture": "Two readable volumes, main gable plus offset entry gable, low masonry piers and timber canopy; staggered bedroom and living window sizes.",
+      "costGuard": "Limit valleys, conventional roof spans, local brick or clinker accents.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-03",
+      "group": "core",
+      "title": "Садовое бунгало",
+      "targetArea": 127,
+      "levels": "1",
+      "referenceIds": [
+        "PL-ZX100",
+        "PL-SKAL"
+      ],
+      "architecture": "L-shaped living and sleeping volumes enclose private shaded terrace; horizontally framed entry niche.",
+      "costGuard": "No obligatory garage, compact wet core, pitched or flat roof variants separately evaluated.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-04",
+      "group": "core",
+      "title": "Европейский дом с мансардой",
+      "targetArea": 153,
+      "levels": "1+attic",
+      "referenceIds": [
+        "DE-124",
+        "HOUZZ-26"
+      ],
+      "architecture": "Deep pitched silhouette; one measured dormer or garden gable, bay opening to terrace, varied facade depth.",
+      "costGuard": "Avoid two expensive dormers by default; attic usable area and stair geometry calculated separately.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-05",
+      "group": "core",
+      "title": "Современный семейный коттедж",
+      "targetArea": 186,
+      "levels": "2",
+      "referenceIds": [
+        "US-56500",
+        "HOUZZ-26",
+        "DE-124"
+      ],
+      "architecture": "Compact two storeys with stepped entrance and one-storey garden wing; clear hierarchy of volumes; no generic symmetrical cube.",
+      "costGuard": "Simplify garage to optional separate wing; standard window modules and avoid excessive roof intersections.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-06",
+      "group": "extra",
+      "title": "Лесной дом",
+      "targetArea": 160,
+      "levels": "1",
+      "referenceIds": [
+        "FI-HUVILA",
+        "UK-RIBA"
+      ],
+      "architecture": "Two low volumes around sheltered entry terrace; natural materials, long framed views.",
+      "costGuard": "Adapt to ordinary level site; not direct replication of award-winning design.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-07",
+      "group": "extra",
+      "title": "Американский farmhouse",
+      "targetArea": 169,
+      "levels": "1",
+      "referenceIds": [
+        "US-56500",
+        "US-51826"
+      ],
+      "architecture": "Broad porch and separate cross gable; grouped windows with simple vertical siding and brick base.",
+      "costGuard": "Avoid decorative dormers that do not serve rooms.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-08",
+      "group": "extra",
+      "title": "Южный дом с патио",
+      "targetArea": 155,
+      "levels": "1",
+      "referenceIds": [
+        "BR-MOM",
+        "AIA-25"
+      ],
+      "architecture": "Private courtyard or sheltered outdoor dining, strong indoor-outdoor connection, shading.",
+      "costGuard": "Climate-adapted glazing, roof and drainage; no assumption Brazilian design suits Russian climate.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-09",
+      "group": "extra",
+      "title": "Городской дом с мансардой",
+      "targetArea": 195,
+      "levels": "2+attic",
+      "referenceIds": [
+        "DE-124",
+        "HOUZZ-26"
+      ],
+      "architecture": "Narrow footprint, restrained upper gable, stepped rear terrace, differentiated street and garden fronts.",
+      "costGuard": "Third level subject to stair, height, local constraints; reserve rather than default.",
+      "status": "design brief only; original geometry not yet created"
+    },
+    {
+      "id": "K75-10",
+      "group": "extra",
+      "title": "Современный дом с защищённым входом",
+      "targetArea": 145,
+      "levels": "2",
+      "referenceIds": [
+        "PL-ZX100",
+        "HOUZZ-26"
+      ],
+      "architecture": "Two offset rectangular volumes, recessed entry, contrast of wood and plaster, daylight to stair.",
+      "costGuard": "Flat-roof drainage and waterproofing must be costed; no projecting unsupported cantilevers.",
+      "status": "design brief only; original geometry not yet created"
+    }
+  ],
+  "acceptance": {
+    "architecture": [
+      "recognizable silhouette in monochrome",
+      "street and garden elevations independently designed",
+      "openings correspond to actual rooms",
+      "buildable conceptual roof intersections",
+      "distinct massing, not only texture"
+    ],
+    "visual": [
+      "no placeholder landscaping",
+      "same geometry for promotional render and interactive view",
+      "daylight and human-scale camera",
+      "material scale and glass reflections verified"
+    ],
+    "budget": [
+      "gross vs net area separate",
+      "roof and facade takeoff",
+      "no claims of mid-budget until local cost review"
+    ],
+    "rights": "Links for study. No third-party drawings or photographs copied into public library without permissions; original geometry and licensed assets."
+  }
+}
