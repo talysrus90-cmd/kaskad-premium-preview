@@ -1,0 +1,169 @@
+{
+  "version": "V73 selection",
+  "decision": "5 core + 5 optional, selected from V72 to avoid restarting. Existing 3 unselected drafts retained.",
+  "area": "Approximate gross heated contour; attic weighted; garage and terraces separate. No fixed target area.",
+  "budget": "Target mid-market, not verified by cost estimate. Simplify shell, use regular spans and local material options. Cost verification required.",
+  "marketReferences": {
+    "PL": "https://www.archon.pl/przeglad-najlepszych-projektow-domow-parterowych-do-120-m2-z-dachem-dwuspadowym-bez-garazu-art-10924",
+    "DE": "https://www.danwood.de/kundenhauser",
+    "ATT": "https://www.archon.pl/projekty-domow/projekt-dom-w-arekach-mfe7267e750ef1",
+    "ATT2": "https://www.archon.pl/projekty-domow/projekt-dom-w-arekach-g-md9527e4e36472",
+    "US": "https://www.architecturaldesigns.com/house-plans/3-bed-modern-farmhouse-cottage-under-1600-square-feet-51934hz",
+    "US2": "https://www.architecturaldesigns.com/house-plans/three-bedroom-modern-farmhouse-house-plan-with-expansive-covered-porches-850068pke",
+    "DE2": "https://www.fertighaus.de/grundrisse-haeuser/",
+    "PL2": "https://www.archon.pl/projekty-nowoczesnych-domow-parterowych-do-120m2-pc6566"
+  },
+  "models": [
+    {
+      "id": "K100-01",
+      "group": "core",
+      "title": "Семейный 108",
+      "area_m2": 108.2,
+      "levels": "1",
+      "brief": "Простой прямоугольник, 3 спальни, кухня-гостиная, котельная, двускатная кровля. Минимум сложных узлов.",
+      "references": [
+        "https://www.archon.pl/przeglad-najlepszych-projektow-domow-parterowych-do-120-m2-z-dachem-dwuspadowym-bez-garazu-art-10924",
+        "https://www.danwood.de/kundenhauser"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K100-03",
+      "group": "core",
+      "title": "Кирпичный 100",
+      "area_m2": 99.8,
+      "levels": "1",
+      "brief": "Три спальни, вальмовая кровля, облицовочный кирпич и защищённый вход.",
+      "references": [
+        "https://www.danwood.de/kundenhauser",
+        "https://www.archon.pl/przeglad-najlepszych-projektow-domow-parterowych-do-120-m2-z-dachem-dwuspadowym-bez-garazu-art-10924"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K150-01",
+      "group": "core",
+      "title": "Семейный 149",
+      "area_m2": 149.3,
+      "levels": "1",
+      "brief": "Три спальни, мастер-зона, постирочная, терраса; пересмотреть крыло и суммарную стоимость.",
+      "references": [
+        "https://www.danwood.de/kundenhauser",
+        "https://www.archon.pl/projekty-nowoczesnych-domow-parterowych-do-120m2-pc6566"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K150-03",
+      "group": "core",
+      "title": "Мансардный 152",
+      "area_m2": 152,
+      "levels": "1+attic",
+      "brief": "Четыре спальни, два санузла, простой скат, компактная лестница.",
+      "references": [
+        "https://www.archon.pl/projekty-domow/projekt-dom-w-arekach-mfe7267e750ef1",
+        "https://www.archon.pl/projekty-domow/projekt-dom-w-arekach-g-md9527e4e36472"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K200-01",
+      "group": "core",
+      "title": "Семейный 196 с гаражом",
+      "area_m2": 196,
+      "levels": "2",
+      "brief": "Два этажа, четыре спальни, гараж отдельно от отапливаемой площади; компактный инженерный узел.",
+      "references": [
+        "https://www.danwood.de/kundenhauser",
+        "https://www.fertighaus.de/grundrisse-haeuser/"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K100-04",
+      "group": "choice",
+      "title": "Мансардный 114",
+      "area_m2": 113.5,
+      "levels": "1+attic",
+      "brief": "Компактный дом для небольшого участка, жилой верхний уровень.",
+      "references": [
+        "https://www.archon.pl/projekty-domow/projekt-dom-w-arekach-mfe7267e750ef1"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K150-02",
+      "group": "choice",
+      "title": "Панорамный 148",
+      "area_m2": 147.6,
+      "levels": "1",
+      "brief": "Г-образный современный объём, плоская кровля, садовая терраса; проверить водоотвод.",
+      "references": [
+        "https://www.archon.pl/projekty-nowoczesnych-domow-parterowych-do-120m2-pc6566",
+        "https://www.danwood.de/kundenhauser"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K150-04",
+      "group": "choice",
+      "title": "Городской 155",
+      "area_m2": 154.6,
+      "levels": "2",
+      "brief": "Узкое пятно застройки, два полноценных этажа, кабинет.",
+      "references": [
+        "https://www.fertighaus.de/grundrisse-haeuser/"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K200-02",
+      "group": "choice",
+      "title": "Европейская вилла 199",
+      "area_m2": 199.3,
+      "levels": "2",
+      "brief": "Симметричная Stadtvilla, вальмовая кровля; спокойная классика, без лишнего декора.",
+      "references": [
+        "https://www.fertighaus.de/grundrisse-haeuser/",
+        "https://www.danwood.de/kundenhauser"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    },
+    {
+      "id": "K200-03",
+      "group": "choice",
+      "title": "Загородный 191",
+      "area_m2": 191.4,
+      "levels": "1",
+      "brief": "Одноэтажный farmhouse, широкая веранда, самостоятельные фронтоны; проработать объём, не просто отделку.",
+      "references": [
+        "https://www.architecturaldesigns.com/house-plans/3-bed-modern-farmhouse-cottage-under-1600-square-feet-51934hz",
+        "https://www.architecturaldesigns.com/house-plans/three-bedroom-modern-farmhouse-house-plan-with-expansive-covered-porches-850068pke"
+      ],
+      "status": "V72 geometry draft, V73 visual upgrade requested",
+      "approval": "not approved"
+    }
+  ],
+  "heldBack": [
+    "K100-02",
+    "K200-04",
+    "K200-05"
+  ],
+  "quality": [
+    "No flat colored cartoon landscape or placeholder trees",
+    "Photographic PBR and daylight with consistent scale",
+    "Exterior preview from same geometry as web mesh; document differences in materials",
+    "Reference photos are research links, not licensed for copying unless permissions established",
+    "Interior layout and quantities checked before pricing",
+    "V69 untouched"
+  ]
+}
