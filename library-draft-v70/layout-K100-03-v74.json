@@ -1,0 +1,231 @@
+{
+  "id": "K100-03",
+  "stage": "concept only",
+  "units": "m",
+  "axis": "x from left, y from entrance to garden; z height",
+  "width": 10.5,
+  "depth": 9.5,
+  "external_wall": 0.3,
+  "partition": 0.12,
+  "rooms": [
+    {
+      "id": "bed1",
+      "name": "Спальня 1",
+      "x": 0.3,
+      "y": 0.3,
+      "w": 3.75,
+      "d": 2.82
+    },
+    {
+      "id": "bed2",
+      "name": "Спальня 2",
+      "x": 0.3,
+      "y": 3.24,
+      "w": 3.75,
+      "d": 2.88
+    },
+    {
+      "id": "bed3",
+      "name": "Спальня 3",
+      "x": 0.3,
+      "y": 6.24,
+      "w": 3.75,
+      "d": 2.96
+    },
+    {
+      "id": "hall",
+      "name": "Прихожая / коридор",
+      "x": 4.17,
+      "y": 0.3,
+      "w": 1.65,
+      "d": 8.9
+    },
+    {
+      "id": "utility",
+      "name": "Техническое помещение",
+      "x": 5.94,
+      "y": 0.3,
+      "w": 4.26,
+      "d": 1.75
+    },
+    {
+      "id": "bath",
+      "name": "Санузел",
+      "x": 5.94,
+      "y": 2.17,
+      "w": 4.26,
+      "d": 1.8
+    },
+    {
+      "id": "living",
+      "name": "Кухня-гостиная",
+      "x": 5.94,
+      "y": 4.09,
+      "w": 4.26,
+      "d": 5.11
+    }
+  ],
+  "walls": [
+    {
+      "axis": "y",
+      "x": 4.05,
+      "y": 0.3,
+      "length": 8.9,
+      "doors": [
+        {
+          "start": 0.91,
+          "width": 0.9
+        },
+        {
+          "start": 3.89,
+          "width": 0.9
+        },
+        {
+          "start": 6.91,
+          "width": 0.9
+        }
+      ]
+    },
+    {
+      "axis": "y",
+      "x": 5.82,
+      "y": 0.3,
+      "length": 8.9,
+      "doors": [
+        {
+          "start": 0.35,
+          "width": 0.85
+        },
+        {
+          "start": 2.24,
+          "width": 0.85
+        },
+        {
+          "start": 4.5,
+          "width": 1
+        }
+      ]
+    },
+    {
+      "axis": "x",
+      "x": 0.3,
+      "y": 3.12,
+      "length": 3.75,
+      "doors": []
+    },
+    {
+      "axis": "x",
+      "x": 0.3,
+      "y": 6.12,
+      "length": 3.75,
+      "doors": []
+    },
+    {
+      "axis": "x",
+      "x": 5.94,
+      "y": 2.05,
+      "length": 4.26,
+      "doors": []
+    },
+    {
+      "axis": "x",
+      "x": 5.94,
+      "y": 3.97,
+      "length": 4.26,
+      "doors": []
+    }
+  ],
+  "exterior_openings": {
+    "front": [
+      [
+        4.69,
+        0,
+        1.12,
+        2.18,
+        "door"
+      ],
+      [
+        1.35,
+        0.84,
+        1.65,
+        1.35,
+        "window"
+      ],
+      [
+        7.25,
+        0.98,
+        1.35,
+        1.15,
+        "window"
+      ]
+    ],
+    "back": [
+      [
+        1.35,
+        0.84,
+        1.65,
+        1.35,
+        "window"
+      ],
+      [
+        6.5,
+        0,
+        1.9,
+        2.2,
+        "patio"
+      ]
+    ],
+    "left": [
+      [
+        0.71,
+        0.84,
+        1.6,
+        1.35,
+        "window"
+      ],
+      [
+        3.58,
+        0.84,
+        1.6,
+        1.35,
+        "window"
+      ],
+      [
+        6.62,
+        0.84,
+        1.6,
+        1.35,
+        "window"
+      ]
+    ],
+    "right": [
+      [
+        0.46,
+        1.15,
+        0.8,
+        0.85,
+        "window"
+      ],
+      [
+        2.39,
+        1.55,
+        0.8,
+        0.6,
+        "window"
+      ],
+      [
+        5.5,
+        0.55,
+        2.2,
+        1.65,
+        "window"
+      ]
+    ]
+  },
+  "limitations": [
+    "No engineering or regulatory validation. Technical room heating equipment, ventilation, accessibility and dimensions must be confirmed.",
+    "Doors modeled as openings, no full furniture layout or structural design.",
+    "Approximate schematic net room areas, not a cadastral measurement."
+  ],
+  "net_rooms_m2": 84.05
+}
