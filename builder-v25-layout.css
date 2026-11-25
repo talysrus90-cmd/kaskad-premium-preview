@@ -1021,8 +1021,8 @@ body.kaskad-interior-active :has(> #builderProgress){display:none!important}
  .scene-external-actions .scene-request-menu{width:100%!important}
 }
 
-/* v67: Styles are horizontal-only; never let a vertical drag on their
-   thumbnails/floor filter move the settings panel or parent page. */
+/* v68: Native horizontal carousel; vertical drags are forwarded to the
+   parent page by the gesture bridge, never to the inner settings panel. */
 #builderGallery[data-active-material="presets"]{
  touch-action:pan-x!important;
  overscroll-behavior-y:contain!important;
