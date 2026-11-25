@@ -1,0 +1,130 @@
+{
+  "version": "V79",
+  "base": "V78 reference preference",
+  "areaPolicy": "gross contour × 1.65 illustrative only, not net usable floor area; recalculation required",
+  "models": [
+    {
+      "id": "K78-01",
+      "title": "Немецкий кирпичный с поперечным фронтоном",
+      "levels": "1+attic",
+      "main": {
+        "x": 0,
+        "z": 0,
+        "w": 8.6,
+        "d": 10.4,
+        "roof": "gable",
+        "rise": 3.55
+      },
+      "wings": [],
+      "facade": "brick",
+      "roofMat": "dark",
+      "porch": {
+        "w": 2.6,
+        "d": 1.25
+      },
+      "entryCenter": 4.3,
+      "entry": "modernFrame",
+      "bedrooms": 3,
+      "baths": 2,
+      "atticFactor": 0.65,
+      "atticKnee": 1.05,
+      "storeyHeight": 3,
+      "plinth": 0.28,
+      "quantities": {
+        "grossHeatedApprox": 147.6
+      },
+      "referenceIds": [
+        "DE01",
+        "DE02",
+        "SE01"
+      ],
+      "crossGable": {
+        "side": "right",
+        "center": 5.2,
+        "halfWidth": 2.25,
+        "riseAboveEave": 2.7
+      },
+      "openings": {
+        "front": [
+          [
+            1,
+            0.85,
+            1.7,
+            1.35,
+            "window"
+          ],
+          [
+            5.65,
+            0.85,
+            1.75,
+            1.35,
+            "window"
+          ]
+        ],
+        "back": [
+          [
+            0.9,
+            0.8,
+            1.8,
+            1.4,
+            "window"
+          ],
+          [
+            4.7,
+            0,
+            2.7,
+            2.2,
+            "patio"
+          ]
+        ],
+        "left": [
+          [
+            1,
+            0.85,
+            1.7,
+            1.35,
+            "window"
+          ],
+          [
+            4,
+            1.25,
+            1,
+            0.85,
+            "window"
+          ],
+          [
+            7,
+            0.85,
+            1.7,
+            1.35,
+            "window"
+          ]
+        ],
+        "right": [
+          [
+            0.95,
+            0.85,
+            1.6,
+            1.35,
+            "window"
+          ],
+          [
+            4.35,
+            0,
+            1.1,
+            2.2,
+            "door"
+          ],
+          [
+            7.3,
+            0.85,
+            1.6,
+            1.35,
+            "window"
+          ]
+        ]
+      },
+      "stage": "original schematic exterior; attic layout not verified"
+    }
+  ]
+}
